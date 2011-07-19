@@ -74,7 +74,7 @@ module Jark =
     let vm_connect host port =
       eval "(jark.vm/stats)"
         
-    let cp_add_eval path =
+    let do_cp path =
       printf "Adding classpath %s\n" path;
       eval_cmd_args "jark.cp" "add" [(stringify (q path))]
 
@@ -83,9 +83,9 @@ module Jark =
       let f = apath ^ "/" in
       if (File.exists apath) then begin
         if (File.isdir apath) then 
-          List.iter (fun x -> cp_add_eval (f ^ x)) (get_jars apath)
+          List.iter (fun x -> do_cp (f ^ x)) (glob (sprintf "%s/*.jar" apath))
         else
-          cp_add_eval(apath);
+          do_cp(apath);
         ()
       end
       else begin

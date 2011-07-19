@@ -60,3 +60,25 @@ let getlines filename =
   end;
   close_in fd;
   !retval
+
+let regexp_of_glob pat =
+  Str.regexp
+    (Printf.sprintf "^%s$"
+       (String.concat ""
+          (List.map
+             (function
+                | Str.Text s -> Str.quote s
+                | Str.Delim "*" -> ".*"
+                | Str.Delim "?" -> "."
+                | Str.Delim _ -> assert false)
+             (Str.full_split (Str.regexp "[*?]") pat))))
+
+let glob pat =
+  let basedir = Filename.dirname pat in
+  let files = Sys.readdir basedir in
+  let regexp = regexp_of_glob (Filename.basename pat) in
+  List.map
+    (Filename.concat basedir)
+    (List.filter
+       (fun file -> Str.string_match regexp file 0)
+       (Array.to_list files))
