@@ -97,8 +97,9 @@ module Jark =
        List.iter (fun x -> cp_add_file x) path_list;
        ()
 
-    let ns_load file =
-      eval (sprintf "(jark.ns/load-clj \"%s\")" file)
+    let ns_load path =
+      let apath = (File.abspath path) in
+      eval (sprintf "(jark.ns/load-clj \"%s\")" apath)
       
     let wget_cmd ul =
       let url = String.concat " " ul in
