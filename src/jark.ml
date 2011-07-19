@@ -83,7 +83,7 @@ module Jark =
       let f = apath ^ "/" in
       if (File.exists apath) then begin
         if (File.isdir apath) then 
-          List.iter (fun x -> cp_add_eval (f ^ x)) (File.list_of_dir apath)
+          List.iter (fun x -> cp_add_eval (f ^ x)) (get_jars apath)
         else
           cp_add_eval(apath);
         ()
