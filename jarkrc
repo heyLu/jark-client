@@ -1,0 +1,13 @@
+
+CLJR_DIR = "~/.cljr"
+
+HTTP_CLIENT = "/usr/bin/wget"
+
+URL_CLOJURE = "http://build.clojure.org/releases/org/clojure/clojure/1.2.1/clojure-1.2.1.jar"
+
+URL_CONTRIB = "http://build.clojure.org/releases/org/clojure/clojure-contrib/1.2.0/clojure-contrib-1.2.0.jar"
+
+URL_NREPL   =  "http://repo1.maven.org/maven2/org/clojure/tools.nrepl/0.0.5/tools.nrepl-0.0.5.jar"
+
+URL_JARK    = "http://clojars.org/repo/jark/jark/0.4/jark-0.4.jar"
+

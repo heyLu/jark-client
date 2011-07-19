@@ -7,13 +7,15 @@ open Jark
 open ExtList
 open ExtString
 open Repl
+include Util
 
- let cp cmd arg =
+let cp cmd arg =
+  Jark.require "jark.cp";
    match cmd with
    | "usage"   -> pe cp_usage
    | "help"    -> pe cp_usage
-   | "list"    -> Jark.eval_cmd "jark.cp" "ls"
-   | "ls"      -> Jark.eval_cmd "jark.cp" "ls"
+   | "list"    -> Jark.eval_fn "jark.cp" "ls"
+   | "ls"      -> Jark.eval_fn "jark.cp" "ls"
    | "add"     -> Jark.cp_add arg
    |  _        -> pe cp_usage
             
@@ -24,27 +26,27 @@ let vm cmd arg =
   | "connect" -> begin 
       Jark.vm_connect (List.nth arg 1) (String.to_int (List.nth arg 3))
   end
-  | "stat"    -> Jark.eval_cmd "jark.vm" "stats"
-  | "uptime"  -> Jark.eval_cmd "jark.vm" "uptime"
-  | "gc"      -> Jark.eval_cmd "jark.vm" "gc"
-  | "threads" -> Jark.eval_cmd "jark.vm" "threads"
+  | "stat"    -> Jark.eval_fn "jark.vm" "stats"
+  | "uptime"  -> Jark.eval_fn "jark.vm" "uptime"
+  | "gc"      -> Jark.eval_fn "jark.vm" "gc"
+  | "threads" -> Jark.eval_fn "jark.vm" "threads"
   |  _        -> pe vm_usage 
             
 let ns cmd arg =
+  Jark.require "jark.ns";
   match cmd with
   | "usage"   -> pe ns_usage
-  | "list"    -> Jark.eval_cmd "jark.ns" "list"
-  | "find"    -> Jark.eval_cmd "jark.ns" "list"
+  | "list"    -> Jark.eval_fn "jark.ns" "list"
+  | "find"    -> Jark.eval_nfa "jark.ns" "find" [(List.nth arg 0)]
   | "load"    -> Jark.ns_load (List.first arg)
-  | "run"     -> Jark.eval_cmd "jark.ns" "list"
-  | "repl"    -> Jark.eval_cmd "jark.ns" "list"
+  | "repl"    -> Jark.eval_fn "jark.ns" "list"
   |  _        -> pe ns_usage
             
 let package cmd arg =
   match cmd with
   | "usage"     -> pe package_usage
-  | "install"   -> pe "Install package"
-  | "versions"  -> pe "package versions"
+  | "install"   -> pe "install"
+  | "versions"  -> pe "versions"
   | "deps"      -> pe "dependencies"
   | "installed" -> pe "install a package"
   | "latest"    -> pe "Latest"
@@ -55,6 +57,12 @@ let swank cmd arg =
   | "usage"   -> pe swank_usage
   | "start"   -> Jark.eval "(jark.swank/start \"0.0.0.0\" 4005)"
   |  _        -> pe swank_usage
+
+let repo cmd arg =
+  match cmd with
+  | "list"   -> Jark.eval_fn "jark.package" "repo-list"
+  | "add "   -> Jark.eval "(jark.swank/start \"0.0.0.0\" 4005)"
+  |  _       -> pe repo_usage
         
 let version = 
   "version 0.4"
@@ -80,6 +88,7 @@ let _ =
   | "swank" :: []   -> pe swank_usage
   | "swank" :: xs   -> swank (List.first xs) (List.tl xs)
   | "repo" :: []    -> pe repo_usage
+  | "repo" :: xs    -> repo (List.first xs) (List.tl xs)
   | "repl" :: []    -> Repl.run "user"
   | "version" :: [] -> pe version
   | "--version" :: [] -> pe version

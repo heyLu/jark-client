@@ -43,25 +43,8 @@ module Jark =
       let expr = clj_string env code in
       nrepl_send env (make_eval_message env expr)
 
-    (* dispatcher Namespace Function Args *)
-
-    let make_dispatch_message env ns fn =
-      { mid = node_id env; code = sprintf "(jark.ns/dispatch %s %s)" ns fn }
-
-    let eval_cmd ns fn = 
-      let env = get_env in
-      nrepl_send env (make_dispatch_message env (qq ns) (qq fn))
-
-    let make_dispatch_message_args env ns fn args =
-      let s = String.concat " " args in
-      let f = (sprintf "(jark.ns/dispatch %s %s %s)" ns fn s) in
-      printf "%s\n" f;
-      { mid = node_id env; code = f }
-
-    let eval_cmd_args ns fn args = 
-      List.iter (fun x -> printf "%s\n" x) args;
-      let env = get_env in
-      nrepl_send env (make_dispatch_message_args env (qq ns) (qq fn) args)
+    let require ns =
+      eval (sprintf "(require '%s)" ns)
 
     (* nfa *)
 
@@ -94,11 +77,10 @@ module Jark =
         
     let do_cp path =
       printf "Adding classpath %s\n" path;
-      eval_nfa "jark.cp" "add" [(stringify (q path))]
+      eval_nfa "jark.cp" "add" [(qq path)]
 
     let cp_add_file path =
       let apath = (File.abspath path) in
-      (* FIXME: check if path exists *)
       let f = apath ^ "/" in
       if (File.exists apath) then begin
         if (File.isdir apath) then 
