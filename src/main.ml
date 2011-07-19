@@ -58,7 +58,15 @@ let swank cmd arg =
         
 let version = 
   "version 0.4"
-        
+ 
+let nfa xs =
+  match (List.length xs) with 
+    0 -> pe usage
+  | 1 -> Jark.eval_ns  (List.nth xs 0)
+  | 2 -> Jark.eval_fn  (List.nth xs 0) (List.nth xs 1) 
+  | 3 -> Jark.eval_nfa (List.nth xs 0) (List.nth xs 1) (List.drop 2 xs)
+  | _ -> Jark.eval_nfa (List.nth xs 0) (List.nth xs 1) (List.drop 2 xs)
+
 let _ =
   match (List.tl (Array.to_list Sys.argv)) with
     "vm" :: []      -> pe vm_usage
@@ -78,6 +86,6 @@ let _ =
   | "-v" :: []      -> pe version
   | "install" :: [] -> Jark.install "jark"
   | "-e" :: xs      -> Jark.eval (List.first xs)
-  |  _   :: xs      -> Jark.eval_cmd_args (List.nth xs 0) (List.nth xs 1) (List.drop 1 xs)
+  |  xs             -> nfa xs
   |  _              -> pe usage
- 
+

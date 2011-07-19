@@ -16,4 +16,11 @@ module Jark :
     val install : string -> unit
 
     val eval_cmd_args : string -> string -> string list -> unit
+
+    val eval_ns : string -> unit
+
+    val eval_fn : string -> string -> unit
+
+    val eval_nfa : string -> string -> string list -> unit
+
    end
