@@ -46,6 +46,8 @@ let wget =
   else
     "wget --user-agent jark"
 
+let standalone = true
+
 let url_clojure = "http://build.clojure.org/releases/org/clojure/clojure/1.2.1/clojure-1.2.1.jar"
 
 let url_clojure_contrib = "http://build.clojure.org/releases/org/clojure/clojure-contrib/1.2.0/clojure-contrib-1.2.0.jar"
@@ -55,6 +57,8 @@ let url_nrepl =  "http://repo1.maven.org/maven2/org/clojure/tools.nrepl/0.0.5/to
 let url_jark = "http://clojars.org/repo/jark/jark/0.4/jark-0.4.jar"
 
 let url_swank = "http://clojars.org/repo/swank-clojure/swank-clojure/1.3.2/swank-clojure-1.3.2.jar"
+
+let url_standalone = "https://github.com/downloads/icylisper/jark-server/jark-0.4-standalone.jar"
 
 let jar_clojure = cljr_lib ^ "/clojure-1.2.1.jar"
 
@@ -66,11 +70,25 @@ let jar_jark    = cljr_lib ^ "/jark-0.4.jar"
 
 let jar_swank   = cljr_lib ^ "/swank-clojure-1.3.2.jar"
 
-let cp_boot  = String.concat ":" [ jar_clojure;
-                                   jar_contrib;
-                                   jar_nrepl;
-                                   jar_jark;
-                                   jar_swank ]
+let jar_standalone = cljr_lib ^ "/jark-0.4-standalone.jar"
+
+let cp_boot  = 
+  if standalone then
+    jar_standalone
+  else
+    String.concat ":" [ jar_clojure;
+                        jar_contrib;
+                        jar_nrepl;
+                        jar_jark;
+                        jar_swank ]
+
+
+let setup_cljr () = 
+  let file = cljr ^ "/project.clj" in
+  let f = open_out(file) in
+  let x = "(leiningen.core/defproject cljr.core/cljr-repo \"1.0.0-SNAPSHOT\" :description \"cljr is a Clojure REPL and package management system.\" :dependencies [[org.clojure/clojure \"1.2.0\"] [org.clojure/clojure-contrib \"1.2.0\"] [leiningen \"1.1.0\"] [swank-clojure \"1.3.2\"]] :classpath [\"./src/\" \"./\"] :repositories nil)" in
+  fprintf f "%s\n" x;
+  close_out f
 
 let set k v () =
   ignore (Sys.command("mkdir -p " ^ (Sys.getenv "HOME") ^ "/.config/jark"));

@@ -113,10 +113,20 @@ module Jark =
     let install component =
       (try Unix.mkdir cljr 0o740 with Unix.Unix_error(Unix.EEXIST,_,_) -> ());
       (try Unix.mkdir cljr_lib 0o740 with Unix.Unix_error(Unix.EEXIST,_,_) -> ());
-      wget_cmd [ wget; url_clojure; "-O"; jar_clojure];
-      wget_cmd [ wget; url_clojure_contrib; "-O"; jar_contrib];
-      wget_cmd [ wget; url_nrepl; "-O"; jar_nrepl];
-      wget_cmd [ wget; url_jark; "-O";  jar_jark];
-      pe "Installed components successfully";
+      setup_cljr ();
+      if standalone then begin
+        if (File.exists jar_standalone) then
+          pe (jar_standalone ^ " already exists")
+        else
+          wget_cmd [ wget; url_standalone; "-O"; jar_standalone]
+      end
+      else begin
+        wget_cmd [ wget; url_clojure; "-O"; jar_clojure];
+        wget_cmd [ wget; url_clojure_contrib; "-O"; jar_contrib];
+        wget_cmd [ wget; url_nrepl; "-O"; jar_nrepl];
+        wget_cmd [ wget; url_jark; "-O";  jar_jark]
+      end;
+
+      pe "Installed components successfully"
 
 end

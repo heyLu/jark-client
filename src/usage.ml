@@ -77,6 +77,7 @@ let usage =
             "    repo     list add remove" ;
             "    swank    start stop" ;
             "    vm       start connect stop stat uptime threads gc";
+            "    lein     [LEIN-TASK]";
             "";
             "See 'jark <module>' for more information on a specific module."]
 

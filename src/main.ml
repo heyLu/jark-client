@@ -102,6 +102,7 @@ let _ =
     | "--version" :: [] -> pe version
     | "-v" :: []      -> pe version
     | "install" :: [] -> Jark.install "jark"
+    |  "lein"   :: [] -> Jark.eval_fn "leiningen.core" "-main"
     | "-e" :: xs      -> Jark.eval (List.first xs)
     |  xs             -> nfa xs
     |  _              -> pe usage
