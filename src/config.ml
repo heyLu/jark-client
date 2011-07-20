@@ -83,6 +83,8 @@ let cp_boot  =
                         jar_swank ]
 
 
+let jark_config_dir = (Sys.getenv "HOME") ^ "/.config/jark/"
+
 let setup_cljr () = 
   let file = cljr ^ "/project.clj" in
   let f = open_out(file) in
@@ -91,14 +93,16 @@ let setup_cljr () =
   close_out f
 
 let set k v () =
-  ignore (Sys.command("mkdir -p " ^ (Sys.getenv "HOME") ^ "/.config/jark"));
-  let file = (Sys.getenv "HOME") ^ "/.config/jark/" ^ k in
+  let config_dir = (Sys.getenv "HOME") ^ "/.config/" in
+  (try Unix.mkdir config_dir 0o740 with Unix.Unix_error(Unix.EEXIST,_,_) -> ());
+  (try Unix.mkdir jark_config_dir 0o740 with Unix.Unix_error(Unix.EEXIST,_,_) -> ());
+  let file = jark_config_dir ^ k in
   let f = open_out(file) in 
   fprintf f "%s\n" v; 
   close_out f
 
 let get k () =
-  let file = (Sys.getenv "HOME") ^ "/.config/jark/" ^ k in
+  let file = jark_config_dir ^ k in
   let f = open_in file in
   try 
     let line = input_line f in 
@@ -114,22 +118,21 @@ let getc () =
   (* List.iter (fun x -> Printf.printf "%d\n" x) xs *)
   xs
 
-
 let set_env ?(host="localhost") ?(port=9000) () =
-  set "host" host;
-  (* set "port" (string_of_int port); *)
-  {
-  ns          = "user";
-  debug       = false;
-  host        = host;
-  port        = 9000
+  set "host" host ();
+  set "port" (string_of_int port) ();
+  { 
+    ns          = "user";
+    debug       = false;
+    host        = host;
+    port        = 9000
   }
         
 let get_env = 
   {
-  ns          = "user";
-  debug       = false;
-  host        = "localhost";
-  port        = 9000
-} 
+    ns          = "user";
+    debug       = false;
+    host        = (get "host" ());
+    port        = (int_of_string (get "port" ()))
+  } 
 

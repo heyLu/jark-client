@@ -78,6 +78,12 @@ let nfa xs =
   | 3 -> Jark.eval_nfa (List.nth xs 0) (List.nth xs 1) (List.drop 2 xs)
   | _ -> Jark.eval_nfa (List.nth xs 0) (List.nth xs 1) (List.drop 2 xs)
 
+let rl () =
+  let term = Unix.tcgetattr Unix.stdin in
+  Unix.tcsetattr Unix.stdin Unix.TCSANOW term;
+  let line = input_line stdin in
+  pe line
+
 let _ =
   try
     match (List.tl (Array.to_list Sys.argv)) with
@@ -93,7 +99,8 @@ let _ =
     | "swank" :: xs   -> swank (List.first xs) (List.tl xs)
     | "repo" :: []    -> pe repo_usage
     | "repo" :: xs    -> repo (List.first xs) (List.tl xs)
-    | "repl" :: []    -> 
+    | "-s" :: []      -> pe (input_line stdin)
+    | "repl" :: []    ->
         if is_windows then
           pe "Repl not implemented yet"
         else

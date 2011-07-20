@@ -67,17 +67,18 @@ let package_usage =
 let usage =
   unlines ["usage: jark [-v|--version] [-h|--help]" ;
             "            [-r|repl] [-e|--eval] [-i|--install|install]" ;
+            "            [-c|--config=<path>]";
             "            [-a|--host=<hostname>] [-p|--port=<port>] <module> <command> <args>" ;
             "";
             "The most commonly used jark modules are:" ;
             "    cp       list add" ;
             "    doc      search examples comments" ;
-            "    ns       list find load run repl" ;
+            "    ns       list load run repl" ;
             "    package  install uninstall versions deps search installed latest" ;
             "    repo     list add remove" ;
             "    swank    start stop" ;
             "    vm       start connect stop stat uptime threads gc";
-            "    lein     [LEIN-TASK]";
+            "    lein     <task(s)>";
             "";
             "See 'jark <module>' for more information on a specific module."]
 

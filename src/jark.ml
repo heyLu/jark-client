@@ -73,7 +73,8 @@ module Jark =
       Unix.sleep 10
         
     let vm_connect host port =
-      eval "(jark.vm/stats)"
+      set_env ~host:host ~port:port ();
+      eval_fn "jark.vm" "stats" 
         
     let do_cp path =
       printf "Adding classpath %s\n" path;
