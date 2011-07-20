@@ -26,8 +26,10 @@ let cread config () =
     (line_stream_of_channel config);
   List.rev !xs
 
+let is_windows = (Sys.os_type = "Win32")
+
 let cljr = 
-  if (Sys.os_type = "Win32") then
+  if is_windows then
     "c:\cljr"
   else
     (Sys.getenv "HOME") ^ "/.cljr"
@@ -52,6 +54,8 @@ let url_nrepl =  "http://repo1.maven.org/maven2/org/clojure/tools.nrepl/0.0.5/to
 
 let url_jark = "http://clojars.org/repo/jark/jark/0.4/jark-0.4.jar"
 
+let url_swank = "http://clojars.org/repo/swank-clojure/swank-clojure/1.3.2/swank-clojure-1.3.2.jar"
+
 let jar_clojure = cljr_lib ^ "/clojure-1.2.1.jar"
 
 let jar_contrib = cljr_lib ^ "/clojure-contrib-1.2.0.jar"
@@ -60,10 +64,13 @@ let jar_nrepl   = cljr_lib ^ "/tools.nrepl-0.0.5.jar"
 
 let jar_jark    = cljr_lib ^ "/jark-0.4.jar"
 
+let jar_swank   = cljr_lib ^ "/swank-clojure-1.3.2.jar"
+
 let cp_boot  = String.concat ":" [ jar_clojure;
                                    jar_contrib;
                                    jar_nrepl;
-                                   jar_jark ]
+                                   jar_jark;
+                                   jar_swank ]
 
 let set k v () =
   ignore (Sys.command("mkdir -p " ^ (Sys.getenv "HOME") ^ "/.config/jark"));

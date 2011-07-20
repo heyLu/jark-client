@@ -79,3 +79,8 @@ let usage =
             "    vm       start connect stop stat uptime threads gc";
             "";
             "See 'jark <module>' for more information on a specific module."]
+
+let connection_usage = 
+  unlines ["Cannot connect to the JVM on localhost:9000" ;
+            "Try vm connect --host <HOST> --port <PORT>";
+            "or do a vm start"]

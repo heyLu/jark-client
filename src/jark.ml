@@ -84,9 +84,8 @@ module Jark =
       let f = apath ^ "/" in
       if (File.exists apath) then begin
         if (File.isdir apath) then 
-          List.iter (fun x -> do_cp x) (glob (sprintf "%s/*.jar" apath))
-        else
-          do_cp(apath);
+          List.iter (fun x -> do_cp x) (glob (sprintf "%s/*.jar" apath));
+        do_cp(apath);
         ()
       end
       else begin
@@ -100,7 +99,12 @@ module Jark =
 
     let ns_load path =
       let apath = (File.abspath path) in
-      eval (sprintf "(jark.ns/load-clj \"%s\")" apath)
+      if (File.exists apath) then
+        eval (sprintf "(jark.ns/load-clj \"%s\")" apath)
+      else begin
+        printf "File not found %s\n" apath;
+        ()
+      end
       
     let wget_cmd ul =
       let url = String.concat " " ul in

@@ -8,6 +8,7 @@ open ExtList
 open ExtString
 open Repl
 include Util
+include Config
 
 let cp cmd arg =
   Jark.require "jark.cp";
@@ -43,6 +44,7 @@ let ns cmd arg =
   |  _        -> pe ns_usage
             
 let package cmd arg =
+  Jark.require "jark.package";
   match cmd with
   | "usage"     -> pe package_usage
   | "install"   -> pe "install"
@@ -59,6 +61,7 @@ let swank cmd arg =
   |  _        -> pe swank_usage
 
 let repo cmd arg =
+  Jark.require "jark.package";
   match cmd with
   | "list"   -> Jark.eval_fn "jark.package" "repo-list"
   | "add "   -> Jark.eval "(jark.swank/start \"0.0.0.0\" 4005)"
@@ -76,25 +79,31 @@ let nfa xs =
   | _ -> Jark.eval_nfa (List.nth xs 0) (List.nth xs 1) (List.drop 2 xs)
 
 let _ =
-  match (List.tl (Array.to_list Sys.argv)) with
-    "vm" :: []      -> pe vm_usage
-  | "vm" :: xs      -> vm (List.first xs) (List.tl xs)
-  | "cp" :: []      -> pe cp_usage
-  | "cp" :: xs      -> cp (List.first xs) (List.tl xs)
-  | "ns" :: []      -> pe ns_usage
-  | "ns" :: xs      -> ns (List.first xs) (List.tl xs)
-  | "package" :: [] -> pe package_usage
-  | "package" :: xs -> package (List.first xs) (List.tl xs)
-  | "swank" :: []   -> pe swank_usage
-  | "swank" :: xs   -> swank (List.first xs) (List.tl xs)
-  | "repo" :: []    -> pe repo_usage
-  | "repo" :: xs    -> repo (List.first xs) (List.tl xs)
-  | "repl" :: []    -> Repl.run "user"
-  | "version" :: [] -> pe version
-  | "--version" :: [] -> pe version
-  | "-v" :: []      -> pe version
-  | "install" :: [] -> Jark.install "jark"
-  | "-e" :: xs      -> Jark.eval (List.first xs)
-  |  xs             -> nfa xs
-  |  _              -> pe usage
-
+  try
+    match (List.tl (Array.to_list Sys.argv)) with
+      "vm" :: []      -> pe vm_usage
+    | "vm" :: xs      -> vm (List.first xs) (List.tl xs)
+    | "cp" :: []      -> pe cp_usage
+    | "cp" :: xs      -> cp (List.first xs) (List.tl xs)
+    | "ns" :: []      -> pe ns_usage
+    | "ns" :: xs      -> ns (List.first xs) (List.tl xs)
+    | "package" :: [] -> pe package_usage
+    | "package" :: xs -> package (List.first xs) (List.tl xs)
+    | "swank" :: []   -> pe swank_usage
+    | "swank" :: xs   -> swank (List.first xs) (List.tl xs)
+    | "repo" :: []    -> pe repo_usage
+    | "repo" :: xs    -> repo (List.first xs) (List.tl xs)
+    | "repl" :: []    -> 
+        if is_windows then
+          pe "Repl not implemented yet"
+        else
+          Repl.run "user"
+    | "version" :: [] -> pe version
+    | "--version" :: [] -> pe version
+    | "-v" :: []      -> pe version
+    | "install" :: [] -> Jark.install "jark"
+    | "-e" :: xs      -> Jark.eval (List.first xs)
+    |  xs             -> nfa xs
+    |  _              -> pe usage
+  with Unix.Unix_error _ ->
+    pe connection_usage
