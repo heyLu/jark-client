@@ -56,4 +56,13 @@ let strip_fake_newline value =
 
 let nilp value = 
   (String.strip (strip_fake_newline (us value))) = "nil"
-  
+
+let nstr f s =
+  let fmt = format_of_string f in 
+  sprintf fmt s
+
+let nstrx f xs =
+  let sl = List.map (fun x -> (sprintf "%s" "%s")) xs in
+  sprintf "%s" "a"
+
+

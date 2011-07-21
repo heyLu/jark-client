@@ -111,6 +111,7 @@ let _ =
     | "install" :: [] -> Jark.install "jark"
     |  "lein"   :: [] -> Jark.eval_fn "leiningen.core" "-main"
     | "-e" :: xs      -> Jark.eval (List.first xs)
+    |  "test" :: []   -> pe (nstrx "%s" ["a"])
     |  xs             -> nfa xs
     |  _              -> pe usage
   with Unix.Unix_error _ ->

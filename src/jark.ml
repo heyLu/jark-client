@@ -39,7 +39,7 @@ module Jark =
       Str.global_replace (Str.regexp "\"") "\\\"" s
 
     let eval code = 
-      let env = get_env in
+      let env = get_env() in
       let expr = clj_string env code in
       nrepl_send env (make_eval_message env expr)
 
@@ -49,19 +49,19 @@ module Jark =
     (* nfa *)
 
     let eval_ns ns = 
-      let env = get_env in
+      let env = get_env() in
       let f = (sprintf "(jark.ns/dispatch %s)" (qq ns)) in
       nrepl_send env { mid = node_id env; code = f }
       
     let eval_fn ns fn =
-      let env = get_env in
+      let env = get_env() in
       let f = (sprintf "(jark.ns/dispatch %s %s)" (qq ns) (qq fn)) in
       nrepl_send env { mid = node_id env; code = f }
 
     let eval_nfa ns fn args =
-      let env = get_env in
-      let s = (String.concat " " args) in
-      let f = (sprintf "(jark.ns/dispatch %s %s %s)" (qq ns) (qq fn) s) in
+      let env = get_env() in
+      let sargs = String.concat " " (List.map (fun x -> (qq x)) args) in
+      let f = String.concat " " ["(jark.ns/dispatch "; (qq ns); (qq fn); sargs; ")"] in 
       nrepl_send env { mid = node_id env; code = f }
           
     (* commands *)
@@ -78,7 +78,7 @@ module Jark =
         
     let do_cp path =
       printf "Adding classpath %s\n" path;
-      eval_nfa "jark.cp" "add" [(qq path)]
+      eval_nfa "jark.cp" "add" [path]
 
     let cp_add_file path =
       let apath = (File.abspath path) in

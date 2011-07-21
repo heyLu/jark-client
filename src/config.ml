@@ -33,7 +33,7 @@ let cljr =
     "c:\cljr"
   else
     (Sys.getenv "HOME") ^ "/.cljr"
- 
+
 let cljr_lib = 
   if (Sys.os_type = "Win32") then
     "c:\cljr\lib"
@@ -82,8 +82,17 @@ let cp_boot  =
                         jar_jark;
                         jar_swank ]
 
+ let config_dir = 
+  if is_windows then
+    "c:\jark\\"
+  else
+    (Sys.getenv "HOME") ^ "/.config/"
 
-let jark_config_dir = (Sys.getenv "HOME") ^ "/.config/jark/"
+ let jark_config_dir = 
+  if is_windows then
+    "c:\jark\\"
+  else
+    (Sys.getenv "HOME") ^ "/.config/jark/"
 
 let setup_cljr () = 
   let file = cljr ^ "/project.clj" in
@@ -128,7 +137,7 @@ let set_env ?(host="localhost") ?(port=9000) () =
     port        = 9000
   }
         
-let get_env = 
+let get_env () = 
   {
     ns          = "user";
     debug       = false;

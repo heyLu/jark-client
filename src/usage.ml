@@ -73,12 +73,12 @@ let usage =
             "The most commonly used jark modules are:" ;
             "    cp       list add" ;
             "    doc      search examples comments" ;
+            "    lein     <task(s)>";
             "    ns       list load run repl" ;
             "    package  install uninstall versions deps search installed latest" ;
             "    repo     list add remove" ;
             "    swank    start stop" ;
             "    vm       start connect stop stat uptime threads gc";
-            "    lein     <task(s)>";
             "";
             "See 'jark <module>' for more information on a specific module."]
 
