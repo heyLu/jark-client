@@ -5,7 +5,8 @@ module Jark =
     open ExtString
     open Printf
     open Datatypes
-    include Config
+    open Config
+    module C = Config
     include Usage
     open Gfile
     open Gstr
@@ -38,7 +39,7 @@ module Jark =
       Str.global_replace (Str.regexp "\"") "\\\"" s
 
     let eval code = 
-      let env = get_env() in
+      let env = C.get_env() in
       let expr = clj_string env code in
       nrepl_send env (make_eval_message env expr)
 
@@ -48,17 +49,17 @@ module Jark =
     (* nfa *)
 
     let eval_ns ns = 
-      let env = get_env() in
+      let env = C.get_env() in
       let f = (sprintf "(jark.ns/dispatch %s)" (Gstr.qq ns)) in
       nrepl_send env { mid = node_id env; code = f }
       
     let eval_fn ns fn =
-      let env = get_env() in
+      let env = C.get_env() in
       let f = (sprintf "(jark.ns/dispatch %s %s)" (Gstr.qq ns) (Gstr.qq fn)) in
       nrepl_send env { mid = node_id env; code = f }
 
     let eval_nfa ns fn args =
-      let env = get_env() in
+      let env = C.get_env() in
       let sargs = String.concat " " (List.map (fun x -> (Gstr.qq x)) args) in
       let f = String.concat " " ["(jark.ns/dispatch "; (Gstr.qq ns); (Gstr.qq fn); sargs; ")"] in 
       nrepl_send env { mid = node_id env; code = f }
@@ -66,13 +67,12 @@ module Jark =
     (* commands *)
 
     let vm_start port =
-      let c = String.concat " " ["java -cp"; cp_boot; "jark.vm"; port; "&"] in
+      let c = String.concat " " ["java -cp"; C.cp_boot(); "jark.vm"; port; "&"] in
       ignore (Sys.command c);
-      getc;
       Unix.sleep 10
         
     let vm_connect host port =
-      set_env ~host:host ~port:port ();
+      C.set_env ~host:host ~port:port ();
       eval_fn "jark.vm" "stats" 
         
     let do_cp path =
@@ -105,27 +105,19 @@ module Jark =
         ()
       end
 
-    let wget_cmd ul =
-      let url = String.concat " " ul in
-      ignore (Sys.command(url))
-  
     let install component =
-      (try Unix.mkdir cljr 0o740 with Unix.Unix_error(Unix.EEXIST,_,_) -> ());
-      (try Unix.mkdir cljr_lib 0o740 with Unix.Unix_error(Unix.EEXIST,_,_) -> ());
-      setup_cljr ();
-      if standalone then begin
-        if (Gfile.exists jar_standalone) then
-          Gstr.pe (jar_standalone ^ " already exists")
+      (try Unix.mkdir C.cljr 0o740 with Unix.Unix_error(Unix.EEXIST,_,_) -> ());
+      (try Unix.mkdir C.cljr_lib 0o740 with Unix.Unix_error(Unix.EEXIST,_,_) -> ());
+      C.setup_cljr ();
+      if C.standalone then begin
+        if (Gfile.exists C.jar_standalone) then
+          Gstr.pe (C.jar_standalone ^ " already exists")
         else
-          wget_cmd [ wget; url_standalone; "-O"; jar_standalone]
+          C.install_standalone()
       end
-      else begin
-        wget_cmd [ wget; url_clojure; "-O"; jar_clojure];
-        wget_cmd [ wget; url_clojure_contrib; "-O"; jar_contrib];
-        wget_cmd [ wget; url_nrepl; "-O"; jar_nrepl];
-        wget_cmd [ wget; url_jark; "-O";  jar_jark]
-      end;
-
+      else 
+        C.install_components();
+     
       Gstr.pe "Installed components successfully"
 
 end

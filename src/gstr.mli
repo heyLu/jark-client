@@ -24,4 +24,5 @@ module Gstr :
     val us : string option -> string
 
     val notnone : 'a option -> bool
+
   end

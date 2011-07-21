@@ -15,4 +15,5 @@ module Gsys =
       (Buffer.contents buf)
 
     let is_windows () = (Sys.os_type = "Win32")
+
 end 
