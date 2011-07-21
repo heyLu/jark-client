@@ -25,17 +25,6 @@ let us x = unsome "" x
 
 let notnone x = x != None
 
-let syscall cmd =
-  let ic, oc = Unix.open_process cmd in
-  let buf = Buffer.create 16 in
-  (try
-     while true do
-       Buffer.add_channel buf ic 1
-     done
-   with End_of_file -> ());
-  let _ = Unix.close_process (ic, oc) in
-  (Buffer.contents buf)
-
 let pe s = print_endline s
 
 let stringify s = Str.global_replace (Str.regexp "\"") "\\\"" s
@@ -56,13 +45,3 @@ let strip_fake_newline value =
 
 let nilp value = 
   (String.strip (strip_fake_newline (us value))) = "nil"
-
-let nstr f s =
-  let fmt = format_of_string f in 
-  sprintf fmt s
-
-let nstrx f xs =
-  let sl = List.map (fun x -> (sprintf "%s" "%s")) xs in
-  sprintf "%s" "a"
-
-
