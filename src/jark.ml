@@ -1,16 +1,15 @@
-open ExtList
-open ExtString
-open Printf
-open Datatypes
-include Config
-include Util
-include Usage
-open File
-open Nrepl
-
 module Jark =
   struct
+
+    open ExtList
+    open ExtString
+    open Printf
     open Datatypes
+    include Config
+    include Util
+    include Usage
+    open File
+    open Nrepl
 
     let nrepl_send env msg  =
       let res = Nrepl.send_msg env msg in
@@ -84,7 +83,7 @@ module Jark =
       let apath = (File.abspath path) in
       if (File.exists apath) then begin
         if (File.isdir apath) then 
-          List.iter (fun x -> do_cp x) (glob (sprintf "%s/*.jar" apath));
+          List.iter (fun x -> do_cp x) (File.glob (sprintf "%s/*.jar" apath));
         do_cp(apath);
         ()
       end

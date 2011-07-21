@@ -45,3 +45,6 @@ let strip_fake_newline value =
 
 let nilp value = 
   (String.strip (strip_fake_newline (us value))) = "nil"
+
+let list_to_hashtbl xs =
+  xs

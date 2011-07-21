@@ -1,12 +1,12 @@
-open ExtList
-open ExtString
-open Printf
-open Datatypes
-open Jark
 
 module Repl =
   struct
+
+    open ExtList
+    open ExtString
+    open Printf
     open Datatypes
+    open Jark
 
     let prompt_of env = env.ns ^ ">> "
 

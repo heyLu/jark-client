@@ -1,16 +1,17 @@
 (*pp $PP *)
 
-include Util
-open Printf
-open ExtList
-open ExtString
-include Config
 
 (* The Nrepl module is written by Martin Demello *) 
 (* Ref: https://github.com/martindemello/ocaml-nrepl-client.git *)
 
 module Nrepl =
   struct
+    
+    include Util
+    open Printf
+    open ExtList
+    open ExtString
+    include Config
     open Datatypes
 
     let empty_response = {
