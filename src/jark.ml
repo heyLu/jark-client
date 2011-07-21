@@ -94,9 +94,9 @@ module Jark =
         ()
       end
 
-     let cp_add path_list =
-       List.iter (fun x -> cp_add_file x) path_list;
-       ()
+    let cp_add path_list =
+      List.iter (fun x -> cp_add_file x) path_list;
+      ()
 
     let ns_load path =
       let apath = (File.abspath path) in
@@ -106,7 +106,7 @@ module Jark =
         printf "File not found %s\n" apath;
         ()
       end
-      
+
     let wget_cmd ul =
       let url = String.concat " " ul in
       ignore (Sys.command(url))

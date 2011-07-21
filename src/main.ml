@@ -6,9 +6,9 @@ open OptParse
 open Jark
 open ExtList
 open ExtString
-open Repl
 include Util
 include Config
+open Repl
 
 let cp cmd arg =
   Jark.require "jark.cp";
@@ -84,6 +84,13 @@ let rl () =
   let line = input_line stdin in
   pe line
 
+let run_repl ns = 
+  if is_windows then
+    pe "Repl not implemented yet"
+  else begin
+    Repl.run "user"
+   end
+
 let _ =
   try
     match (List.tl (Array.to_list Sys.argv)) with
@@ -100,18 +107,13 @@ let _ =
     | "repo" :: []    -> pe repo_usage
     | "repo" :: xs    -> repo (List.first xs) (List.tl xs)
     | "-s" :: []      -> pe (input_line stdin)
-    | "repl" :: []    ->
-        if is_windows then
-          pe "Repl not implemented yet"
-        else
-          Repl.run "user"
+    | "repl" :: []    -> run_repl "user"
     | "version" :: [] -> pe version
     | "--version" :: [] -> pe version
     | "-v" :: []      -> pe version
     | "install" :: [] -> Jark.install "jark"
     |  "lein"   :: [] -> Jark.eval_fn "leiningen.core" "-main"
     | "-e" :: xs      -> Jark.eval (List.first xs)
-    |  "test" :: []   -> pe (nstrx "%s" ["a"])
     |  xs             -> nfa xs
     |  _              -> pe usage
   with Unix.Unix_error _ ->
