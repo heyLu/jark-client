@@ -1,6 +1,7 @@
 (*pp $PP *)
 open Printf
 open Datatypes
+open Os
 
 let user_preferences = Hashtbl.create 0
 
@@ -26,22 +27,20 @@ let cread config () =
     (line_stream_of_channel config);
   List.rev !xs
 
-let is_windows = (Sys.os_type = "Win32")
-
 let cljr = 
-  if is_windows then
+  if Os.is_windows() then
     "c:\cljr"
   else
     (Sys.getenv "HOME") ^ "/.cljr"
 
 let cljr_lib = 
-  if (Sys.os_type = "Win32") then
+  if Os.is_windows() then
     "c:\cljr\lib"
   else
     (Sys.getenv "HOME") ^ "/.cljr/lib"
 
 let wget = 
-  if (Sys.os_type = "Win32") then
+  if Os.is_windows() then
     "c:\wget.exe --user-agent jark"
   else
     "wget --user-agent jark"
@@ -83,13 +82,13 @@ let cp_boot  =
                         jar_swank ]
 
  let config_dir = 
-  if is_windows then
+  if Os.is_windows() then
     "c:\jark\\"
   else
     (Sys.getenv "HOME") ^ "/.config/"
 
  let jark_config_dir = 
-  if is_windows then
+  if Os.is_windows() then
     "c:\jark\\"
   else
     (Sys.getenv "HOME") ^ "/.config/jark/"

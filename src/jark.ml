@@ -82,7 +82,6 @@ module Jark =
 
     let cp_add_file path =
       let apath = (File.abspath path) in
-      let f = apath ^ "/" in
       if (File.exists apath) then begin
         if (File.isdir apath) then 
           List.iter (fun x -> do_cp x) (glob (sprintf "%s/*.jar" apath));

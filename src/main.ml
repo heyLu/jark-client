@@ -9,6 +9,7 @@ open ExtString
 include Util
 include Config
 open Repl
+open Os
 
 let cp cmd arg =
   Jark.require "jark.cp";
@@ -85,7 +86,7 @@ let rl () =
   pe line
 
 let run_repl ns = 
-  if is_windows then
+  if Os.is_windows() then
     pe "Repl not implemented yet"
   else begin
     Repl.run "user"
