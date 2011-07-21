@@ -1,7 +1,7 @@
-open Unix
-
-module Os =
+module Gsys =
   struct
+
+    open Unix
 
     let syscall cmd =
       let ic, oc = Unix.open_process cmd in

@@ -6,22 +6,22 @@ module Jark =
     open Printf
     open Datatypes
     include Config
-    include Util
     include Usage
-    open File
+    open Gfile
+    open Gstr
     open Nrepl
 
     let nrepl_send env msg  =
       let res = Nrepl.send_msg env msg in
-      if notnone res.err then
-        printf "%s\n" (strip_fake_newline (us res.err))
+      if Gstr.notnone res.err then
+        printf "%s\n" (Gstr.strip_fake_newline (Gstr.us res.err))
       else
         begin
-          ignore (strip_fake_newline (us res.out));
-          if notnone res.out then printf "%s\n" (strip_fake_newline (us res.out));
-          if notnone res.value then begin
-            if not (nilp res.value) then
-              printf "%s\n" (strip_fake_newline (us res.value));
+          ignore (Gstr.strip_fake_newline (Gstr.us res.out));
+          if Gstr.notnone res.out then printf "%s\n" (Gstr.strip_fake_newline (Gstr.us res.out));
+          if Gstr.notnone res.value then begin
+            if not (Gstr.nilp res.value) then
+              printf "%s\n" (Gstr.strip_fake_newline (Gstr.us res.value));
           end
         end;
         flush stdout
@@ -49,18 +49,18 @@ module Jark =
 
     let eval_ns ns = 
       let env = get_env() in
-      let f = (sprintf "(jark.ns/dispatch %s)" (qq ns)) in
+      let f = (sprintf "(jark.ns/dispatch %s)" (Gstr.qq ns)) in
       nrepl_send env { mid = node_id env; code = f }
       
     let eval_fn ns fn =
       let env = get_env() in
-      let f = (sprintf "(jark.ns/dispatch %s %s)" (qq ns) (qq fn)) in
+      let f = (sprintf "(jark.ns/dispatch %s %s)" (Gstr.qq ns) (Gstr.qq fn)) in
       nrepl_send env { mid = node_id env; code = f }
 
     let eval_nfa ns fn args =
       let env = get_env() in
-      let sargs = String.concat " " (List.map (fun x -> (qq x)) args) in
-      let f = String.concat " " ["(jark.ns/dispatch "; (qq ns); (qq fn); sargs; ")"] in 
+      let sargs = String.concat " " (List.map (fun x -> (Gstr.qq x)) args) in
+      let f = String.concat " " ["(jark.ns/dispatch "; (Gstr.qq ns); (Gstr.qq fn); sargs; ")"] in 
       nrepl_send env { mid = node_id env; code = f }
           
     (* commands *)
@@ -80,10 +80,10 @@ module Jark =
       eval_nfa "jark.cp" "add" [path]
 
     let cp_add_file path =
-      let apath = (File.abspath path) in
-      if (File.exists apath) then begin
-        if (File.isdir apath) then 
-          List.iter (fun x -> do_cp x) (File.glob (sprintf "%s/*.jar" apath));
+      let apath = (Gfile.abspath path) in
+      if (Gfile.exists apath) then begin
+        if (Gfile.isdir apath) then 
+          List.iter (fun x -> do_cp x) (Gfile.glob (sprintf "%s/*.jar" apath));
         do_cp(apath);
         ()
       end
@@ -97,8 +97,8 @@ module Jark =
       ()
 
     let ns_load path =
-      let apath = (File.abspath path) in
-      if (File.exists apath) then
+      let apath = (Gfile.abspath path) in
+      if (Gfile.exists apath) then
         eval (sprintf "(jark.ns/load-clj \"%s\")" apath)
       else begin
         printf "File not found %s\n" apath;
@@ -114,8 +114,8 @@ module Jark =
       (try Unix.mkdir cljr_lib 0o740 with Unix.Unix_error(Unix.EEXIST,_,_) -> ());
       setup_cljr ();
       if standalone then begin
-        if (File.exists jar_standalone) then
-          pe (jar_standalone ^ " already exists")
+        if (Gfile.exists jar_standalone) then
+          Gstr.pe (jar_standalone ^ " already exists")
         else
           wget_cmd [ wget; url_standalone; "-O"; jar_standalone]
       end
@@ -126,6 +126,6 @@ module Jark =
         wget_cmd [ wget; url_jark; "-O";  jar_jark]
       end;
 
-      pe "Installed components successfully"
+      Gstr.pe "Installed components successfully"
 
 end

@@ -7,12 +7,12 @@
 module Nrepl =
   struct
     
-    include Util
     open Printf
     open ExtList
     open ExtString
     include Config
     open Datatypes
+    open Gstr  
 
     let empty_response = {
       id     = None;
@@ -23,8 +23,8 @@ module Nrepl =
     }
 
     let update_response res (x, y) =
-      let y = Some (uq y) in
-      match (uq x) with
+      let y = Some (Gstr.uq y) in
+      match (Gstr.uq x) with
       | "id"     -> {res with id = y};
       | "out"    -> {res with out = y};
       | "err"    -> {res with err = y};
@@ -49,13 +49,13 @@ module Nrepl =
         | Done ->
             let out = match !out with
             | [] -> None
-            | _  -> Some (unlines (List.map us (List.rev !out)))
+            | _  -> Some (Gstr.unlines (List.map Gstr.us (List.rev !out)))
             in
             {res with value = !value; out = out; err = !err}
         | Receiving 0 ->
-            if notnone res.err then err := res.err;
-            if notnone res.out then out := res.out :: !out;
-            if notnone res.value then value := res.value;
+            if Gstr.notnone res.err then err := res.err;
+            if Gstr.notnone res.out then out := res.out :: !out;
+            if Gstr.notnone res.value then value := res.value;
             get NewPacket res
         | Receiving n ->
             let k = getline () in
@@ -71,14 +71,14 @@ module Nrepl =
       Unix.send socket s 0 (String.length s) []
 
     let nrepl_message_packet msg =
-      ["2"; q "id"; q msg.mid; q "code"; q msg.code]
+      ["2"; Gstr.q "id"; Gstr.q msg.mid; Gstr.q "code"; Gstr.q msg.code]
 
     let send_msg env msg =
       let socket = Unix.socket Unix.PF_INET Unix.SOCK_STREAM 0 in
       let hostinfo = Unix.gethostbyname env.host in
       let server_address = hostinfo.Unix.h_addr_list.(0) in
       let _ = Unix.connect socket (Unix.ADDR_INET (server_address, env.port)) in
-      let msg = unlines (nrepl_message_packet msg) in
+      let msg = Gstr.unlines (nrepl_message_packet msg) in
       let _ = write_all socket msg in
       let res = readlines socket in
       Unix.close socket;

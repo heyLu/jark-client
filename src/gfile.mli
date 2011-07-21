@@ -1,4 +1,4 @@
-module File :
+module Gfile :
   sig
 
     val exists : string -> bool
@@ -17,4 +17,4 @@ module File :
         
     val glob : string -> string list
 
-end
+  end

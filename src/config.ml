@@ -1,7 +1,7 @@
 (*pp $PP *)
 open Printf
 open Datatypes
-open Os
+open Gsys
 
 let user_preferences = Hashtbl.create 0
 
@@ -28,19 +28,19 @@ let cread config () =
   List.rev !xs
 
 let cljr = 
-  if Os.is_windows() then
+  if Gsys.is_windows() then
     "c:\cljr"
   else
     (Sys.getenv "HOME") ^ "/.cljr"
 
 let cljr_lib = 
-  if Os.is_windows() then
+  if Gsys.is_windows() then
     "c:\cljr\lib"
   else
     (Sys.getenv "HOME") ^ "/.cljr/lib"
 
 let wget = 
-  if Os.is_windows() then
+  if Gsys.is_windows() then
     "c:\wget.exe --user-agent jark"
   else
     "wget --user-agent jark"
@@ -82,13 +82,13 @@ let cp_boot  =
                         jar_swank ]
 
  let config_dir = 
-  if Os.is_windows() then
+  if Gsys.is_windows() then
     "c:\jark\\"
   else
     (Sys.getenv "HOME") ^ "/.config/"
 
  let jark_config_dir = 
-  if Os.is_windows() then
+  if Gsys.is_windows() then
     "c:\jark\\"
   else
     (Sys.getenv "HOME") ^ "/.config/jark/"
@@ -123,7 +123,6 @@ let get k () =
 let getc () =
   let config_file = (Sys.getenv "HOME") ^ "/.jarkc" in 
   let xs = cread (open_in config_file) in
-  (* List.iter (fun x -> Printf.printf "%d\n" x) xs *)
   xs
 
 let set_env ?(host="localhost") ?(port=9000) () =
