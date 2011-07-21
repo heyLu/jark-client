@@ -6,6 +6,9 @@ open ExtList
 open ExtString
 include Config
 
+(* The Nrepl module is written by Martin Demello *) 
+(* Ref: https://github.com/martindemello/ocaml-nrepl-client.git *)
+
 module Nrepl =
   struct
     open Datatypes
