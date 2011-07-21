@@ -25,4 +25,11 @@ module Gstr :
 
     val notnone : 'a option -> bool
 
+    val to_int : string -> int
+        
+    val strip : ?chars:string -> string -> string
+
+    val ends_with : string -> string -> bool
+
+    val starts_with : string -> string -> bool
   end

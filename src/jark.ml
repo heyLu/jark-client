@@ -1,8 +1,6 @@
 module Jark =
   struct
 
-    open ExtList
-    open ExtString
     open Printf
     open Datatypes
     open Config

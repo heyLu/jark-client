@@ -8,9 +8,6 @@ module Nrepl =
   struct
     
     open Printf
-    open ExtList
-    open ExtString
-    include Config
     open Datatypes
     open Gstr  
 

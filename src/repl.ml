@@ -2,11 +2,10 @@
 module Repl =
   struct
 
-    open ExtList
-    open ExtString
     open Printf
     open Datatypes
     open Jark
+    open Gstr
 
     let prompt_of env = env.ns ^ ">> "
 
@@ -63,7 +62,7 @@ module Repl =
     let handle env str =
       if String.length str == 0 then
         env
-      else if String.starts_with str "/" then
+      else if Gstr.starts_with str "/" then
         handle_cmd env str
       else
         send_cmd env str

@@ -1,14 +1,11 @@
 (*pp $PP *)
 
 include Usage
-open ExtList
 open Jark
-open ExtList
-open ExtString
-include Config
 open Repl
 open Gsys
 open Gstr
+open Glist
 
 let cp cmd arg =
   Jark.require "jark.cp";
@@ -25,7 +22,7 @@ let vm cmd arg =
   | "usage"   -> Gstr.pe vm_usage
   | "start"   -> Jark.vm_start (List.nth arg 1)
   | "connect" -> begin 
-      Jark.vm_connect (List.nth arg 1) (String.to_int (List.nth arg 3))
+      Jark.vm_connect (List.nth arg 1) (Gstr.to_int (List.nth arg 3))
   end
   | "stat"    -> Jark.eval_fn "jark.vm" "stats"
   | "uptime"  -> Jark.eval_fn "jark.vm" "uptime"
@@ -39,7 +36,7 @@ let ns cmd arg =
   | "usage"   -> Gstr.pe ns_usage
   | "list"    -> Jark.eval_fn "jark.ns" "list"
   | "find"    -> Jark.eval_nfa "jark.ns" "find" [(List.nth arg 0)]
-  | "load"    -> Jark.ns_load (List.first arg)
+  | "load"    -> Jark.ns_load (Glist.first arg)
   | "repl"    -> Jark.eval_fn "jark.ns" "list"
   |  _        -> Gstr.pe ns_usage
             
@@ -75,8 +72,8 @@ let nfa xs =
     0 -> Gstr.pe usage
   | 1 -> Jark.eval_ns  (List.nth xs 0)
   | 2 -> Jark.eval_fn  (List.nth xs 0) (List.nth xs 1) 
-  | 3 -> Jark.eval_nfa (List.nth xs 0) (List.nth xs 1) (List.drop 2 xs)
-  | _ -> Jark.eval_nfa (List.nth xs 0) (List.nth xs 1) (List.drop 2 xs)
+  | 3 -> Jark.eval_nfa (List.nth xs 0) (List.nth xs 1) (Glist.drop 2 xs)
+  | _ -> Jark.eval_nfa (List.nth xs 0) (List.nth xs 1) (Glist.drop 2 xs)
 
 let rl () =
   let term = Unix.tcgetattr Unix.stdin in
@@ -95,17 +92,17 @@ let _ =
   try
     match (List.tl (Array.to_list Sys.argv)) with
       "vm" :: []      -> Gstr.pe vm_usage
-    | "vm" :: xs      -> vm (List.first xs) (List.tl xs)
+    | "vm" :: xs      -> vm (Glist.first xs) (List.tl xs)
     | "cp" :: []      -> Gstr.pe cp_usage
-    | "cp" :: xs      -> cp (List.first xs) (List.tl xs)
+    | "cp" :: xs      -> cp (Glist.first xs) (List.tl xs)
     | "ns" :: []      -> Gstr.pe ns_usage
-    | "ns" :: xs      -> ns (List.first xs) (List.tl xs)
+    | "ns" :: xs      -> ns (Glist.first xs) (List.tl xs)
     | "package" :: [] -> Gstr.pe package_usage
-    | "package" :: xs -> package (List.first xs) (List.tl xs)
+    | "package" :: xs -> package (Glist.first xs) (List.tl xs)
     | "swank" :: []   -> Gstr.pe swank_usage
-    | "swank" :: xs   -> swank (List.first xs) (List.tl xs)
+    | "swank" :: xs   -> swank (Glist.first xs) (List.tl xs)
     | "repo" :: []    -> Gstr.pe repo_usage
-    | "repo" :: xs    -> repo (List.first xs) (List.tl xs)
+    | "repo" :: xs    -> repo (Glist.first xs) (List.tl xs)
     | "-s" :: []      -> Gstr.pe (input_line stdin)
     | "repl" :: []    -> run_repl "user"
     | "version" :: [] -> Gstr.pe version
@@ -114,7 +111,7 @@ let _ =
     | "install" :: [] -> Jark.install "jark"
     |  "lein"   :: [] -> Jark.eval_fn "leiningen.core" "-main" 
     |  "lein"   :: xs -> Jark.eval_nfa "leiningen.core" "-main" xs
-    | "-e" :: xs      -> Jark.eval (List.first xs)
+    | "-e" :: xs      -> Jark.eval (Glist.first xs)
     |  xs             -> nfa xs
     |  _              -> Gstr.pe usage
   with Unix.Unix_error _ ->

@@ -6,13 +6,12 @@ BIN_NAME = jark-$(VERSION)-`uname -m`
 OLIB = /usr/lib/ocaml
 WLIB = /usr/lib/i486-mingw32-ocaml
 
-WIN_LIBS = $(WLIB)/unix,$(WLIB)/bigarray,$(WLIB)/str,$(WLIB)/nums,$(OLIB)/camlp5/camlp5,$(OLIB)/camlp5/gramlib,$(OLIB)/ledit/ledit,$(OLIB)/extlib/extLib
+WIN_LIBS = $(WLIB)/unix,$(WLIB)/bigarray,$(WLIB)/str,$(WLIB)/nums,$(OLIB)/camlp5/camlp5,$(OLIB)/camlp5/gramlib,$(OLIB)/ledit/ledit
 
-LIBS = unix,bigarray,str,nums,$(OLIB)/camlp5/camlp5,$(OLIB)/camlp5/gramlib,$(OLIB)/ledit/ledit,$(OLIB)/extlib/extLib
+LIBS = unix,bigarray,str,nums,$(OLIB)/camlp5/camlp5,$(OLIB)/camlp5/gramlib,$(OLIB)/ledit/ledit
 
 OCAMLBUILD = ocamlbuild -j 2 -quiet -I src -lflags -I,/usr/lib/ocaml/pcre  \
-           -lflags -I,/usr/lib/ocaml/camlp5 -cflags  -I,/usr/lib/ocaml/ledit -lflags -I,/usr/lib/ocaml/extlib  \
-	   -cflags -I,/usr/lib/ocaml/extlib
+           -lflags -I,/usr/lib/ocaml/camlp5 -cflags  -I,/usr/lib/ocaml/ledit
 
 all:: native
 
@@ -78,6 +77,3 @@ deps:
 	rm -rf /usr/lib/ocaml/ledit
 	cp -r ledit-2.02.1/ /usr/lib/ocaml/ledit
 	rm -rf ledit-2.02.1
-	wget -O - http://ocaml-extlib.googlecode.com/files/extlib-1.5.1.tar.gz 2> /dev/null | tar xzvf - 
-	cd extlib-1.5.1 && make && make opt && make install
-	rm -rf extlib-1.5.1
