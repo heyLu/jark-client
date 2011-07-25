@@ -3,9 +3,9 @@ module Jark :
 
     val eval : string -> unit
 
-    val vm_start : string -> unit
+    val vm_start : unit -> unit
 
-    val vm_connect : string -> int -> unit
+    val vm_connect : unit -> unit
 
     val cp_add : string list -> unit
 
@@ -20,5 +20,7 @@ module Jark :
     val eval_nfa : string -> string -> string list -> unit
 
     val require : string -> unit
+
+    val lein : string list -> unit
 
    end

@@ -8,6 +8,7 @@ module Jark =
     include Usage
     open Gfile
     open Gstr
+    open Glist
     open Nrepl
 
     let nrepl_send env msg  =
@@ -64,13 +65,14 @@ module Jark =
           
     (* commands *)
 
-    let vm_start port =
+    let vm_start () =
+      let port = string_of_int (C.get_port()) in
       let c = String.concat " " ["java -cp"; C.cp_boot(); "jark.vm"; port; "&"] in
       ignore (Sys.command c);
       Unix.sleep 10
         
-    let vm_connect host port =
-      C.set_env ~host:host ~port:port ();
+    let vm_connect () =
+      C.set_env ();
       eval_fn "jark.vm" "stats" 
         
     let do_cp path =
@@ -102,6 +104,10 @@ module Jark =
         printf "File not found %s\n" apath;
         ()
       end
+
+    let lein args =
+      Unix.putenv "LEIN_HOME" "/home/icylisper/.lein";
+      eval_nfa "leiningen.core" "-main" args
 
     let install component =
       (try Unix.mkdir C.cljr 0o740 with Unix.Unix_error(Unix.EEXIST,_,_) -> ());

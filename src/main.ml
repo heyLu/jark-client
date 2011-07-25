@@ -6,6 +6,7 @@ open Repl
 open Gsys
 open Gstr
 open Glist
+open Config
 
 let cp cmd arg =
   Jark.require "jark.cp";
@@ -18,12 +19,11 @@ let cp cmd arg =
    |  _        -> Gstr.pe cp_usage
             
 let vm cmd arg =
+  Config.opts := (Glist.list_to_hashtbl arg);
   match cmd with
   | "usage"   -> Gstr.pe vm_usage
-  | "start"   -> Jark.vm_start (List.nth arg 1)
-  | "connect" -> begin 
-      Jark.vm_connect (List.nth arg 1) (Gstr.to_int (List.nth arg 3))
-  end
+  | "start"   -> Jark.vm_start ()
+  | "connect" -> Jark.vm_connect ()
   | "stat"    -> Jark.eval_fn "jark.vm" "stats"
   | "uptime"  -> Jark.eval_fn "jark.vm" "uptime"
   | "gc"      -> Jark.eval_fn "jark.vm" "gc"
@@ -110,7 +110,7 @@ let _ =
     | "-v" :: []      -> Gstr.pe version
     | "install" :: [] -> Jark.install "jark"
     |  "lein"   :: [] -> Jark.eval_fn "leiningen.core" "-main" 
-    |  "lein"   :: xs -> Jark.eval_nfa "leiningen.core" "-main" xs
+    |  "lein"   :: xs -> Jark.lein xs
     | "-e" :: xs      -> Jark.eval (Glist.first xs)
     |  xs             -> nfa xs
     |  _              -> Gstr.pe usage

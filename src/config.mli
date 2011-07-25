@@ -1,7 +1,7 @@
 module Config :
   sig
     
-    val set_env : ?host:string -> ?port:int -> unit -> Datatypes.env
+    val set_env : unit -> Datatypes.env
     
     val get_env : unit -> Datatypes.env
 
@@ -22,5 +22,11 @@ module Config :
     val install_standalone : unit -> unit
 
     val jar_standalone : string
+
+    val opts : (string, string) Hashtbl.t ref
+
+    val get_port : unit -> int
+     
+    val get_host : unit -> string
 
   end

@@ -7,6 +7,10 @@ module Config =
     open Datatypes
     open Gsys
     open Gnet
+    open Glist
+    open Gstr
+
+    let opts = ref ((Hashtbl.create 0) : (string, string) Hashtbl.t);;
 
     let user_preferences = Hashtbl.create 0
 
@@ -31,7 +35,12 @@ module Config =
             | _ -> failwith s)
         (line_stream_of_channel config);
       List.rev !xs
- 
+
+    let getc () =
+      let config_file = (Sys.getenv "HOME") ^ "/.jarkc" in 
+      let xs = cread (open_in config_file) in
+      xs
+
     let cljr = 
       if Gsys.is_windows() then
         "c:\cljr"
@@ -125,29 +134,6 @@ module Config =
         close_in_noerr f; 
         raise e 
 
-    let getc () =
-      let config_file = (Sys.getenv "HOME") ^ "/.jarkc" in 
-      let xs = cread (open_in config_file) in
-      xs
-
-    let set_env ?(host="localhost") ?(port=9000) () =
-      set "host" host ();
-      set "port" (string_of_int port) ();
-      { 
-        ns          = "user";
-        debug       = false;
-        host        = host;
-        port        = 9000
-      }
-        
-    let get_env () = 
-      {
-        ns          = "user";
-        debug       = false;
-        host        = (get "host" ());
-        port        = (int_of_string (get "port" ()))
-      } 
-
     let install_standalone () =
       Gnet.http_get wget_bin url_standalone jar_standalone
 
@@ -156,5 +142,45 @@ module Config =
       Gnet.http_get wget_bin url_clojure_contrib jar_contrib;
       Gnet.http_get wget_bin url_nrepl jar_nrepl;
       Gnet.http_get wget_bin url_jark jar_jark
+
+    let get_port () =
+      let h = !opts in
+      Glist.print_hashtbl h;
+      if (Hashtbl.mem h "--port") then begin
+          let port = Hashtbl.find h "--port" in
+          Gstr.to_int port
+      end
+      else
+        9000
+
+    let get_host () =
+      let h = !opts in
+      Glist.print_hashtbl h;
+      if (Hashtbl.mem h "--host") then
+        Hashtbl.find h "--host"
+      else
+        "localhost"
+
+    let set_env () =
+      let host = (get_host ()) in
+      let port = (get_port ()) in
+      set "host" host ();
+      set "port" (string_of_int port) ();
+      { 
+        ns          = "user";
+        debug       = false;
+        host        = host;
+        port        = port
+      }
+        
+    let get_env () = 
+      let host = (get_host ()) in
+      let port = (get_port ()) in
+      {
+        ns          = "user";
+        debug       = false;
+        host        = host;
+        port        = port
+      } 
 
 end
