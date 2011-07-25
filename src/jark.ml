@@ -109,7 +109,6 @@ module Jark =
       end
 
     let lein args =
-      Unix.putenv "LEIN_HOME" "/home/icylisper/.lein";
       eval_nfa "leiningen.core" "-main" args
 
     let install component =

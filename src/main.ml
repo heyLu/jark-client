@@ -9,6 +9,7 @@ open Glist
 open Config
 
 let cp cmd arg =
+  Config.opts := (Glist.list_to_hashtbl arg);
   Jark.require "jark.cp";
    match cmd with
    | "usage"   -> Gstr.pe cp_usage
@@ -22,8 +23,9 @@ let vm cmd arg =
   Config.opts := (Glist.list_to_hashtbl arg);
   match cmd with
   | "usage"   -> Gstr.pe vm_usage
-  | "start"   -> Jark.vm_start ()
-  | "connect" -> Jark.vm_connect ()
+  | "start"   -> Jark.vm_start()
+  | "stop"    -> Jark.vm_stop()
+  | "connect" -> Jark.vm_connect()
   | "stat"    -> Jark.eval_fn "jark.vm" "stats"
   | "uptime"  -> Jark.eval_fn "jark.vm" "uptime"
   | "gc"      -> Jark.eval_fn "jark.vm" "gc"
@@ -31,6 +33,7 @@ let vm cmd arg =
   |  _        -> Gstr.pe vm_usage 
             
 let ns cmd arg =
+  Config.opts := (Glist.list_to_hashtbl arg);
   Jark.require "jark.ns";
   match cmd with
   | "usage"   -> Gstr.pe ns_usage
@@ -41,6 +44,7 @@ let ns cmd arg =
   |  _        -> Gstr.pe ns_usage
             
 let package cmd arg =
+  Config.opts := (Glist.list_to_hashtbl arg);
   Jark.require "jark.package";
   match cmd with
   | "usage"     -> Gstr.pe package_usage
@@ -52,12 +56,14 @@ let package cmd arg =
   |  _          -> Gstr.pe package_usage
             
 let swank cmd arg =
+  Config.opts := (Glist.list_to_hashtbl arg);
   match cmd with
   | "usage"   -> Gstr.pe swank_usage
   | "start"   -> Jark.eval "(jark.swank/start \"0.0.0.0\" 4005)"
   |  _        -> Gstr.pe swank_usage
 
 let repo cmd arg =
+  Config.opts := (Glist.list_to_hashtbl arg);
   Jark.require "jark.package";
   match cmd with
   | "list"   -> Jark.eval_fn "jark.package" "repo-list"
