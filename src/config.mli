@@ -29,6 +29,8 @@ module Config :
      
     val get_host : unit -> string
 
+    val get_jvm_opts : unit -> string
+
     val remove_config : unit -> unit
 
   end

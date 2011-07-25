@@ -6,7 +6,7 @@ open Gstr
 let vm_usage = 
   Gstr.unlines ["usage: jark [options] vm <command> <args>";
                  "Available commands for 'vm' module:\n";
-                 "    start     [-p|--port=<9000>] [-j|--jvm_opts=<opts>] [--log=<path>] [-n|--name=<vm-name>]" ;
+                 "    start     [-p|--port=<9000>] [-j|--jvm-opts=<opts>] [--log=<path>]" ;
                  "              Start a local Jark server. Takes optional JVM options as a \" delimited string\n" ;
                  "    stop      [-n|--name=<vm-name>]";
                  "              Shuts down the current instance of the JVM\n" ;

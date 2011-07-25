@@ -120,5 +120,5 @@ let _ =
     | "-e" :: xs      -> Jark.eval (Glist.first xs)
     |  xs             -> nfa xs
     |  _              -> Gstr.pe usage
-  with Unix.Unix_error _ ->
+  with Unix.Unix_error(_, "connect", "") ->
     Gstr.pe connection_usage

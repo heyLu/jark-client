@@ -66,10 +66,12 @@ module Jark =
     (* commands *)
 
     let vm_start () =
+      C.remove_config();
       let port = string_of_int (C.get_port()) in
-      let c = String.concat " " ["java -cp"; C.cp_boot(); "jark.vm"; port; "&"] in
+      let jvm_opts = C.get_jvm_opts() in 
+      let c = String.concat " " ["java"; jvm_opts ; "-cp"; C.cp_boot(); "jark.vm"; port; "&"] in
       ignore (Sys.command c);
-      Unix.sleep 10
+      printf "Started JVM on port %s\n" port
         
     let vm_connect () =
       C.set_env ();
