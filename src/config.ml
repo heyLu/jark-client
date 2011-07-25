@@ -162,7 +162,9 @@ module Config =
         close_in_noerr f; 
         raise e 
 
-    let get_port () =
+    (* options *)
+
+    let opt_port () =
       let h = !opts in
       if (Hashtbl.mem h "--port") then begin
           let port = Hashtbl.find h "--port" in
@@ -179,7 +181,7 @@ module Config =
           9000
       end
 
-    let get_host () =
+    let opt_host () =
       let h = !opts in
       if (Hashtbl.mem h "--host") then
         Hashtbl.find h "--host"
@@ -192,7 +194,7 @@ module Config =
           "localhost"
       end
 
-    let get_jvm_opts () =
+    let opt_jvm_opts () =
       let h = !opts in
       if (Hashtbl.mem h "--jvm-opts") then
         Hashtbl.find h "--jvm-opts"
@@ -201,7 +203,7 @@ module Config =
       else 
         "-Xms64m -Xmx256m -DNOSECURITY=true"
 
-    let get_log_path () =
+    let opt_log_path () =
       let h = !opts in
       if (Hashtbl.mem h "--log-path") then
         Hashtbl.find h "--log-path"
@@ -211,8 +213,8 @@ module Config =
         "/dev/null"
 
     let set_env () =
-      let host = (get_host ()) in
-      let port = (get_port ()) in
+      let host = (opt_host ()) in
+      let port = (opt_port ()) in
       set "host" host ();
       set "port" (string_of_int port) ();
       { 
@@ -223,8 +225,8 @@ module Config =
       }
         
     let get_env () = 
-      let host = (get_host ()) in
-      let port = (get_port ()) in
+      let host = (opt_host ()) in
+      let port = (opt_port ()) in
       {
         ns          = "user";
         debug       = false;

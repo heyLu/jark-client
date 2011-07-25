@@ -25,13 +25,13 @@ module Config :
 
     val opts : (string, string) Hashtbl.t ref
 
-    val get_port : unit -> int
+    val opt_port : unit -> int
      
-    val get_host : unit -> string
+    val opt_host : unit -> string
 
-    val get_jvm_opts : unit -> string
+    val opt_jvm_opts : unit -> string
 
-    val get_log_path : unit -> string
+    val opt_log_path : unit -> string
 
     val remove_config : unit -> unit
 

@@ -67,9 +67,9 @@ module Jark =
 
     let vm_start () =
       C.remove_config();
-      let port = string_of_int (C.get_port()) in
-      let jvm_opts = C.get_jvm_opts() in 
-      let log_path = C.get_log_path() in 
+      let port = string_of_int (C.opt_port()) in
+      let jvm_opts = C.opt_jvm_opts() in 
+      let log_path = C.opt_log_path() in 
       let c = String.concat " " ["java"; jvm_opts ; "-cp"; C.cp_boot(); "jark.vm"; port; "<&- & 2&>"; log_path] in
       ignore (Sys.command c);
       printf "Started JVM on port %s\n" port
