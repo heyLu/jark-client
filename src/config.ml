@@ -212,6 +212,15 @@ module Config =
       else 
         "/dev/null"
 
+    let opt_ignore_jars () =
+      let h = !opts in
+      if (Hashtbl.mem h "--ignore-jars") then
+        true
+      else if (Hashtbl.mem h "-i") then
+        true
+      else 
+        false
+
     let set_env () =
       let host = (opt_host ()) in
       let port = (opt_port ()) in

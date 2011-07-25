@@ -89,13 +89,14 @@ module Jark =
       let apath = (Gfile.abspath path) in
       if (Gfile.exists apath) then begin
         if (Gfile.isdir apath) then 
-          List.iter (fun x -> do_cp x) (Gfile.glob (sprintf "%s/*.jar" apath));
+          if not (C.opt_ignore_jars()) then
+            List.iter (fun x -> do_cp x) (Gfile.glob (sprintf "%s/*.jar" apath));
         do_cp(apath);
         ()
       end
       else begin
-        printf "File not found %s\n" apath;
-        ()
+        if not (Gstr.starts_with path "--") then
+          printf "File not found %s\n" apath
       end
 
     let cp_add path_list =

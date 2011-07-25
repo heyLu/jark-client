@@ -9,14 +9,18 @@ open Glist
 open Config
 
 let cp cmd arg =
-  Config.opts := (Glist.list_to_hashtbl arg);
   Jark.require "jark.cp";
    match cmd with
    | "usage"   -> Gstr.pe cp_usage
    | "help"    -> Gstr.pe cp_usage
    | "list"    -> Jark.eval_fn "jark.cp" "ls"
    | "ls"      -> Jark.eval_fn "jark.cp" "ls"
-   | "add"     -> Jark.cp_add arg
+   | "add"     -> begin
+      let last_arg = Glist.last arg in
+      if (Gstr.starts_with last_arg  "--") then
+        Config.opts := Glist.list_to_hashtbl [last_arg; "yes"];
+      Jark.cp_add arg
+   end
    |  _        -> Gstr.pe cp_usage
             
 let vm cmd arg =

@@ -33,6 +33,8 @@ module Config :
 
     val opt_log_path : unit -> string
 
+    val opt_ignore_jars : unit -> bool
+
     val remove_config : unit -> unit
 
   end

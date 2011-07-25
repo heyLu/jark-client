@@ -3,6 +3,7 @@ module Glist =
 
     open Unix
     open Printf
+    exception Empty_list
 
     let first xs = 
       (List.hd xs)
@@ -13,6 +14,11 @@ module Glist =
     let rec drop n = function
       | _ :: l when n > 0 -> drop (n-1) l
       | l -> l
+
+    let rec last = function
+      | [] -> raise Empty_list
+      | h :: [] -> h
+      | _ :: t -> last t
 
     let drop_nth l n =
       let rec drop_aux l i =

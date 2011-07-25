@@ -7,6 +7,10 @@ module Glist :
 
     val drop : int -> 'a list -> 'a list
 
+    val last : 'a list -> 'a
+
+    (* hashtable routines *)
+
     val assoc_to_hashtbl : ('a * 'b) list -> ('a, 'b) Hashtbl.t
 
     val print_hashtbl : (string, string) Hashtbl.t -> unit

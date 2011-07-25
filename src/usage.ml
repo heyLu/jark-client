@@ -36,7 +36,7 @@ let cp_usage =
   Gstr.unlines ["usage: jark [options] cp <command> <args>";
                  "Available commands for 'cp' module:\n";
                  "    list      List the classpath for the current instance of the JVM\n" ;
-                 "    add       path+" ;
+                 "    add       path+ [--ignore-jars]" ;
                  "              Add to the classpath for the current instance of the JVM"]
 
 let ns_usage = 
