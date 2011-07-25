@@ -111,8 +111,17 @@ module Config =
     let setup_cljr () = 
       let file = cljr ^ "/project.clj" in
       let f = open_out(file) in
-      let x = "(leiningen.core/defproject cljr.core/cljr-repo \"1.0.0-SNAPSHOT\" :description \"cljr is a Clojure REPL and package management system.\" :dependencies [[org.clojure/clojure \"1.2.0\"] [org.clojure/clojure-contrib \"1.2.0\"] [leiningen \"1.1.0\"] [swank-clojure \"1.3.2\"]] :classpath [\"./src/\" \"./\"] :repositories nil)" in
-      fprintf f "%s\n" x;
+      let project_clj_string = String.concat 
+          " " ["(leiningen.core/defproject cljr.core/cljr-repo";
+                "\"1.0.0-SNAPSHOT\"";
+                ":description \"cljr is a Clojure REPL and package management system.\"";
+                ":dependencies [[org.clojure/clojure \"1.2.0\"]";
+                "[org.clojure/clojure-contrib \"1.2.0\"]";
+                "[leiningen \"1.1.0\"]";
+                "[swank-clojure \"1.3.2\"]]";
+                ":classpath [\"./src/\" \"./\"]";
+                ":repositories nil)";] in
+      fprintf f "%s\n" project_clj_string;
       close_out f
 
     let install_standalone () =
