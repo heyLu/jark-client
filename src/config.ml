@@ -127,8 +127,10 @@ module Config =
     (* config routines *)
 
     let remove_config () = 
-      Sys.remove(jark_config_dir ^ "host");
-      Sys.remove(jark_config_dir ^ "port");
+      if (Gfile.exists (jark_config_dir ^ "host")) then 
+        Sys.remove(jark_config_dir ^ "host");
+      if (Gfile.exists (jark_config_dir ^ "port")) then 
+        Sys.remove(jark_config_dir ^ "port");
       ()
 
     let set k v () =
