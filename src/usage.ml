@@ -68,7 +68,7 @@ let usage =
   Gstr.unlines ["usage: jark [-v|--version] [-h|--help]" ;
                  "            [-r|repl] [-e|--eval] [-i|--install|install]" ;
                  "            [-c|--config=<path>]";
-                 "            [-a|--host=<hostname>] [-p|--port=<port>] <module> <command> <args>" ;
+                 "            [-h|--host=<hostname>] [-p|--port=<port>] <module> <command> <args>" ;
                  "";
                  "The most commonly used jark modules are:" ;
                  "    cp       list add" ;
@@ -85,4 +85,4 @@ let usage =
 let connection_usage = 
   Gstr.unlines ["Cannot connect to the JVM on localhost:9000" ;
                  "Try vm connect --host <HOST> --port <PORT>";
-                 "or do a vm start"]
+                 "or specify --host / --port flags in the command"]

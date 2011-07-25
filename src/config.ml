@@ -164,9 +164,12 @@ module Config =
 
     let get_port () =
       let h = !opts in
-      Glist.print_hashtbl h;
       if (Hashtbl.mem h "--port") then begin
           let port = Hashtbl.find h "--port" in
+          Gstr.to_int port
+      end
+      else if (Hashtbl.mem h "-p") then begin
+          let port = Hashtbl.find h "-p" in
           Gstr.to_int port
       end
       else begin
@@ -178,15 +181,25 @@ module Config =
 
     let get_host () =
       let h = !opts in
-      Glist.print_hashtbl h;
       if (Hashtbl.mem h "--host") then
         Hashtbl.find h "--host"
+      else if (Hashtbl.mem h "-h") then
+        Hashtbl.find h "-h"
       else begin
         if (Gfile.exists (jark_config_dir ^ "host")) then 
           get "host" ()
         else
           "localhost"
       end
+
+    let get_jvm_opts () =
+      let h = !opts in
+      if (Hashtbl.mem h "--jvm-opts") then
+        Hashtbl.find h "--jvm-opts"
+      else if (Hashtbl.mem h "-j") then
+        Hashtbl.find h "-j"
+      else 
+        "-Xms64m -Xmx256m -DNOSECURITY=true"
           
     let set_env () =
       let host = (get_host ()) in
