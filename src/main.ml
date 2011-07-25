@@ -6,6 +6,7 @@ open Repl
 open Gsys
 open Gstr
 open Glist
+open Gfile
 open Config
 
 let cp cmd arg =
@@ -76,14 +77,22 @@ let repo cmd arg =
         
 let version = 
   "version 0.4"
- 
-let nfa xs =
+
+let nfa xs = 
   match (List.length xs) with 
     0 -> Gstr.pe usage
   | 1 -> Jark.eval_ns  (List.nth xs 0)
   | 2 -> Jark.eval_fn  (List.nth xs 0) (List.nth xs 1) 
   | 3 -> Jark.eval_nfa (List.nth xs 0) (List.nth xs 1) (Glist.drop 2 xs)
   | _ -> Jark.eval_nfa (List.nth xs 0) (List.nth xs 1) (Glist.drop 2 xs)
+
+let dispatch xs =
+  let file = (Glist.first xs) in
+  if (Gfile.exists file) then begin
+    Jark.ns_load file;
+  end
+  else 
+    nfa xs
 
 let rl () =
   let term = Unix.tcgetattr Unix.stdin in
@@ -100,7 +109,9 @@ let run_repl ns =
 
 let _ =
   try
-    match (List.tl (Array.to_list Sys.argv)) with
+    (* For shebang *)
+    let al = (List.tl (Array.to_list Sys.argv)) in
+    match al with
       "vm" :: []      -> Gstr.pe vm_usage
     | "vm" :: xs      -> vm (Glist.first xs) (List.tl xs)
     | "cp" :: []      -> Gstr.pe cp_usage
@@ -122,7 +133,8 @@ let _ =
     |  "lein"   :: [] -> Jark.eval_fn "leiningen.core" "-main" 
     |  "lein"   :: xs -> Jark.lein xs
     | "-e" :: xs      -> Jark.eval (Glist.first xs)
-    |  xs             -> nfa xs
+    |  xs             -> dispatch xs
     |  _              -> Gstr.pe usage
+
   with Unix.Unix_error(_, "connect", "") ->
     Gstr.pe connection_usage

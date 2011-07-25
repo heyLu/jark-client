@@ -35,6 +35,8 @@ module Config :
 
     val opt_ignore_jars : unit -> bool
 
+    val opt_json : unit -> bool
+
     val remove_config : unit -> unit
 
   end

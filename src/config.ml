@@ -221,6 +221,15 @@ module Config =
       else 
         false
 
+    let opt_json () =
+      let h = !opts in
+      if (Hashtbl.mem h "--json") then
+        true
+      else if (Hashtbl.mem h "-j") then
+        true
+      else 
+        false
+
     let set_env () =
       let host = (opt_host ()) in
       let port = (opt_port ()) in
