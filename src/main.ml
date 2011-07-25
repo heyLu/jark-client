@@ -42,10 +42,8 @@ let ns cmd arg =
   Jark.require "jark.ns";
   match cmd with
   | "usage"   -> Gstr.pe ns_usage
-  | "list"    -> Jark.eval_fn "jark.ns" "list"
-  | "find"    -> Jark.eval_nfa "jark.ns" "find" [(List.nth arg 0)]
+  | "list"    -> Jark.eval_fn "jark.ns" "list" 
   | "load"    -> Jark.ns_load (Glist.first arg)
-  | "repl"    -> Jark.eval_fn "jark.ns" "list"
   |  _        -> Gstr.pe ns_usage
             
 let package cmd arg =
@@ -53,18 +51,19 @@ let package cmd arg =
   Jark.require "jark.package";
   match cmd with
   | "usage"     -> Gstr.pe package_usage
-  | "install"   -> Gstr.pe "install"
-  | "versions"  -> Gstr.pe "versions"
-  | "deps"      -> Gstr.pe "dependencies"
-  | "installed" -> Gstr.pe "install a package"
-  | "latest"    -> Gstr.pe "Latest"
+  | "install"   -> Jark.package_install() 
+  | "versions"  -> Jark.package_versions()
+  | "deps"      -> Gstr.pe "deps"
+  | "installed" -> Jark.eval_fn "jark.package" "list"
+  | "list"      -> Jark.eval_fn "jark.package" "list"
+  | "latest"    -> Jark.package_latest()
   |  _          -> Gstr.pe package_usage
             
 let swank cmd arg =
   Config.opts := (Glist.list_to_hashtbl arg);
   match cmd with
   | "usage"   -> Gstr.pe swank_usage
-  | "start"   -> Jark.eval "(jark.swank/start \"0.0.0.0\" 4005)"
+  | "start"   -> Jark.swank_start()
   |  _        -> Gstr.pe swank_usage
 
 let repo cmd arg =
@@ -133,6 +132,7 @@ let _ =
     |  "lein"   :: [] -> Jark.eval_fn "leiningen.core" "-main" 
     |  "lein"   :: xs -> Jark.lein xs
     | "-e" :: xs      -> Jark.eval (Glist.first xs)
+    |  []             -> Gstr.pe usage
     |  xs             -> dispatch xs
     |  _              -> Gstr.pe usage
 

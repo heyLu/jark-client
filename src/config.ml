@@ -212,6 +212,33 @@ module Config =
       else 
         "/dev/null"
 
+    let opt_package () =
+      let h = !opts in
+      if (Hashtbl.mem h "--package") then
+        Hashtbl.find h "--package"
+      else if (Hashtbl.mem h "-a") then
+        Hashtbl.find h "-a"
+      else 
+        "no"
+
+    let opt_swank_port () =
+      let h = !opts in
+      if (Hashtbl.mem h "--swank-port") then
+        Hashtbl.find h "--swank-port"
+      else if (Hashtbl.mem h "-s") then
+        Hashtbl.find h "-s"
+      else 
+        "4005"
+
+    let opt_package_version () =
+      let h = !opts in
+      if (Hashtbl.mem h "--version") then
+        Hashtbl.find h "--version"
+      else if (Hashtbl.mem h "-v") then
+        Hashtbl.find h "-v"
+      else 
+        "no"
+
     let opt_ignore_jars () =
       let h = !opts in
       if (Hashtbl.mem h "--ignore-jars") then
@@ -229,6 +256,7 @@ module Config =
         true
       else 
         false
+
 
     let set_env () =
       let host = (opt_host ()) in

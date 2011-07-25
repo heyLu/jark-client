@@ -112,6 +112,22 @@ module Jark =
         ()
       end
 
+    let package_install () =
+      let package = C.opt_package() in 
+      eval_nfa "jark.package" "install" [package]
+
+    let package_versions () =
+      let package = C.opt_package() in 
+      eval_nfa "jark.package" "versions" [package]
+
+    let package_latest () =
+      let package = C.opt_package() in 
+      eval_nfa "jark.package" "latest-version" [package]
+
+    let swank_start () =
+      let port = C.opt_swank_port() in 
+      eval_nfa "jark.swank" "start" ["0.0.0.0"; port]
+
     let lein args =
       eval_nfa "leiningen.core" "-main" args
 

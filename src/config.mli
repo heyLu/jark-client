@@ -33,9 +33,15 @@ module Config :
 
     val opt_log_path : unit -> string
 
+    val opt_package : unit -> string
+
+    val opt_package_version : unit -> string
+
     val opt_ignore_jars : unit -> bool
 
     val opt_json : unit -> bool
+
+    val opt_swank_port : unit -> string
 
     val remove_config : unit -> unit
 

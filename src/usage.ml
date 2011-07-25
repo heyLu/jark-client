@@ -28,7 +28,7 @@ let repo_usage =
 let swank_usage =
   Gstr.unlines ["usage: jark [options] swank <command> <args>";
                  "Available commands for 'swank' module:\n";
-                 "    start     [--port 4005]" ; 
+                 "    start     [-s|--swank-port 4005]" ; 
                  "              Start a swank server on given port\n" ;
                  "    stop      Stop an instance of the server"]
 

@@ -17,6 +17,14 @@ module Jark :
         
     val vm_connect : unit -> unit
 
+    val package_install : unit -> unit
+
+    val package_versions : unit -> unit
+
+    val package_latest : unit -> unit
+
+    val swank_start : unit -> unit
+
     val cp_add : string list -> unit
 
     val ns_load : string -> unit
