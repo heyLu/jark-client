@@ -9,6 +9,7 @@ module Config =
     open Gnet
     open Glist
     open Gstr
+    open Gfile
 
     let opts = ref ((Hashtbl.create 0) : (string, string) Hashtbl.t);;
 
@@ -114,6 +115,22 @@ module Config =
       fprintf f "%s\n" x;
       close_out f
 
+    let install_standalone () =
+      Gnet.http_get wget_bin url_standalone jar_standalone
+
+    let install_components () =
+      Gnet.http_get wget_bin url_clojure jar_clojure;
+      Gnet.http_get wget_bin url_clojure_contrib jar_contrib;
+      Gnet.http_get wget_bin url_nrepl jar_nrepl;
+      Gnet.http_get wget_bin url_jark jar_jark
+        
+    (* config routines *)
+
+    let remove_config () = 
+      Sys.remove(jark_config_dir ^ "host");
+      Sys.remove(jark_config_dir ^ "port");
+      ()
+
     let set k v () =
       let config_dir = (Sys.getenv "HOME") ^ "/.config/" in
       (try Unix.mkdir config_dir 0o740 with Unix.Unix_error(Unix.EEXIST,_,_) -> ());
@@ -134,15 +151,6 @@ module Config =
         close_in_noerr f; 
         raise e 
 
-    let install_standalone () =
-      Gnet.http_get wget_bin url_standalone jar_standalone
-
-    let install_components () =
-      Gnet.http_get wget_bin url_clojure jar_clojure;
-      Gnet.http_get wget_bin url_clojure_contrib jar_contrib;
-      Gnet.http_get wget_bin url_nrepl jar_nrepl;
-      Gnet.http_get wget_bin url_jark jar_jark
-
     let get_port () =
       let h = !opts in
       Glist.print_hashtbl h;
@@ -150,17 +158,25 @@ module Config =
           let port = Hashtbl.find h "--port" in
           Gstr.to_int port
       end
-      else
-        9000
+      else begin
+        if (Gfile.exists (jark_config_dir ^ "port")) then 
+          Gstr.to_int (get "port" ())
+        else
+          9000
+      end
 
     let get_host () =
       let h = !opts in
       Glist.print_hashtbl h;
       if (Hashtbl.mem h "--host") then
         Hashtbl.find h "--host"
-      else
-        "localhost"
-
+      else begin
+        if (Gfile.exists (jark_config_dir ^ "host")) then 
+          get "host" ()
+        else
+          "localhost"
+      end
+          
     let set_env () =
       let host = (get_host ()) in
       let port = (get_port ()) in

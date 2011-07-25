@@ -74,7 +74,10 @@ module Jark =
     let vm_connect () =
       C.set_env ();
       eval_fn "jark.vm" "stats" 
-        
+
+    let vm_stop () =
+      C.remove_config()
+
     let do_cp path =
       printf "Adding classpath %s\n" path;
       eval_nfa "jark.cp" "add" [path]

@@ -24,7 +24,7 @@ module Glist =
       in
       drop_aux l n
 
-    let rec zip lst1 lst2 = match lst1,lst2 with
+    let rec zip l1 l2 = match l1,l2 with
     | [],_ -> []
     | _, []-> []
     | (x::xs),(y::ys) -> (x,y) :: (zip xs ys);;
