@@ -31,6 +31,8 @@ module Config :
 
     val get_jvm_opts : unit -> string
 
+    val get_log_path : unit -> string
+
     val remove_config : unit -> unit
 
   end

@@ -200,7 +200,16 @@ module Config =
         Hashtbl.find h "-j"
       else 
         "-Xms64m -Xmx256m -DNOSECURITY=true"
-          
+
+    let get_log_path () =
+      let h = !opts in
+      if (Hashtbl.mem h "--log-path") then
+        Hashtbl.find h "--log-path"
+      else if (Hashtbl.mem h "-l") then
+        Hashtbl.find h "-l"
+      else 
+        "/dev/null"
+
     let set_env () =
       let host = (get_host ()) in
       let port = (get_port ()) in
