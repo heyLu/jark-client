@@ -1,4 +1,4 @@
 module Repl :
   sig
-    val run : string -> unit
+    val run : string -> unit -> unit
   end

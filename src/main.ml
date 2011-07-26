@@ -57,6 +57,7 @@ let package cmd arg =
   | "installed" -> Jark.eval_fn "jark.package" "list"
   | "list"      -> Jark.eval_fn "jark.package" "list"
   | "latest"    -> Jark.package_latest()
+  | "search"    -> Jark.package_search (List.hd arg) ()
   |  _          -> Gstr.pe package_usage
             
 let swank cmd arg =
@@ -97,13 +98,13 @@ let rl () =
   let term = Unix.tcgetattr Unix.stdin in
   Unix.tcsetattr Unix.stdin Unix.TCSANOW term;
   let line = input_line stdin in
-  Gstr.pe line
+  Jark.eval line
 
-let run_repl ns = 
+let run_repl ns () = 
   if Gsys.is_windows() then
     Gstr.pe "Repl not implemented yet"
   else begin
-    Repl.run "user"
+    Repl.run "user" ()
    end
 
 let _ =
@@ -124,7 +125,7 @@ let _ =
     | "repo" :: []    -> Gstr.pe repo_usage
     | "repo" :: xs    -> repo (Glist.first xs) (List.tl xs)
     | "-s" :: []      -> Gstr.pe (input_line stdin)
-    | "repl" :: []    -> run_repl "user"
+    | "repl" :: []    -> run_repl "user" ()
     | "version" :: [] -> Gstr.pe version
     | "--version" :: [] -> Gstr.pe version
     | "-v" :: []      -> Gstr.pe version
@@ -132,6 +133,7 @@ let _ =
     |  "lein"   :: [] -> Jark.eval_fn "leiningen.core" "-main" 
     |  "lein"   :: xs -> Jark.lein xs
     | "-e" :: xs      -> Jark.eval (Glist.first xs)
+    | "-s" :: []      -> rl()
     |  []             -> Gstr.pe usage
     |  xs             -> dispatch xs
     |  _              -> Gstr.pe usage

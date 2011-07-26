@@ -124,6 +124,9 @@ module Jark =
       let package = C.opt_package() in 
       eval_nfa "jark.package" "latest-version" [package]
 
+    let package_search term () =
+      eval_nfa "jark.package" "search" [term]
+
     let swank_start () =
       let port = C.opt_swank_port() in 
       eval_nfa "jark.swank" "start" ["0.0.0.0"; port]

@@ -23,6 +23,8 @@ module Jark :
 
     val package_latest : unit -> unit
 
+    val package_search : string -> unit -> unit
+
     val swank_start : unit -> unit
 
     val cp_add : string list -> unit
