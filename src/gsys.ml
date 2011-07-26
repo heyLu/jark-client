@@ -16,4 +16,7 @@ module Gsys =
 
     let is_windows () = (Sys.os_type = "Win32")
 
+    let get_pid () = 
+      2
+
 end 

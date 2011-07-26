@@ -257,6 +257,23 @@ module Config =
       else 
         false
 
+    let opt_repo_name () =
+      let h = !opts in
+      if (Hashtbl.mem h "--repo-name") then
+        Hashtbl.find h "--repo-name"
+      else if (Hashtbl.mem h "-l") then
+        Hashtbl.find h "-l"
+      else 
+        "none"
+
+    let opt_repo_url () =
+      let h = !opts in
+      if (Hashtbl.mem h "--repo-url") then
+        Hashtbl.find h "--repo-url"
+      else if (Hashtbl.mem h "-l") then
+        Hashtbl.find h "-l"
+      else 
+        "none"
 
     let set_env () =
       let host = (opt_host ()) in

@@ -27,6 +27,8 @@ module Jark :
 
     val swank_start : unit -> unit
 
+    val repo_add : unit -> unit
+
     val cp_add : string list -> unit
 
     val ns_load : string -> unit

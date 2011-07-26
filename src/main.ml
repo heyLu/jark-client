@@ -72,6 +72,14 @@ let repo cmd arg =
   Jark.require "jark.package";
   match cmd with
   | "list"   -> Jark.eval_fn "jark.package" "repo-list"
+  | "add"   -> Jark.repo_add ()
+  |  _       -> Gstr.pe repo_usage
+
+let stat cmd arg =
+  Config.opts := (Glist.list_to_hashtbl arg);
+  Jark.require "recon.jvmstat";
+  match cmd with
+  | "list"   -> Jark.eval_fn "jark.package" "repo-list"
   | "add "   -> Jark.eval "(jark.swank/start \"0.0.0.0\" 4005)"
   |  _       -> Gstr.pe repo_usage
         
@@ -122,6 +130,8 @@ let _ =
     | "package" :: xs -> package (Glist.first xs) (List.tl xs)
     | "swank" :: []   -> Gstr.pe swank_usage
     | "swank" :: xs   -> swank (Glist.first xs) (List.tl xs)
+    | "stat" :: []   -> Gstr.pe stat_usage
+    | "stat" :: xs   ->  stat (Glist.first xs) (List.tl xs)
     | "repo" :: []    -> Gstr.pe repo_usage
     | "repo" :: xs    -> repo (Glist.first xs) (List.tl xs)
     | "-s" :: []      -> Gstr.pe (input_line stdin)

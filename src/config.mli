@@ -43,6 +43,10 @@ module Config :
 
     val opt_swank_port : unit -> string
 
+    val opt_repo_name : unit -> string
+
+    val opt_repo_url : unit -> string
+
     val remove_config : unit -> unit
 
   end

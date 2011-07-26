@@ -131,6 +131,16 @@ module Jark =
       let port = C.opt_swank_port() in 
       eval_nfa "jark.swank" "start" ["0.0.0.0"; port]
 
+    let repo_add () =
+      let repo_name = C.opt_repo_name() in 
+      let repo_url = C.opt_repo_url() in 
+      if repo_name = "none" then 
+        Gstr.pe "repo add --repo-name <repo-name> --repo-url <repo-url"
+      else if repo_url = "none" then            
+        Gstr.pe "repo add --repo-name <repo-name> --repo-url <repo-url"
+      else
+        eval_nfa "jark.package" "repo-add" [repo_name; repo_url]
+
     let lein args =
       eval_nfa "leiningen.core" "-main" args
 

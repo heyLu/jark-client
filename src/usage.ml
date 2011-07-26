@@ -4,7 +4,7 @@ open Gstr
 
 (* command usage *)
 let vm_usage = 
-  Gstr.unlines ["usage: jark [options] vm <command> <args>";
+  Gstr.unlines ["usage: jark vm <command> <args> [options]";
                  "Available commands for 'vm' module:\n";
                  "    start     [-p|--port=<9000>] [-j|--jvm-opts=<opts>] [--log=<path>]" ;
                  "              Start a local Jark server. Takes optional JVM options as a \" delimited string\n" ;
@@ -12,6 +12,7 @@ let vm_usage =
                  "              Shuts down the current instance of the JVM\n" ;
                  "    connect   [-a|--host=<localhost>] [-p|--port=<port>] [-n|--name=<vm-name>]" ;
                  "              Connect to a remote JVM\n" ;
+                 "    stat      [--instruments] [--instrument-value <name>]\n" ;
                  "    threads   Print a list of JVM threads\n" ;
                  "    uptime    uptime of the current instance of the JVM\n" ;
                  "    gc        Run garbage collection on the current instance of the JVM" ]
@@ -20,9 +21,9 @@ let repo_usage =
   Gstr.unlines ["usage: jark [options] repo <command> <args>";
                  "Available commands for 'repo' module:\n";
                  "    list      List current repositories\n" ;
-                 "    add       URL" ;
+                 "    add       --repo-name <repo-name> --repo-url <repo-url>" ;
                  "              Add repository\n" ;
-                 "    remove    URL" ;
+                 "    remove    --repo-name <repo-name>" ;
                  "              Remove repository"]
 
 let swank_usage =
@@ -64,6 +65,14 @@ let package_usage =
                  "    latest     -p|--package <package>" ;
                  "               Print the latest version of the package" ]
 
+let stat_usage = 
+  Gstr.unlines ["usage: jark stat <command> <args>";
+                 "Available commands for 'stat' module:\n";
+                 "    instruments    [prefix]" ;
+                 "                   List all available instruments. Optionally takes a regex\n" ;
+                 "    instrument     <instrument-name>" ;
+                 "                   Print the value for the given instrument name"]
+
 let usage =
   Gstr.unlines ["usage: jark [-v|--version] [-h|--help]" ;
                  "            [-r|repl] [-e|--eval] [-i|--install|install]" ;
@@ -74,11 +83,12 @@ let usage =
                  "    cp       list add" ;
                  "    doc      search examples comments" ;
                  "    lein     <task(s)>";
-                 "    ns       list load run repl" ;
+                 "    ns       list load run" ;
                  "    package  install uninstall versions deps search installed latest" ;
                  "    repo     list add remove" ;
+                 "    stat     instruments instrument vms mem";
                  "    swank    start stop" ;
-                 "    vm       start connect stop stat uptime threads gc";
+                 "    vm       start connect stop uptime threads gc";
                  "";
                  "See 'jark <module>' for more information on a specific module."]
 
