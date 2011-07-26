@@ -88,7 +88,16 @@ let stat cmd arg =
 let version = 
   "version 0.4"
 
-let nfa xs = 
+let nfa al = 
+  let arg = ref [] in
+  let last_arg = Glist.last al in
+  if (Gstr.starts_with last_arg  "--") then begin
+    Config.opts := Glist.list_to_hashtbl [last_arg; "yes"];
+    arg := (Glist.remove_last al)
+  end
+  else
+    arg := al;
+  let xs = !arg in
   match (List.length xs) with 
     0 -> Gstr.pe usage
   | 1 -> Jark.eval_ns  (List.nth xs 0)

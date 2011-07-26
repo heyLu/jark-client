@@ -30,6 +30,11 @@ module Glist =
       in
       drop_aux l n
 
+    let remove_last xs = 
+      match (List.rev xs) with
+      | h::t -> List.rev t
+      | []   -> []
+
     let rec zip l1 l2 = match l1,l2 with
     | [],_ -> []
     | _, []-> []

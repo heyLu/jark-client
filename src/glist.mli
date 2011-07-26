@@ -9,6 +9,8 @@ module Glist :
 
     val last : 'a list -> 'a
 
+    val remove_last : 'a list -> 'a list
+
     (* hashtable routines *)
 
     val assoc_to_hashtbl : ('a * 'b) list -> ('a, 'b) Hashtbl.t

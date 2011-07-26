@@ -57,12 +57,19 @@ module Jark =
       let f = (sprintf "(jark.ns/dispatch %s %s)" (Gstr.qq ns) (Gstr.qq fn)) in
       nrepl_send env { mid = node_id env; code = f }
 
+    let dispatch_fn () =
+      match (C.getopt "--json") with 
+      | "no"  -> "(jark.ns/dispatch "
+      | "yes" -> "(jark.ns/cli-json "
+      |  _    -> "(jark.ns/dispatch "
+
     let eval_nfa ns fn args =
+      let dfn = dispatch_fn () in
       let env = C.get_env() in
       let sargs = String.concat " " (List.map (fun x -> (Gstr.qq x)) args) in
-      let f = String.concat " " ["(jark.ns/dispatch "; (Gstr.qq ns); (Gstr.qq fn); sargs; ")"] in 
+      let f = String.concat " " [dispatch_fn(); (Gstr.qq ns); (Gstr.qq fn); sargs; ")"] in 
       nrepl_send env { mid = node_id env; code = f }
-          
+
     (* commands *)
 
     let vm_start () =
