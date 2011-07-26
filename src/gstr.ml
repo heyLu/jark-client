@@ -7,7 +7,6 @@ module Gstr =
     open Unix
     open String
 
-
     let strip ?(chars=" \t\r\n") s =
       let p = ref 0 in
       let l = length s in
@@ -39,7 +38,6 @@ module Gstr =
     let rchop s =
       if s = "" then "" else sub s 0 (length s - 1)
 
-  
     let split x y = Str.split (Str.regexp x) y
 
     let lines x = split "\n" x

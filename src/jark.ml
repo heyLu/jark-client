@@ -106,7 +106,7 @@ module Jark =
     let ns_load path =
       let apath = (Gfile.abspath path) in
       if (Gfile.exists apath) then
-        eval (sprintf "(jark.ns/load-clj \"%s\")" apath)
+        eval_nfa "jark.ns" "load-clj" [apath]
       else begin
         printf "File not found %s\n" apath;
         ()
