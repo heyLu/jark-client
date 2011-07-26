@@ -71,17 +71,27 @@ let repo cmd arg =
   Config.opts := (Glist.list_to_hashtbl arg);
   Jark.require "jark.package";
   match cmd with
-  | "list"   -> Jark.eval_fn "jark.package" "repo-list"
-  | "add"   -> Jark.repo_add ()
-  |  _       -> Gstr.pe repo_usage
+  | "list"    -> Jark.eval_fn "jark.package" "repo-list"
+  | "add"     -> Jark.repo_add ()
+  |  _        -> Gstr.pe repo_usage
 
 let stat cmd arg =
   Config.opts := (Glist.list_to_hashtbl arg);
   Jark.require "recon.jvmstat";
   match cmd with
-  | "list"   -> Jark.eval_fn "jark.package" "repo-list"
-  | "add "   -> Jark.eval "(jark.swank/start \"0.0.0.0\" 4005)"
-  |  _       -> Gstr.pe repo_usage
+  | "instruments"   -> begin
+      try
+        Jark.stat_instrument (List.hd arg) ()
+      with Failure("hd") ->
+        Jark.stat_instruments ()
+  end
+  | "instrument"    -> begin
+      try
+        Jark.stat_instrument (List.hd arg) ()
+      with Failure("hd") ->
+        Jark.stat_instruments ()
+  end
+  |  _              -> Gstr.pe repo_usage
         
 let version = 
   "version 0.4"

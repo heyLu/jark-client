@@ -75,8 +75,8 @@ let stat_usage =
 
 let usage =
   Gstr.unlines ["usage: jark [-v|--version] [-h|--help]" ;
-                 "            [-r|repl] [-e|--eval] [-i|--install|install]" ;
-                 "            [-c|--config=<path>]";
+                 "            [-r|repl] [-e|--eval]" ; 
+                 "            [-c|--config=<path>]" ;
                  "            [-h|--host=<hostname>] [-p|--port=<port>] <module> <command> <args>" ;
                  "";
                  "The most commonly used jark modules are:" ;

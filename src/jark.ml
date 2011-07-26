@@ -141,6 +141,12 @@ module Jark =
       else
         eval_nfa "jark.package" "repo-add" [repo_name; repo_url]
 
+    let stat_instruments () =
+      eval_nfa "recon.jvmstat" "instrument-names" ["localhost"; "4211"]
+
+    let stat_instrument instrument_name () =
+      eval_nfa "recon.jvmstat" "instrument-value" ["localhost"; "4211"; instrument_name]
+          
     let lein args =
       eval_nfa "leiningen.core" "-main" args
 

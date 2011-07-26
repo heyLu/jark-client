@@ -33,6 +33,10 @@ module Jark :
 
     val ns_load : string -> unit
 
+    val stat_instruments : unit -> unit
+
+    val stat_instrument : string -> unit -> unit
+
     val install : string -> unit
 
     val lein : string list -> unit
