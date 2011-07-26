@@ -21,11 +21,11 @@ module Config :
         
     val install_standalone : unit -> unit
 
-    val jar_standalone : string
-
     val opts : (string, string) Hashtbl.t ref
 
     val getopt : string -> string
+        
+    val jar : string -> string
 
     val remove_config : unit -> unit
 

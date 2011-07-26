@@ -162,8 +162,8 @@ module Jark =
       (try Unix.mkdir C.cljr_lib 0o740 with Unix.Unix_error(Unix.EEXIST,_,_) -> ());
       C.setup_cljr ();
       if C.standalone then begin
-        if (Gfile.exists C.jar_standalone) then
-          Gstr.pe (C.jar_standalone ^ " already exists")
+        if (Gfile.exists (C.jar "standalone")) then
+          Gstr.pe ((C.jar "standalone") ^ " already exists")
         else
           C.install_standalone()
       end

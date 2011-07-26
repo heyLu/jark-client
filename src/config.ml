@@ -62,39 +62,53 @@ module Config =
 
     let standalone = true
 
-    let url_clojure = "http://build.clojure.org/releases/org/clojure/clojure/1.2.1/clojure-1.2.1.jar"
+    let component c = 
+      match c with
+      | "clojure"  -> [cljr_lib ^ "/clojure-1.2.1.jar" ;
+                        "http://build.clojure.org/releases/org/clojure/clojure/1.2.1/clojure-1.2.1.jar";
+                        "1.2.1"]
 
-    let url_clojure_contrib = "http://build.clojure.org/releases/org/clojure/clojure-contrib/1.2.0/clojure-contrib-1.2.0.jar"
+      | "contrib"   -> [cljr_lib ^ "/clojure-contrib-1.2.0.jar" ;
+                         "http://build.clojure.org/releases/org/clojure/clojure-contrib/1.2.0/clojure-contrib-1.2.0.jar";
+                         "1.2.0"]
 
-    let url_nrepl =  "http://repo1.maven.org/maven2/org/clojure/tools.nrepl/0.0.5/tools.nrepl-0.0.5.jar"
+      | "nrepl"     -> [cljr_lib ^ "/tools.nrepl-0.0.5.jar" ;
+                         "http://repo1.maven.org/maven2/org/clojure/tools.nrepl/0.0.5/tools.nrepl-0.0.5.jar" ;
+                         "0.0.5"]
 
-    let url_jark = "http://clojars.org/repo/jark/jark/0.4/jark-0.4.jar"
+      | "jark"      -> [cljr_lib ^ "/jark-0.4.jar" ;
+                         "http://clojars.org/repo/jark/jark/0.4/jark-0.4.jar";
+                         "0.4"]
 
-    let url_swank = "http://clojars.org/repo/swank-clojure/swank-clojure/1.3.2/swank-clojure-1.3.2.jar"
+      | "swank"     -> [cljr_lib ^ "/tools.nrepl-0.0.5.jar" ;
+                         "http://clojars.org/repo/swank-clojure/swank-clojure/1.3.2/swank-clojure-1.3.2.jar" ;
+                         "0.0.5"]
 
-    let url_standalone = "https://github.com/downloads/icylisper/jark-server/jark-0.4-standalone.jar"
+      | "standalone" -> [cljr_lib ^ "/jark-0.4-standalone.jar" ;
+                          "https://github.com/downloads/icylisper/jark-server/jark-0.4-standalone.jar" ;
+                          "0.4"]
+                                 
+      |  _           -> ["none" ; "none" ; "none"]
 
-    let jar_clojure = cljr_lib ^ "/clojure-1.2.1.jar"
 
-    let jar_contrib = cljr_lib ^ "/clojure-contrib-1.2.0.jar"
+    let jar c = 
+      (List.nth (component c) 0)
 
-    let jar_nrepl   = cljr_lib ^ "/tools.nrepl-0.0.5.jar"
+    let url c =
+      (List.nth (component c) 1)
 
-    let jar_jark    = cljr_lib ^ "/jark-0.4.jar"
-
-    let jar_swank   = cljr_lib ^ "/swank-clojure-1.3.2.jar"
-
-    let jar_standalone = cljr_lib ^ "/jark-0.4-standalone.jar"
+    let version c =
+      (List.nth (component c) 2)
 
     let cp_boot ()  = 
       if standalone then
-        jar_standalone
+        jar "standalone"
       else
-        String.concat ":" [ jar_clojure;
-                            jar_contrib;
-                            jar_nrepl;
-                            jar_jark;
-                            jar_swank ]
+        String.concat ":" [ jar "clojure";
+                            jar "contrib";
+                            jar "nrepl";
+                            jar "jark";
+                            jar "swank" ]
 
     let config_dir = 
       if Gsys.is_windows() then
@@ -125,13 +139,13 @@ module Config =
       close_out f
 
     let install_standalone () =
-      Gnet.http_get wget_bin url_standalone jar_standalone
+      Gnet.http_get wget_bin (url "standalone") (jar "standalone")
 
     let install_components () =
-      Gnet.http_get wget_bin url_clojure jar_clojure;
-      Gnet.http_get wget_bin url_clojure_contrib jar_contrib;
-      Gnet.http_get wget_bin url_nrepl jar_nrepl;
-      Gnet.http_get wget_bin url_jark jar_jark
+      Gnet.http_get wget_bin (url "clojure") (jar "clojure");
+      Gnet.http_get wget_bin (url "contrib") (jar "contrib");
+      Gnet.http_get wget_bin (url "nrepl") (jar "nrepl");
+      Gnet.http_get wget_bin (url "jark") (jar "jark")
         
     (* config routines *)
 
