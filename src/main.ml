@@ -82,6 +82,7 @@ let stat cmd arg =
   | "instruments"   -> Jark.stat_instruments arg ()
   | "instrument"    -> Jark.stat_instruments arg ()
   | "vms"           -> Jark.stat_vms () 
+  | "mem"           -> Jark.eval_fn "jark.vm" "stats"
   |  _              -> Gstr.pe repo_usage
         
 let version = 

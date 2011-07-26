@@ -72,6 +72,7 @@ let stat_usage =
                  "                   List all available instruments. Optionally takes a regex\n" ;
                  "    instrument     <instrument-name>" ;
                  "                   Print the value for the given instrument name\n" ;
+                 "    mem            Print the memory usage of the JVM\n" ;
                  "    vms            --remote-host <host>" ;
                  "                   List the vms running on remote host\n"]
 
