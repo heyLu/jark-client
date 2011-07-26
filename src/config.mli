@@ -25,29 +25,7 @@ module Config :
 
     val opts : (string, string) Hashtbl.t ref
 
-    val opt_port : unit -> int
-     
-    val opt_host : unit -> string
-
-    val opt_jvm_opts : unit -> string
-
-    val opt_log_path : unit -> string
-
-    val opt_package : unit -> string
-
-    val opt_package_version : unit -> string
-
-    val opt_ignore_jars : unit -> bool
-
-    val opt_json : unit -> bool
-
-    val opt_swank_port : unit -> string
-
-    val opt_repo_name : unit -> string
-
-    val opt_repo_url : unit -> string
-
-    val opt_remote_host : unit -> string
+    val getopt : string -> string
 
     val remove_config : unit -> unit
 

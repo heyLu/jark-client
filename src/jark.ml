@@ -67,9 +67,9 @@ module Jark =
 
     let vm_start () =
       C.remove_config();
-      let port = string_of_int (C.opt_port()) in
-      let jvm_opts = C.opt_jvm_opts() in 
-      let log_path = C.opt_log_path() in 
+      let port = C.getopt "--port" in
+      let jvm_opts = C.getopt "--jvm-opts" in 
+      let log_path = C.getopt "--port" in 
       let c = String.concat " " ["java"; jvm_opts ; "-cp"; C.cp_boot(); "jark.vm"; port; "<&- & 2&>"; log_path] in
       ignore (Sys.command c);
       printf "Started JVM on port %s\n" port
@@ -89,7 +89,7 @@ module Jark =
       let apath = (Gfile.abspath path) in
       if (Gfile.exists apath) then begin
         if (Gfile.isdir apath) then 
-          if not (C.opt_ignore_jars()) then
+          if not ((C.getopt "--ignore-jars") = "yes") then
             List.iter (fun x -> do_cp x) (Gfile.glob (sprintf "%s/*.jar" apath));
         do_cp(apath);
         ()
@@ -113,27 +113,27 @@ module Jark =
       end
 
     let package_install () =
-      let package = C.opt_package() in 
+      let package = C.getopt "--package" in 
       eval_nfa "jark.package" "install" [package]
 
     let package_versions () =
-      let package = C.opt_package() in 
+      let package = C.getopt "--package" in 
       eval_nfa "jark.package" "versions" [package]
 
     let package_latest () =
-      let package = C.opt_package() in 
+      let package = C.getopt "--package" in 
       eval_nfa "jark.package" "latest-version" [package]
 
     let package_search term () =
       eval_nfa "jark.package" "search" [term]
 
     let swank_start () =
-      let port = C.opt_swank_port() in 
+      let port = C.getopt "--swank-port" in 
       eval_nfa "jark.swank" "start" ["0.0.0.0"; port]
 
     let repo_add () =
-      let repo_name = C.opt_repo_name() in 
-      let repo_url = C.opt_repo_url() in 
+      let repo_name = C.getopt "--repo-name" in 
+      let repo_url = C.getopt "--repo-url" in 
       if repo_name = "none" then 
         Gstr.pe "repo add --repo-name <repo-name> --repo-url <repo-url"
       else if repo_url = "none" then            
@@ -151,7 +151,7 @@ module Jark =
         eval_nfa "recon.jvmstat" "instrument-names" ["localhost"; "4211"]
 
     let stat_vms () =
-      let remote_host = C.opt_remote_host() in 
+      let remote_host = C.getopt "--remote-host" in 
       eval_nfa "recon.jvmstat" "vms" [remote_host]
           
     let lein args =

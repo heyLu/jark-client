@@ -163,147 +163,52 @@ module Config =
         raise e 
 
     (* options *)
+     
+    let opt_default opt_name = 
+      match opt_name with 
+      | "--port"         -> ["-p" ; "9000"]
+      | "--host"         -> ["-h" ; "localhost"]
+      | "--jvm-opts"     -> ["-o" ; "-Xms64m -Xmx256m -DNOSECURITY=true"]
+      | "--log-path"     -> ["-l" ; "/dev/null"]
+      | "--package"      -> ["-p" ; "none"]
+      | "--swank-port"   -> ["-s" ; "4005"]
+      | "--ignore-jars"  -> ["-i" ; "no"]
+      | "--json"         -> ["-j" ; "no"]
+      | "--repo-name"    -> ["-n" ; "none"]
+      | "--repo-url"     -> ["-u" ; "none"]
+      | "--remote-host"  -> ["-r" ; "localhost"]
+      |  _               -> ["-x" ; "none"]
 
-    let opt_port () =
-      let h = !opts in
-      if (Hashtbl.mem h "--port") then begin
-          let port = Hashtbl.find h "--port" in
-          Gstr.to_int port
-      end
-      else if (Hashtbl.mem h "-p") then begin
-          let port = Hashtbl.find h "-p" in
-          Gstr.to_int port
-      end
-      else begin
-        if (Gfile.exists (jark_config_dir ^ "port")) then 
-          Gstr.to_int (get "port" ())
-        else
-          9000
-      end
-
-    let opt_host () =
-      let h = !opts in
-      if (Hashtbl.mem h "--host") then
-        Hashtbl.find h "--host"
-      else if (Hashtbl.mem h "-h") then
-        Hashtbl.find h "-h"
-      else begin
-        if (Gfile.exists (jark_config_dir ^ "host")) then 
-          get "host" ()
-        else
-          "localhost"
-      end
-
-    let opt_jvm_opts () =
-      let h = !opts in
-      if (Hashtbl.mem h "--jvm-opts") then
-        Hashtbl.find h "--jvm-opts"
-      else if (Hashtbl.mem h "-j") then
-        Hashtbl.find h "-j"
-      else 
-        "-Xms64m -Xmx256m -DNOSECURITY=true"
-
-    let opt_log_path () =
-      let h = !opts in
-      if (Hashtbl.mem h "--log-path") then
-        Hashtbl.find h "--log-path"
-      else if (Hashtbl.mem h "-l") then
-        Hashtbl.find h "-l"
-      else 
-        "/dev/null"
-
-    let opt_package () =
-      let h = !opts in
-      if (Hashtbl.mem h "--package") then
-        Hashtbl.find h "--package"
-      else if (Hashtbl.mem h "-a") then
-        Hashtbl.find h "-a"
-      else 
-        "no"
-
-    let opt_swank_port () =
-      let h = !opts in
-      if (Hashtbl.mem h "--swank-port") then
-        Hashtbl.find h "--swank-port"
-      else if (Hashtbl.mem h "-s") then
-        Hashtbl.find h "-s"
-      else 
-        "4005"
-
-    let opt_package_version () =
-      let h = !opts in
-      if (Hashtbl.mem h "--version") then
-        Hashtbl.find h "--version"
-      else if (Hashtbl.mem h "-v") then
-        Hashtbl.find h "-v"
-      else 
-        "no"
-
-    let opt_ignore_jars () =
-      let h = !opts in
-      if (Hashtbl.mem h "--ignore-jars") then
-        true
-      else if (Hashtbl.mem h "-i") then
-        true
-      else 
-        false
-
-    let opt_json () =
-      let h = !opts in
-      if (Hashtbl.mem h "--json") then
-        true
-      else if (Hashtbl.mem h "-j") then
-        true
-      else 
-        false
-
-    let opt_repo_name () =
-      let h = !opts in
-      if (Hashtbl.mem h "--repo-name") then
-        Hashtbl.find h "--repo-name"
-      else if (Hashtbl.mem h "-l") then
-        Hashtbl.find h "-l"
-      else 
-        "none"
-
-    let opt_repo_url () =
-      let h = !opts in
-      if (Hashtbl.mem h "--repo-url") then
-        Hashtbl.find h "--repo-url"
-      else if (Hashtbl.mem h "-l") then
-        Hashtbl.find h "-l"
-      else 
-        "none"
-
-    let opt_remote_host () =
-      let h = !opts in
-      if (Hashtbl.mem h "--remote-host") then
-        Hashtbl.find h "--remote-host"
-      else if (Hashtbl.mem h "-m") then
-        Hashtbl.find h "-m"
-      else 
-        "localhost"
+    let getopt opt_name =
+      let alias = (Glist.first (opt_default opt_name)) in
+      let h = !opts in 
+      if (Hashtbl.mem h opt_name) then
+        Hashtbl.find h opt_name
+      else if (Hashtbl.mem h alias) then
+        Hashtbl.find h alias
+      else
+        (Glist.last (opt_default opt_name))
 
     let set_env () =
-      let host = (opt_host ()) in
-      let port = (opt_port ()) in
+      let host = (getopt "--host") in
+      let port = (getopt "--port") in
       set "host" host ();
-      set "port" (string_of_int port) ();
+      set "port" port ();
       { 
         ns          = "user";
         debug       = false;
         host        = host;
-        port        = port
+        port        = (Gstr.to_int port)
       }
         
     let get_env () = 
-      let host = (opt_host ()) in
-      let port = (opt_port ()) in
+      let host = (getopt "--host") in
+      let port = (getopt "--port") in
       {
         ns          = "user";
         debug       = false;
         host        = host;
-        port        = port
+        port        = (Gstr.to_int port)
       } 
 
 end
