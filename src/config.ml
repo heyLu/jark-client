@@ -275,6 +275,15 @@ module Config =
       else 
         "none"
 
+    let opt_remote_host () =
+      let h = !opts in
+      if (Hashtbl.mem h "--remote-host") then
+        Hashtbl.find h "--remote-host"
+      else if (Hashtbl.mem h "-m") then
+        Hashtbl.find h "-m"
+      else 
+        "localhost"
+
     let set_env () =
       let host = (opt_host ()) in
       let port = (opt_port ()) in

@@ -33,9 +33,9 @@ module Jark :
 
     val ns_load : string -> unit
 
-    val stat_instruments : unit -> unit
+    val stat_instruments : string list -> unit -> unit
 
-    val stat_instrument : string -> unit -> unit
+    val stat_vms : unit -> unit
 
     val install : string -> unit
 

@@ -47,6 +47,8 @@ module Config :
 
     val opt_repo_url : unit -> string
 
+    val opt_remote_host : unit -> string
+
     val remove_config : unit -> unit
 
   end

@@ -79,18 +79,9 @@ let stat cmd arg =
   Config.opts := (Glist.list_to_hashtbl arg);
   Jark.require "recon.jvmstat";
   match cmd with
-  | "instruments"   -> begin
-      try
-        Jark.stat_instrument (List.hd arg) ()
-      with Failure("hd") ->
-        Jark.stat_instruments ()
-  end
-  | "instrument"    -> begin
-      try
-        Jark.stat_instrument (List.hd arg) ()
-      with Failure("hd") ->
-        Jark.stat_instruments ()
-  end
+  | "instruments"   -> Jark.stat_instruments arg ()
+  | "instrument"    -> Jark.stat_instruments arg ()
+  | "vms"           -> Jark.stat_vms () 
   |  _              -> Gstr.pe repo_usage
         
 let version = 

@@ -71,7 +71,9 @@ let stat_usage =
                  "    instruments    [prefix]" ;
                  "                   List all available instruments. Optionally takes a regex\n" ;
                  "    instrument     <instrument-name>" ;
-                 "                   Print the value for the given instrument name"]
+                 "                   Print the value for the given instrument name" ;
+                 "    vms            --remote-host <host>" ;
+                 "                   List the vms running on remote host\n"]
 
 let usage =
   Gstr.unlines ["usage: jark [-v|--version] [-h|--help]" ;
