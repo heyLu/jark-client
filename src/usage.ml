@@ -71,7 +71,7 @@ let stat_usage =
                  "    instruments    [prefix]" ;
                  "                   List all available instruments. Optionally takes a regex\n" ;
                  "    instrument     <instrument-name>" ;
-                 "                   Print the value for the given instrument name" ;
+                 "                   Print the value for the given instrument name\n" ;
                  "    vms            --remote-host <host>" ;
                  "                   List the vms running on remote host\n"]
 
@@ -87,6 +87,7 @@ let usage =
                  "    lein     <task(s)>";
                  "    ns       list load run" ;
                  "    package  install uninstall versions deps search installed latest" ;
+                 "    repl     <namespace>" ;
                  "    repo     list add remove" ;
                  "    stat     instruments instrument vms mem";
                  "    swank    start stop" ;

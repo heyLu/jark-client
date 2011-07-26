@@ -6,6 +6,9 @@ module Repl =
     open Datatypes
     open Jark
     open Gstr
+    open Gsys
+
+    let enabled = ref false
 
     let prompt_of env = env.ns ^ ">> "
 
@@ -18,7 +21,7 @@ module Repl =
       | _    -> Buffer.add_string buf c; loop (Ledit.input_char stdin)
       in
       loop (Ledit.input_char stdin)
-
+      
     let show_exc x = Printf.printf "Exception: %s\n%!" (Printexc.to_string x)
 
     let bad_command () =
