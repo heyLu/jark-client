@@ -42,6 +42,7 @@ module Jark =
       let expr = clj_string env code in
       nrepl_send env (make_eval_message env expr)
 
+
     let require ns =
       eval (sprintf "(require '%s)" ns)
 
@@ -69,6 +70,31 @@ module Jark =
       let sargs = String.concat " " (List.map (fun x -> (Gstr.qq x)) args) in
       let f = String.concat " " [dispatch_fn(); (Gstr.qq ns); (Gstr.qq fn); sargs; ")"] in 
       nrepl_send env { mid = node_id env; code = f }
+
+    (* eval with no-print *)
+
+    let nrepl_send_np env msg  () =
+      let res = Nrepl.send_msg env msg in
+      if (Gstr.notnone res.err) then
+          sprintf "%s\n" (Gstr.strip_fake_newline (Gstr.us res.err))
+      else
+        begin
+          ignore (Gstr.strip_fake_newline (Gstr.us res.out));
+          if (Gstr.notnone res.out) then
+            sprintf "%s\n" (Gstr.strip_fake_newline (Gstr.us res.out))
+          else if Gstr.notnone res.value then begin
+            if not (Gstr.nilp res.value) then
+              sprintf "%s\n" (Gstr.strip_fake_newline (Gstr.us res.value))
+            else
+              "x\n"
+          end
+          else "y\n"
+        end
+
+    let eval_np code () = 
+      let env = C.get_env() in
+      let expr = clj_string env code in
+      nrepl_send_np env (make_eval_message env expr) ()
 
     (* commands *)
 
@@ -148,14 +174,17 @@ module Jark =
       else
         eval_nfa "jark.package" "repo-add" [repo_name; repo_url]
 
+    let get_pid () =
+      Gstr.strip (eval_np (sprintf "(jark.ns/dispatch \"jark.vm\" \"get-pid\")") ())
+
     let stat_instrument instrument_name () =
-      eval_nfa "recon.jvmstat" "instrument-value" ["localhost"; "4211"; instrument_name]
+      eval_nfa "recon.jvmstat" "instrument-value" ["localhost"; get_pid() ; instrument_name]
 
     let stat_instruments xs () =
       try
         stat_instrument (List.hd xs) ()
       with Failure("hd") ->
-        eval_nfa "recon.jvmstat" "instrument-names" ["localhost"; "4211"]
+        eval_nfa "recon.jvmstat" "instrument-names" ["localhost"; get_pid()]
 
     let stat_vms () =
       let remote_host = C.getopt "--remote-host" in 
