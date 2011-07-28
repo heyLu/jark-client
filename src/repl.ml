@@ -15,6 +15,8 @@ module Repl =
     let readline prompt () =
       let stdin = stdin in
       Ledit.set_prompt prompt;
+      Ledit.set_max_len 200;
+      Ledit.open_histfile false "/tmp/jark";
       let buf = Buffer.create 4096 in
       let rec loop c = match c with
       | "\n" -> Buffer.contents buf
