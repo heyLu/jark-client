@@ -51,7 +51,6 @@ module Ns =
 
     let dispatch cmd arg =
       Config.opts := (Glist.list_to_hashtbl arg);
-      Jark.require "jark.ns";
       match cmd with
       | "usage"   -> Gstr.pe usage
       | "list"    -> Jark.nfa "jark.ns" ~f:"list" ()

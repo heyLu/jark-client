@@ -85,10 +85,8 @@ let _ =
     |  "lein"     :: []      -> Jark.nfa "leiningen.core" ~f:"-main" ()
     |  "lein"     :: xs      -> Lein.dispatch xs
     | "-e"        :: xs      -> Gstr.pe (Jark.eval (Glist.first xs) ())
-    | "-s"        :: []      -> rl()
     |  []                    -> Gstr.pe usage
     |  xs                    -> Ns.run xs
-    |  _                     -> Gstr.pe usage
 
   with Unix.Unix_error(_, "connect", "") ->
     Gstr.pe connection_usage

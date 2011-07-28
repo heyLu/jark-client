@@ -17,19 +17,19 @@ module Config =
 
     let cljr = 
       if Gsys.is_windows() then
-        "c:\cljr"
+        "c:\\cljr"
       else
         (Sys.getenv "HOME") ^ "/.cljr"
 
     let cljr_lib = 
       if Gsys.is_windows() then
-        "c:\cljr\lib"
+        "c:\\cljr\\lib"
       else
         (Sys.getenv "HOME") ^ "/.cljr/lib"
 
     let wget_bin = 
       if Gsys.is_windows() then
-        "c:\wget.exe --user-agent jark "
+        "c:\\wget.exe --user-agent jark "
       else
         "wget --user-agent jark "
 
@@ -87,13 +87,13 @@ module Config =
 
     let config_dir = 
       if Gsys.is_windows() then
-        "c:\jark\\"
+        "c:\\jark\\"
       else
         (Sys.getenv "HOME") ^ "/.config/"
 
     let jark_config_dir = 
       if Gsys.is_windows() then
-        "c:\jark\\"
+        "c:\\jark\\"
       else
         (Sys.getenv "HOME") ^ "/.config/jark/"
 

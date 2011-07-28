@@ -27,7 +27,6 @@ module Repo =
 
     let dispatch cmd arg =
       Config.opts := (Glist.list_to_hashtbl arg);
-      Jark.require "jark.package";
       match cmd with
       | "list"    -> Jark.nfa "jark.package" ~f:"repo-list" ()
       | "add"     -> add ()

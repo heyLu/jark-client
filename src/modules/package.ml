@@ -41,7 +41,6 @@ module Package =
 
     let dispatch cmd arg =
       Config.opts := (Glist.list_to_hashtbl arg);
-      Jark.require "jark.package";
       match cmd with
       | "usage"     -> Gstr.pe usage
       | "install"   -> install() 

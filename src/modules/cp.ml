@@ -38,7 +38,6 @@ module Cp =
       ()
 
     let dispatch cmd arg =
-      Jark.require "jark.cp";
       match cmd with
       | "usage"   -> Gstr.pe usage
       | "help"    -> Gstr.pe usage

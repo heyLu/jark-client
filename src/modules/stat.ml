@@ -36,7 +36,6 @@ module Stat =
 
     let dispatch cmd arg =
       Config.opts := (Glist.list_to_hashtbl arg);
-      Jark.require "recon.jvmstat";
       match cmd with
       | "instruments"   -> instruments arg ()
       | "instrument"    -> instruments arg ()
