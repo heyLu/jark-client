@@ -42,6 +42,9 @@ module Vm =
       Jark.nfa "jark.vm" ~f:"stats" ()
 
     let stop () =
+      let pid = Gstr.to_int (Stat.get_pid()) in
+      printf "Stopping JVM with pid: %d\n" pid;
+      Unix.kill pid Sys.sigkill;
       C.remove_config()
 
     let status () =
