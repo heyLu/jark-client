@@ -35,9 +35,13 @@ module Gconf =
       Glist.print_hashtbl user_config
           
     let load () =
-      let config = (open_in config_path) in 
-      Stream.iter format  (line_stream_of_channel config);
-      close_in config
+      if (Gfile.exists config_path) then begin
+        let config = (open_in config_path) in 
+        Stream.iter format  (line_stream_of_channel config);
+        close_in config
+      end
+      else
+        ()
 
     let get key ?(c=config_path) () =
       if (Hashtbl.mem user_config key) then
