@@ -7,4 +7,6 @@ module Ns :
 
     val load : string -> unit
 
+    val run : string list -> unit
+
   end
