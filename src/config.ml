@@ -11,9 +11,9 @@ module Config =
     open Gstr
     open Gfile
 
-    let opts = ref ((Hashtbl.create 0) : (string, string) Hashtbl.t);;
+    let opts = ref ((Hashtbl.create 0) : (string, string) Hashtbl.t)
 
-    (* let user_config = ref ((Hashtbl.create 0) : (string, string) Hashtbl.t);; *)
+    let jark_version = "jark client version 0.4"
 
     let cljr = 
       if Gsys.is_windows() then

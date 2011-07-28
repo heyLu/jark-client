@@ -29,4 +29,6 @@ module Config :
 
     val java_tools_path : string
 
+    val jark_version : string
+
   end

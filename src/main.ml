@@ -43,9 +43,6 @@ let connection_usage =
                  "Try vm connect --host <HOST> --port <PORT>";
                  "or specify --host / --port flags in the command"]
         
-let version = 
-  "version 0.4"
-
 let dispatch_nfa al = 
   let arg = ref [] in
   let last_arg = Glist.last al in
@@ -104,10 +101,10 @@ let _ =
     | "repo" :: xs    -> Repo.dispatch (Glist.first xs) (List.tl xs)
     | "-s" :: []      -> Gstr.pe (input_line stdin)
     | "repl" :: []    -> run_repl "user" ()
-    | "version" :: [] -> Gstr.pe version
+    | "version" :: [] -> Gstr.pe Config.jark_version 
     | "status" :: []  -> Vm.status ()
-    | "--version" :: [] -> Gstr.pe version
-    | "-v" :: []      -> Gstr.pe version
+    | "--version" :: [] -> Gstr.pe Config.jark_version
+    | "-v" :: []      -> Gstr.pe Config.jark_version
     | "install" :: [] -> Jark.install "jark"
     |  "lein"  :: [] -> Jark.nfa "leiningen.core" ~f:"-main" ()
     |  "lein" :: xs  -> Lein.dispatch xs
