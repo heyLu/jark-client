@@ -3,11 +3,16 @@ CLJR_DIR = "~/.cljr"
 
 HTTP_CLIENT = "/usr/bin/wget"
 
-URL_CLOJURE = "http://build.clojure.org/releases/org/clojure/clojure/1.2.1/clojure-1.2.1.jar"
+CLOJURE_VERSION = "1.2.1"
 
-URL_CONTRIB = "http://build.clojure.org/releases/org/clojure/clojure-contrib/1.2.0/clojure-contrib-1.2.0.jar"
+CONTRIB_VERSION = "1.2.0"
 
-URL_NREPL   =  "http://repo1.maven.org/maven2/org/clojure/tools.nrepl/0.0.5/tools.nrepl-0.0.5.jar"
+CLOJURE_URL = "http://build.clojure.org/releases/org/clojure/clojure/1.2.1/clojure-1.2.1.jar"
 
-URL_JARK    = "http://clojars.org/repo/jark/jark/0.4/jark-0.4.jar"
+CONTRIB_URL = "http://build.clojure.org/releases/org/clojure/clojure-contrib/1.2.0/clojure-contrib-1.2.0.jar"
 
+NREPL_URL   =  "http://repo1.maven.org/maven2/org/clojure/tools.nrepl/0.0.5/tools.nrepl-0.0.5.jar"
+
+JARK_URL    = "http://clojars.org/repo/jark/jark/0.4/jark-0.4.jar"
+
+STANDALONE_JAR  = yes

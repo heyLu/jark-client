@@ -71,15 +71,16 @@ module Jark =
 
     let nfa n ?(f="nil") ?(a=[]) () =
       let dm = ref "" in
+      let d  = dispatch_fn() in
       let env = C.get_env() in
       if f = "nil" then
-        dm := (sprintf "(jark.ns/dispatch %s)" (Gstr.qq n)) 
+        dm := (sprintf "%s %s)" d (Gstr.qq n)) 
       else if (Glist.is_empty a) then
-        dm := (sprintf "(jark.ns/dispatch %s %s)" (Gstr.qq n) (Gstr.qq f))
+        dm := (sprintf "%s %s %s)" d (Gstr.qq n) (Gstr.qq f))
       else begin
         let sa = String.concat " " (List.map (fun x -> (Gstr.qq x)) a) in
         dm := String.concat " " 
-            [dispatch_fn(); (Gstr.qq n); (Gstr.qq f); sa ; ")"]
+            [d; (Gstr.qq n); (Gstr.qq f); sa ; ")"]
       end;
       nrepl_send env { mid = node_id env; code = !dm }
 
