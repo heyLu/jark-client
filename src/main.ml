@@ -148,6 +148,7 @@ let _ =
     | "-s" :: []      -> Gstr.pe (input_line stdin)
     | "repl" :: []    -> run_repl "user" ()
     | "version" :: [] -> Gstr.pe version
+    | "status" :: []  -> Jark.vm_status ()
     | "--version" :: [] -> Gstr.pe version
     | "-v" :: []      -> Gstr.pe version
     | "install" :: [] -> Jark.install "jark"
