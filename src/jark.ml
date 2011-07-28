@@ -26,6 +26,24 @@ module Jark =
         end;
         flush stdout
 
+    let nrepl_send_np env msg  () =
+      let res = Nrepl.send_msg env msg in
+      if (Gstr.notnone res.err) then
+          sprintf "%s" (Gstr.strip_fake_newline (Gstr.us res.err))
+      else
+        begin
+          ignore (Gstr.strip_fake_newline (Gstr.us res.out));
+          if (Gstr.notnone res.out) then
+            sprintf "%s" (Gstr.strip_fake_newline (Gstr.us res.out))
+          else if Gstr.notnone res.value then begin
+            if not (Gstr.nilp res.value) then
+              sprintf "%s" (Gstr.strip_fake_newline (Gstr.us res.value))
+            else
+              "nil"
+          end
+          else "nil"
+        end
+
     let node_id env = sprintf "%s:%d" env.host env.port
 
     let repl_id env = (node_id env) ^ "-repl"
@@ -37,26 +55,13 @@ module Jark =
       let s = sprintf "(do (in-ns '%s) %s)" env.ns exp in
       Str.global_replace (Str.regexp "\"") "\\\"" s
 
-    let eval code = 
+    let eval code () = 
       let env = C.get_env() in
       let expr = clj_string env code in
-      nrepl_send env (make_eval_message env expr)
-
+      nrepl_send_np env (make_eval_message env expr) ()
 
     let require ns =
-      eval (sprintf "(require '%s)" ns)
-
-    (* nfa *)
-
-    let eval_ns ns = 
-      let env = C.get_env() in
-      let f = (sprintf "(jark.ns/dispatch %s)" (Gstr.qq ns)) in
-      nrepl_send env { mid = node_id env; code = f }
-      
-    let eval_fn ns fn =
-      let env = C.get_env() in
-      let f = (sprintf "(jark.ns/dispatch %s %s)" (Gstr.qq ns) (Gstr.qq fn)) in
-      nrepl_send env { mid = node_id env; code = f }
+      eval (sprintf "(require '%s)" ns) ()
 
     let dispatch_fn () =
       match (C.getopt "--json") with 
@@ -64,37 +69,19 @@ module Jark =
       | "yes" -> "(jark.ns/cli-json "
       |  _    -> "(jark.ns/dispatch "
 
-    let eval_nfa ns fn args =
-      let dfn = dispatch_fn () in
+    let nfa n ?(f="nil") ?(a=[]) () =
+      let dm = ref "" in
       let env = C.get_env() in
-      let sargs = String.concat " " (List.map (fun x -> (Gstr.qq x)) args) in
-      let f = String.concat " " [dispatch_fn(); (Gstr.qq ns); (Gstr.qq fn); sargs; ")"] in 
-      nrepl_send env { mid = node_id env; code = f }
-
-    (* eval with no-print *)
-
-    let nrepl_send_np env msg  () =
-      let res = Nrepl.send_msg env msg in
-      if (Gstr.notnone res.err) then
-          sprintf "%s\n" (Gstr.strip_fake_newline (Gstr.us res.err))
-      else
-        begin
-          ignore (Gstr.strip_fake_newline (Gstr.us res.out));
-          if (Gstr.notnone res.out) then
-            sprintf "%s\n" (Gstr.strip_fake_newline (Gstr.us res.out))
-          else if Gstr.notnone res.value then begin
-            if not (Gstr.nilp res.value) then
-              sprintf "%s\n" (Gstr.strip_fake_newline (Gstr.us res.value))
-            else
-              "x\n"
-          end
-          else "y\n"
-        end
-
-    let eval_np code () = 
-      let env = C.get_env() in
-      let expr = clj_string env code in
-      nrepl_send_np env (make_eval_message env expr) ()
+      if f = "nil" then
+        dm := (sprintf "(jark.ns/dispatch %s)" (Gstr.qq n)) 
+      else if (Glist.is_empty a) then
+        dm := (sprintf "(jark.ns/dispatch %s %s)" (Gstr.qq n) (Gstr.qq f))
+      else begin
+        let sa = String.concat " " (List.map (fun x -> (Gstr.qq x)) a) in
+        dm := String.concat " " 
+            [dispatch_fn(); (Gstr.qq n); (Gstr.qq f); sa ; ")"]
+      end;
+      nrepl_send env { mid = node_id env; code = !dm }
 
     (* commands *)
 
@@ -109,14 +96,14 @@ module Jark =
         
     let vm_connect () =
       C.set_env ();
-      eval_fn "jark.vm" "stats" 
+      nfa "jark.vm" ~f:"stats" ()
 
     let vm_stop () =
       C.remove_config()
 
     let do_cp path =
       printf "Adding classpath %s\n" path;
-      eval_nfa "jark.cp" "add" [path]
+      nfa "jark.cp" ~f:"add" ~a:[path] ()
 
     let cp_add_file path =
       let apath = (Gfile.abspath path) in
@@ -139,7 +126,7 @@ module Jark =
     let ns_load path =
       let apath = (Gfile.abspath path) in
       if (Gfile.exists apath) then
-        eval_nfa "jark.ns" "load-clj" [apath]
+        nfa "jark.ns" ~f:"load-clj" ~a:[apath] ()
       else begin
         printf "File not found %s\n" apath;
         ()
@@ -147,22 +134,22 @@ module Jark =
 
     let package_install () =
       let package = C.getopt "--package" in 
-      eval_nfa "jark.package" "install" [package]
+      nfa "jark.package" ~f:"install" ~a:[package] ()
 
     let package_versions () =
       let package = C.getopt "--package" in 
-      eval_nfa "jark.package" "versions" [package]
+      nfa "jark.package" ~f:"versions" ~a:[package] ()
 
     let package_latest () =
       let package = C.getopt "--package" in 
-      eval_nfa "jark.package" "latest-version" [package]
+      nfa "jark.package" ~f:"latest-version" ~a:[package] ()
 
     let package_search term () =
-      eval_nfa "jark.package" "search" [term]
+      nfa "jark.package" ~f:"search" ~a:[term] ()
 
     let swank_start () =
       let port = C.getopt "--swank-port" in 
-      eval_nfa "jark.swank" "start" ["0.0.0.0"; port]
+      nfa "jark.swank" ~f:"start" ~a:["0.0.0.0"; port] ()
 
     let repo_add () =
       let repo_name = C.getopt "--repo-name" in 
@@ -172,26 +159,26 @@ module Jark =
       else if repo_url = "none" then            
         Gstr.pe "repo add --repo-name <repo-name> --repo-url <repo-url"
       else
-        eval_nfa "jark.package" "repo-add" [repo_name; repo_url]
+        nfa "jark.package" ~f:"repo-add" ~a:[repo_name; repo_url] ()
 
     let get_pid () =
-      Gstr.strip (eval_np (sprintf "(jark.ns/dispatch \"jark.vm\" \"get-pid\")") ())
+      Gstr.strip (eval (sprintf "(jark.ns/dispatch \"jark.vm\" \"get-pid\")") ())
 
     let stat_instrument instrument_name () =
-      eval_nfa "recon.jvmstat" "instrument-value" ["localhost"; get_pid() ; instrument_name]
+      nfa "recon.jvmstat" ~f:"instrument-value" ~a:["localhost"; get_pid() ; instrument_name] ()
 
     let stat_instruments xs () =
       try
         stat_instrument (List.hd xs) ()
       with Failure("hd") ->
-        eval_nfa "recon.jvmstat" "instrument-names" ["localhost"; get_pid()]
+        nfa "recon.jvmstat" ~f:"instrument-names" ~a:["localhost"; get_pid()] ()
 
     let stat_vms () =
       let remote_host = C.getopt "--remote-host" in 
-      eval_nfa "recon.jvmstat" "vms" [remote_host]
+      nfa "recon.jvmstat" ~f:"vms" ~a:[remote_host] ()
           
     let lein args =
-      eval_nfa "leiningen.core" "-main" args
+      nfa "leiningen.core" ~f:"-main" ~a:args ()
 
     let install component =
       (try Unix.mkdir C.cljr 0o740 with Unix.Unix_error(Unix.EEXIST,_,_) -> ());
@@ -205,7 +192,6 @@ module Jark =
       end
       else 
         C.install_components();
-     
       Gstr.pe "Installed components successfully"
 
 end

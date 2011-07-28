@@ -29,7 +29,7 @@ module Repl =
       flush stdout
 
     let send_cmd env str () =
-      Jark.eval str;
+      Gstr.pe (Jark.eval str ());
       flush stdout;
       env
 

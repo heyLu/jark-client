@@ -1,15 +1,13 @@
 module Jark :
   sig
 
-    val eval : string -> unit
+    val eval : string -> unit -> string
 
-    val eval_ns : string -> unit
+    val nrepl_send_np : Datatypes.env -> Datatypes.nrepl_message -> unit -> string
 
-    val eval_fn : string -> string -> unit
+    val nfa : string -> ?f:string -> ?a:string list -> unit -> unit
 
-    val eval_nfa : string -> string -> string list -> unit
-
-    val require : string -> unit
+    val require : string -> string
 
     val vm_start : unit -> unit
 

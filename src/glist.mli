@@ -11,6 +11,8 @@ module Glist :
 
     val remove_last : 'a list -> 'a list
 
+    val is_empty : 'a list -> bool
+
     (* hashtable routines *)
 
     val assoc_to_hashtbl : ('a * 'b) list -> ('a, 'b) Hashtbl.t

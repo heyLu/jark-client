@@ -14,8 +14,8 @@ let cp cmd arg =
    match cmd with
    | "usage"   -> Gstr.pe cp_usage
    | "help"    -> Gstr.pe cp_usage
-   | "list"    -> Jark.eval_fn "jark.cp" "ls"
-   | "ls"      -> Jark.eval_fn "jark.cp" "ls"
+   | "list"    -> Jark.nfa "jark.cp" ~f:"ls" ()
+   | "ls"      -> Jark.nfa "jark.cp" ~f:"ls" ()
    | "add"     -> begin
       let last_arg = Glist.last arg in
       if (Gstr.starts_with last_arg  "--") then
@@ -31,10 +31,10 @@ let vm cmd arg =
   | "start"   -> Jark.vm_start()
   | "stop"    -> Jark.vm_stop()
   | "connect" -> Jark.vm_connect()
-  | "stat"    -> Jark.eval_fn "jark.vm" "stats"
-  | "uptime"  -> Jark.eval_fn "jark.vm" "uptime"
-  | "gc"      -> Jark.eval_fn "jark.vm" "gc"
-  | "threads" -> Jark.eval_fn "jark.vm" "threads"
+  | "stat"    -> Jark.nfa "jark.vm" ~f:"stats" ()
+  | "uptime"  -> Jark.nfa "jark.vm" ~f:"uptime" ()
+  | "gc"      -> Jark.nfa "jark.vm" ~f:"gc" ()
+  | "threads" -> Jark.nfa "jark.vm" ~f:"threads" ()
   |  _        -> Gstr.pe vm_usage 
             
 let ns cmd arg =
@@ -42,7 +42,7 @@ let ns cmd arg =
   Jark.require "jark.ns";
   match cmd with
   | "usage"   -> Gstr.pe ns_usage
-  | "list"    -> Jark.eval_fn "jark.ns" "list" 
+  | "list"    -> Jark.nfa "jark.ns" ~f:"list" ()
   | "load"    -> Jark.ns_load (Glist.first arg)
   |  _        -> Gstr.pe ns_usage
             
@@ -54,8 +54,8 @@ let package cmd arg =
   | "install"   -> Jark.package_install() 
   | "versions"  -> Jark.package_versions()
   | "deps"      -> Gstr.pe "deps"
-  | "installed" -> Jark.eval_fn "jark.package" "list"
-  | "list"      -> Jark.eval_fn "jark.package" "list"
+  | "installed" -> Jark.nfa "jark.package" ~f:"list" ()
+  | "list"      -> Jark.nfa "jark.package" ~f:"list" ()
   | "latest"    -> Jark.package_latest()
   | "search"    -> Jark.package_search (List.hd arg) ()
   |  _          -> Gstr.pe package_usage
@@ -71,7 +71,7 @@ let repo cmd arg =
   Config.opts := (Glist.list_to_hashtbl arg);
   Jark.require "jark.package";
   match cmd with
-  | "list"    -> Jark.eval_fn "jark.package" "repo-list"
+  | "list"    -> Jark.nfa "jark.package" ~f:"repo-list" ()
   | "add"     -> Jark.repo_add ()
   |  _        -> Gstr.pe repo_usage
 
@@ -82,13 +82,13 @@ let stat cmd arg =
   | "instruments"   -> Jark.stat_instruments arg ()
   | "instrument"    -> Jark.stat_instruments arg ()
   | "vms"           -> Jark.stat_vms () 
-  | "mem"           -> Jark.eval_fn "jark.vm" "stats"
+  | "mem"           -> Jark.nfa "jark.vm" ~f:"stats" ()
   |  _              -> Gstr.pe repo_usage
         
 let version = 
   "version 0.4"
 
-let nfa al = 
+let dispatch_nfa al = 
   let arg = ref [] in
   let last_arg = Glist.last al in
   if (Gstr.starts_with last_arg  "--") then begin
@@ -100,10 +100,9 @@ let nfa al =
   let xs = !arg in
   match (List.length xs) with 
     0 -> Gstr.pe usage
-  | 1 -> Jark.eval_ns  (List.nth xs 0)
-  | 2 -> Jark.eval_fn  (List.nth xs 0) (List.nth xs 1) 
-  | 3 -> Jark.eval_nfa (List.nth xs 0) (List.nth xs 1) (Glist.drop 2 xs)
-  | _ -> Jark.eval_nfa (List.nth xs 0) (List.nth xs 1) (Glist.drop 2 xs)
+  | 1 -> Jark.nfa (List.nth xs 0) ()
+  | 2 -> Jark.nfa  (List.nth xs 0) ~f:(List.nth xs 1) ()
+  | _ -> Jark.nfa (List.nth xs 0) ~f:(List.nth xs 1) ~a:(Glist.drop 2 xs) ()
 
 let dispatch xs =
   let file = (Glist.first xs) in
@@ -111,13 +110,13 @@ let dispatch xs =
     Jark.ns_load file;
   end
   else 
-    nfa xs
+    dispatch_nfa xs
 
 let rl () =
   let term = Unix.tcgetattr Unix.stdin in
   Unix.tcsetattr Unix.stdin Unix.TCSANOW term;
   let line = input_line stdin in
-  Jark.eval line
+  Gstr.pe (Jark.eval line ()) 
 
 let run_repl ns () = 
   if Gsys.is_windows() then
@@ -151,9 +150,9 @@ let _ =
     | "--version" :: [] -> Gstr.pe version
     | "-v" :: []      -> Gstr.pe version
     | "install" :: [] -> Jark.install "jark"
-    |  "lein"   :: [] -> Jark.eval_fn "leiningen.core" "-main" 
+    |  "lein"   :: [] -> Jark.nfa "leiningen.core" ~f:"-main" ()
     |  "lein"   :: xs -> Jark.lein xs
-    | "-e" :: xs      -> Jark.eval (Glist.first xs)
+    | "-e" :: xs      -> Gstr.pe (Jark.eval (Glist.first xs) ())
     | "-s" :: []      -> rl()
     |  []             -> Gstr.pe usage
     |  xs             -> dispatch xs

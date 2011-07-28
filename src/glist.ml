@@ -35,6 +35,11 @@ module Glist =
       | h::t -> List.rev t
       | []   -> []
 
+    let is_empty = function
+      | [] -> true
+      | _::_ -> false
+      | _ -> false
+
     let rec zip l1 l2 = match l1,l2 with
     | [],_ -> []
     | _, []-> []
