@@ -1,91 +1,47 @@
 (*pp $PP *)
 
-include Usage
 open Jark
-open Repl
 open Gsys
 open Gstr
-open Glist
 open Gfile
-open Config
+open Glist
 open Gconf
+open Config
 
-let cp cmd arg =
-  Jark.require "jark.cp";
-   match cmd with
-   | "usage"   -> Gstr.pe cp_usage
-   | "help"    -> Gstr.pe cp_usage
-   | "list"    -> Jark.nfa "jark.cp" ~f:"ls" ()
-   | "ls"      -> Jark.nfa "jark.cp" ~f:"ls" ()
-   | "add"     -> begin
-      let last_arg = Glist.last arg in
-      if (Gstr.starts_with last_arg  "--") then
-        Config.opts := Glist.list_to_hashtbl [last_arg; "yes"];
-      Jark.cp_add arg
-   end
-   |  _        -> Gstr.pe cp_usage
-            
-let vm cmd arg =
-  Config.opts := (Glist.list_to_hashtbl arg);
-  match cmd with
-  | "usage"   -> Gstr.pe vm_usage
-  | "start"   -> Jark.vm_start()
-  | "stop"    -> Jark.vm_stop()
-  | "connect" -> Jark.vm_connect()
-  | "stat"    -> Jark.nfa "jark.vm" ~f:"stats" ()
-  | "uptime"  -> Jark.nfa "jark.vm" ~f:"uptime" ()
-  | "gc"      -> Jark.nfa "jark.vm" ~f:"gc" ()
-  | "threads" -> Jark.nfa "jark.vm" ~f:"threads" ()
-  | "status"  -> Jark.vm_status ()
-  |  _        -> Gstr.pe vm_usage 
-            
-let ns cmd arg =
-  Config.opts := (Glist.list_to_hashtbl arg);
-  Jark.require "jark.ns";
-  match cmd with
-  | "usage"   -> Gstr.pe ns_usage
-  | "list"    -> Jark.nfa "jark.ns" ~f:"list" ()
-  | "load"    -> Jark.ns_load (Glist.first arg)
-  |  _        -> Gstr.pe ns_usage
-            
-let package cmd arg =
-  Config.opts := (Glist.list_to_hashtbl arg);
-  Jark.require "jark.package";
-  match cmd with
-  | "usage"     -> Gstr.pe package_usage
-  | "install"   -> Jark.package_install() 
-  | "versions"  -> Jark.package_versions()
-  | "deps"      -> Gstr.pe "deps"
-  | "installed" -> Jark.nfa "jark.package" ~f:"list" ()
-  | "list"      -> Jark.nfa "jark.package" ~f:"list" ()
-  | "latest"    -> Jark.package_latest()
-  | "search"    -> Jark.package_search (List.hd arg) ()
-  |  _          -> Gstr.pe package_usage
-            
-let swank cmd arg =
-  Config.opts := (Glist.list_to_hashtbl arg);
-  match cmd with
-  | "usage"   -> Gstr.pe swank_usage
-  | "start"   -> Jark.swank_start()
-  |  _        -> Gstr.pe swank_usage
+open Vm
+open Cp
+open Ns
+open Package
+open Repo
+open Repl
+open Lein
+open Swank
+open Stat
 
-let repo cmd arg =
-  Config.opts := (Glist.list_to_hashtbl arg);
-  Jark.require "jark.package";
-  match cmd with
-  | "list"    -> Jark.nfa "jark.package" ~f:"repo-list" ()
-  | "add"     -> Jark.repo_add ()
-  |  _        -> Gstr.pe repo_usage
+let usage =
+  Gstr.unlines ["usage: jark [-v|--version] [-h|--help]" ;
+                 "            [-r|repl] [-e|--eval]" ; 
+                 "            [-c|--config=<path>]" ;
+                 "            [-h|--host=<hostname>] [-p|--port=<port>] <module> <command> <args>" ;
+                 "";
+                 "The most commonly used jark modules are:" ;
+                 "    cp       list add" ;
+                 "    doc      search examples comments" ;
+                 "    lein     <task(s)>";
+                 "    ns       list load run" ;
+                 "    package  install uninstall versions deps search installed latest" ;
+                 "    repl     <namespace>" ;
+                 "    repo     list add remove" ;
+                 "    stat     instruments instrument vms mem";
+                 "    swank    start stop" ;
+                 "    vm       start connect stop uptime threads gc status";
+                 "";
+                 "See 'jark <module>' for more information on a specific module."]
 
-let stat cmd arg =
-  Config.opts := (Glist.list_to_hashtbl arg);
-  Jark.require "recon.jvmstat";
-  match cmd with
-  | "instruments"   -> Jark.stat_instruments arg ()
-  | "instrument"    -> Jark.stat_instruments arg ()
-  | "vms"           -> Jark.stat_vms () 
-  | "mem"           -> Jark.nfa "jark.vm" ~f:"stats" ()
-  |  _              -> Gstr.pe repo_usage
+let connection_usage = 
+  Gstr.unlines ["Cannot connect to the JVM on localhost:9000" ;
+                 "Try vm connect --host <HOST> --port <PORT>";
+                 "or specify --host / --port flags in the command"]
         
 let version = 
   "version 0.4"
@@ -109,7 +65,7 @@ let dispatch_nfa al =
 let dispatch xs =
   let file = (Glist.first xs) in
   if (Gfile.exists file) then begin
-    Jark.ns_load file;
+    Ns.load file;
   end
   else 
     dispatch_nfa xs
@@ -132,29 +88,29 @@ let _ =
     Gconf.load ();
     let al = (List.tl (Array.to_list Sys.argv)) in
     match al with
-      "vm" :: []      -> Gstr.pe vm_usage
-    | "vm" :: xs      -> vm (Glist.first xs) (List.tl xs)
-    | "cp" :: []      -> Gstr.pe cp_usage
-    | "cp" :: xs      -> cp (Glist.first xs) (List.tl xs)
-    | "ns" :: []      -> Gstr.pe ns_usage
-    | "ns" :: xs      -> ns (Glist.first xs) (List.tl xs)
-    | "package" :: [] -> Gstr.pe package_usage
-    | "package" :: xs -> package (Glist.first xs) (List.tl xs)
-    | "swank" :: []   -> Gstr.pe swank_usage
-    | "swank" :: xs   -> swank (Glist.first xs) (List.tl xs)
-    | "stat" :: []    -> Gstr.pe stat_usage
-    | "stat" :: xs    ->  stat (Glist.first xs) (List.tl xs)
-    | "repo" :: []    -> Gstr.pe repo_usage
-    | "repo" :: xs    -> repo (Glist.first xs) (List.tl xs)
+      "vm" :: []      -> Gstr.pe Vm.usage
+    | "vm" :: xs      -> Vm.dispatch (Glist.first xs) (List.tl xs)
+    | "cp" :: []      -> Gstr.pe Cp.usage
+    | "cp" :: xs      -> Cp.dispatch (Glist.first xs) (List.tl xs)
+    | "ns" :: []      -> Gstr.pe Ns.usage
+    | "ns" :: xs      -> Ns.dispatch (Glist.first xs) (List.tl xs)
+    | "package" :: [] -> Gstr.pe Package.usage
+    | "package" :: xs -> Package.dispatch (Glist.first xs) (List.tl xs)
+    | "swank" :: []   -> Gstr.pe Swank.usage
+    | "swank" :: xs   -> Swank.dispatch (Glist.first xs) (List.tl xs)
+    | "stat" :: []    -> Gstr.pe Stat.usage
+    | "stat" :: xs    -> Stat.dispatch (Glist.first xs) (List.tl xs)
+    | "repo" :: []    -> Gstr.pe Repo.usage
+    | "repo" :: xs    -> Repo.dispatch (Glist.first xs) (List.tl xs)
     | "-s" :: []      -> Gstr.pe (input_line stdin)
     | "repl" :: []    -> run_repl "user" ()
     | "version" :: [] -> Gstr.pe version
-    | "status" :: []  -> Jark.vm_status ()
+    | "status" :: []  -> Vm.status ()
     | "--version" :: [] -> Gstr.pe version
     | "-v" :: []      -> Gstr.pe version
     | "install" :: [] -> Jark.install "jark"
     |  "lein"  :: [] -> Jark.nfa "leiningen.core" ~f:"-main" ()
-    |  "lein"  :: xs -> Jark.lein xs
+    |  "lein" :: xs  -> Lein.dispatch xs
     | "-e" :: xs     -> Gstr.pe (Jark.eval (Glist.first xs) ())
     | "-s" :: []     -> rl()
     |  []            -> Gstr.pe usage

@@ -5,7 +5,6 @@ module Jark =
     open Datatypes
     open Config
     module C = Config
-    include Usage
     open Gfile
     open Gstr
     open Glist
@@ -83,113 +82,6 @@ module Jark =
             [dispatch_fn(); (Gstr.qq n); (Gstr.qq f); sa ; ")"]
       end;
       nrepl_send env { mid = node_id env; code = !dm }
-
-    (* commands *)
-
-    let do_cp path =
-      printf "Adding classpath %s\n" path;
-      nfa "jark.cp" ~f:"add" ~a:[path] ()
-
-    let cp_add_file path =
-      let apath = (Gfile.abspath path) in
-      if (Gfile.exists apath) then begin
-        if (Gfile.isdir apath) then 
-          if not ((C.getopt "--ignore-jars") = "yes") then
-            List.iter (fun x -> do_cp x) (Gfile.glob (sprintf "%s/*.jar" apath));
-        do_cp(apath);
-        ()
-      end
-      else begin
-        if not (Gstr.starts_with path "--") then
-          printf "File not found %s\n" apath
-      end
-
-    let cp_add path_list =
-      List.iter (fun x -> cp_add_file x) path_list;
-      ()
-
-    let vm_start () =
-      C.remove_config();
-      let port = C.getopt "--port" in
-      let jvm_opts = C.getopt "--jvm-opts" in 
-      let log_path = C.getopt "--port" in 
-      let c = String.concat " " ["java"; jvm_opts ; "-cp"; C.cp_boot(); "jark.vm"; port; "<&- & 2&>"; log_path] in
-      ignore (Sys.command c);
-      Unix.sleep 3;
-      cp_add [C.java_tools_path];
-      printf "Started JVM on port %s\n" port
-        
-    let vm_connect () =
-      C.set_env ();
-      nfa "jark.vm" ~f:"stats" ()
-
-    let vm_stop () =
-      C.remove_config()
-
-    let ns_load path =
-      let apath = (Gfile.abspath path) in
-      if (Gfile.exists apath) then
-        nfa "jark.ns" ~f:"load-clj" ~a:[apath] ()
-      else begin
-        printf "File not found %s\n" apath;
-        ()
-      end
-
-    let package_install () =
-      let package = C.getopt "--package" in 
-      nfa "jark.package" ~f:"install" ~a:[package] ()
-
-    let package_versions () =
-      let package = C.getopt "--package" in 
-      nfa "jark.package" ~f:"versions" ~a:[package] ()
-
-    let package_latest () =
-      let package = C.getopt "--package" in 
-      nfa "jark.package" ~f:"latest-version" ~a:[package] ()
-
-    let package_search term () =
-      nfa "jark.package" ~f:"search" ~a:[term] ()
-
-    let swank_start () =
-      let port = C.getopt "--swank-port" in 
-      nfa "jark.swank" ~f:"start" ~a:["0.0.0.0"; port] ()
-
-    let repo_add () =
-      let repo_name = C.getopt "--repo-name" in 
-      let repo_url = C.getopt "--repo-url" in 
-      if repo_name = "none" then 
-        Gstr.pe "repo add --repo-name <repo-name> --repo-url <repo-url"
-      else if repo_url = "none" then            
-        Gstr.pe "repo add --repo-name <repo-name> --repo-url <repo-url"
-      else
-        nfa "jark.package" ~f:"repo-add" ~a:[repo_name; repo_url] ()
-
-    let get_pid () =
-      Gstr.strip (eval (sprintf "(jark.ns/dispatch \"jark.vm\" \"get-pid\")") ())
-
-    let stat_instrument instrument_name () =
-      nfa "recon.jvmstat" ~f:"instrument-value" ~a:["localhost"; get_pid() ; instrument_name] ()
-
-    let stat_instruments xs () =
-      try
-        stat_instrument (List.hd xs) ()
-      with Failure("hd") ->
-        nfa "recon.jvmstat" ~f:"instrument-names" ~a:["localhost"; get_pid()] ()
-
-    let stat_vms () =
-      let remote_host = C.getopt "--remote-host" in 
-      nfa "recon.jvmstat" ~f:"vms" ~a:[remote_host] ()
-          
-    let lein args =
-      nfa "leiningen.core" ~f:"-main" ~a:args ()
-
-    let vm_status () =
-      Gconf.show();
-      let host = C.getopt "--host" in
-      let port = C.getopt "--port" in
-      Gstr.pe (Gstr.unlines ["PID      " ^ get_pid();
-                             "Host     " ^ host;
-                             "Port     " ^ port])
 
     let install component =
       (try Unix.mkdir C.cljr 0o740 with Unix.Unix_error(Unix.EEXIST,_,_) -> ());

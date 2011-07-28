@@ -1,0 +1,70 @@
+module Vm =
+  struct
+
+    open Printf
+    open Glist
+    open Gstr
+    open Jark
+    open Config
+    module C = Config
+
+    open Cp
+    open Gconf
+    open Stat
+
+    let usage = 
+      Gstr.unlines ["usage: jark vm <command> <args> [options]";
+                     "Available commands for 'vm' module:\n";
+                     "    start     [-p|--port=<9000>] [-j|--jvm-opts=<opts>] [--log=<path>]" ;
+                     "              Start a local Jark server. Takes optional JVM options as a \" delimited string\n" ;
+                     "    stop      [-n|--name=<vm-name>]";
+                     "              Shuts down the current instance of the JVM\n" ;
+                     "    connect   [-a|--host=<localhost>] [-p|--port=<port>] [-n|--name=<vm-name>]" ;
+                     "              Connect to a remote JVM\n" ;
+                     "    threads   Print a list of JVM threads\n" ;
+                     "    uptime    uptime of the current instance of the JVM\n" ;
+                     "    gc        Run garbage collection on the current instance of the JVM";
+                     "    status    Current vm connection status"; ]
+
+    let start () =
+      C.remove_config();
+      let port = C.getopt "--port" in
+      let jvm_opts = C.getopt "--jvm-opts" in 
+      let log_path = C.getopt "--port" in 
+      let c = String.concat " " ["java"; jvm_opts ; "-cp"; C.cp_boot(); "jark.vm"; port; "<&- & 2&>"; log_path] in
+      ignore (Sys.command c);
+      Unix.sleep 3;
+      Cp.add [C.java_tools_path];
+      printf "Started JVM on port %s\n" port
+        
+    let connect () =
+      C.set_env ();
+      Jark.nfa "jark.vm" ~f:"stats" ()
+
+    let stop () =
+      C.remove_config()
+
+    let status () =
+      Gconf.show();
+      let host = C.getopt "--host" in
+      let port = C.getopt "--port" in
+      Gstr.pe (Gstr.unlines ["PID      " ^ Stat.get_pid();
+                             "Host     " ^ host;
+                             "Port     " ^ port])
+
+    let dispatch cmd arg =
+      Config.opts := (Glist.list_to_hashtbl arg);
+      match cmd with
+      | "usage"   -> Gstr.pe usage
+      | "start"   -> start()
+      | "stop"    -> stop()
+      | "connect" -> connect()
+      | "stat"    -> Jark.nfa "jark.vm" ~f:"stats" ()
+      | "uptime"  -> Jark.nfa "jark.vm" ~f:"uptime" ()
+      | "gc"      -> Jark.nfa "jark.vm" ~f:"gc" ()
+      | "threads" -> Jark.nfa "jark.vm" ~f:"threads" ()
+      | "status"  -> status()
+      |  _        -> Gstr.pe usage 
+
+
+end

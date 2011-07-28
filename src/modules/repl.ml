@@ -8,8 +8,6 @@ module Repl =
     open Gstr
     open Gsys
 
-    let enabled = ref false
-
     let prompt_of env = env.ns ^ ">> "
 
     let readline prompt () =
