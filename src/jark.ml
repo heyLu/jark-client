@@ -85,22 +85,6 @@ module Jark =
 
     (* commands *)
 
-    let vm_start () =
-      C.remove_config();
-      let port = C.getopt "--port" in
-      let jvm_opts = C.getopt "--jvm-opts" in 
-      let log_path = C.getopt "--port" in 
-      let c = String.concat " " ["java"; jvm_opts ; "-cp"; C.cp_boot(); "jark.vm"; port; "<&- & 2&>"; log_path] in
-      ignore (Sys.command c);
-      printf "Started JVM on port %s\n" port
-        
-    let vm_connect () =
-      C.set_env ();
-      nfa "jark.vm" ~f:"stats" ()
-
-    let vm_stop () =
-      C.remove_config()
-
     let do_cp path =
       printf "Adding classpath %s\n" path;
       nfa "jark.cp" ~f:"add" ~a:[path] ()
@@ -122,6 +106,24 @@ module Jark =
     let cp_add path_list =
       List.iter (fun x -> cp_add_file x) path_list;
       ()
+
+    let vm_start () =
+      C.remove_config();
+      let port = C.getopt "--port" in
+      let jvm_opts = C.getopt "--jvm-opts" in 
+      let log_path = C.getopt "--port" in 
+      let c = String.concat " " ["java"; jvm_opts ; "-cp"; C.cp_boot(); "jark.vm"; port; "<&- & 2&>"; log_path] in
+      ignore (Sys.command c);
+      Unix.sleep 3;
+      cp_add [C.java_tools_path];
+      printf "Started JVM on port %s\n" port
+        
+    let vm_connect () =
+      C.set_env ();
+      nfa "jark.vm" ~f:"stats" ()
+
+    let vm_stop () =
+      C.remove_config()
 
     let ns_load path =
       let apath = (Gfile.abspath path) in
@@ -179,6 +181,13 @@ module Jark =
           
     let lein args =
       nfa "leiningen.core" ~f:"-main" ~a:args ()
+
+    let vm_status () =
+      let host = C.getopt "--host" in
+      let port = C.getopt "--port" in
+      Gstr.pe (Gstr.unlines ["PID      " ^ get_pid();
+                             "Host     " ^ host;
+                             "Port     " ^ port])
 
     let install component =
       (try Unix.mkdir C.cljr 0o740 with Unix.Unix_error(Unix.EEXIST,_,_) -> ());

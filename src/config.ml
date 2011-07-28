@@ -62,6 +62,8 @@ module Config =
 
     let standalone = true
 
+    let java_tools_path = Sys.getenv "JAVA_HOME" ^ "/lib/tools.jar"
+
     let component c = 
       match c with
       | "clojure"  -> [cljr_lib ^ "/clojure-1.2.1.jar" ;
@@ -174,14 +176,28 @@ module Config =
         line
       with e -> 
         close_in_noerr f; 
-        raise e 
-
+        raise e
+     
     (* options *)
+    let host_default = 
+      let f = jark_config_dir ^ "host" in
+      if (Gfile.exists f) then
+        get "host" ()
+      else
+        "localhost"
+
+    let port_default = 
+      let f = jark_config_dir ^ "port" in
+      if (Gfile.exists f) then
+        get "port" ()
+      else
+        "9000"
+
      
     let opt_default opt_name = 
       match opt_name with 
-      | "--port"         -> ["-p" ; "9000"]
-      | "--host"         -> ["-h" ; "localhost"]
+      | "--port"         -> ["-p" ; port_default]
+      | "--host"         -> ["-h" ; host_default]
       | "--jvm-opts"     -> ["-o" ; "-Xms64m -Xmx256m -DNOSECURITY=true"]
       | "--log-path"     -> ["-l" ; "/dev/null"]
       | "--package"      -> ["-p" ; "none"]

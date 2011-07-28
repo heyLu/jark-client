@@ -12,8 +12,10 @@ module Jark :
     val vm_start : unit -> unit
 
     val vm_stop : unit -> unit
-        
+
     val vm_connect : unit -> unit
+
+    val vm_status : unit -> unit
 
     val package_install : unit -> unit
 

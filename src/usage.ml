@@ -12,10 +12,10 @@ let vm_usage =
                  "              Shuts down the current instance of the JVM\n" ;
                  "    connect   [-a|--host=<localhost>] [-p|--port=<port>] [-n|--name=<vm-name>]" ;
                  "              Connect to a remote JVM\n" ;
-                 "    stat      [--instruments] [--instrument-value <name>]\n" ;
                  "    threads   Print a list of JVM threads\n" ;
                  "    uptime    uptime of the current instance of the JVM\n" ;
-                 "    gc        Run garbage collection on the current instance of the JVM" ]
+                 "    gc        Run garbage collection on the current instance of the JVM";
+                 "    status    Current vm connection status"; ]
 
 let repo_usage =
   Gstr.unlines ["usage: jark [options] repo <command> <args>";
@@ -92,7 +92,7 @@ let usage =
                  "    repo     list add remove" ;
                  "    stat     instruments instrument vms mem";
                  "    swank    start stop" ;
-                 "    vm       start connect stop uptime threads gc";
+                 "    vm       start connect stop uptime threads gc status";
                  "";
                  "See 'jark <module>' for more information on a specific module."]
 

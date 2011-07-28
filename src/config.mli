@@ -29,4 +29,6 @@ module Config :
 
     val remove_config : unit -> unit
 
+    val java_tools_path : string
+
   end

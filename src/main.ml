@@ -35,6 +35,7 @@ let vm cmd arg =
   | "uptime"  -> Jark.nfa "jark.vm" ~f:"uptime" ()
   | "gc"      -> Jark.nfa "jark.vm" ~f:"gc" ()
   | "threads" -> Jark.nfa "jark.vm" ~f:"threads" ()
+  | "status"  -> Jark.vm_status ()
   |  _        -> Gstr.pe vm_usage 
             
 let ns cmd arg =
