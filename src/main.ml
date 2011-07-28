@@ -8,6 +8,7 @@ open Gstr
 open Glist
 open Gfile
 open Config
+open Gconf
 
 let cp cmd arg =
   Jark.require "jark.cp";
@@ -128,7 +129,7 @@ let run_repl ns () =
 
 let _ =
   try
-    (* For shebang *)
+    Gconf.load ();
     let al = (List.tl (Array.to_list Sys.argv)) in
     match al with
       "vm" :: []      -> Gstr.pe vm_usage
@@ -141,8 +142,8 @@ let _ =
     | "package" :: xs -> package (Glist.first xs) (List.tl xs)
     | "swank" :: []   -> Gstr.pe swank_usage
     | "swank" :: xs   -> swank (Glist.first xs) (List.tl xs)
-    | "stat" :: []   -> Gstr.pe stat_usage
-    | "stat" :: xs   ->  stat (Glist.first xs) (List.tl xs)
+    | "stat" :: []    -> Gstr.pe stat_usage
+    | "stat" :: xs    ->  stat (Glist.first xs) (List.tl xs)
     | "repo" :: []    -> Gstr.pe repo_usage
     | "repo" :: xs    -> repo (Glist.first xs) (List.tl xs)
     | "-s" :: []      -> Gstr.pe (input_line stdin)
@@ -152,13 +153,13 @@ let _ =
     | "--version" :: [] -> Gstr.pe version
     | "-v" :: []      -> Gstr.pe version
     | "install" :: [] -> Jark.install "jark"
-    |  "lein"   :: [] -> Jark.nfa "leiningen.core" ~f:"-main" ()
-    |  "lein"   :: xs -> Jark.lein xs
-    | "-e" :: xs      -> Gstr.pe (Jark.eval (Glist.first xs) ())
-    | "-s" :: []      -> rl()
-    |  []             -> Gstr.pe usage
-    |  xs             -> dispatch xs
-    |  _              -> Gstr.pe usage
+    |  "lein"  :: [] -> Jark.nfa "leiningen.core" ~f:"-main" ()
+    |  "lein"  :: xs -> Jark.lein xs
+    | "-e" :: xs     -> Gstr.pe (Jark.eval (Glist.first xs) ())
+    | "-s" :: []     -> rl()
+    |  []            -> Gstr.pe usage
+    |  xs            -> dispatch xs
+    |  _             -> Gstr.pe usage
 
   with Unix.Unix_error(_, "connect", "") ->
     Gstr.pe connection_usage

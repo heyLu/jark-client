@@ -10,6 +10,7 @@ module Jark =
     open Gstr
     open Glist
     open Nrepl
+    open Gconf
 
     let nrepl_send env msg  =
       let res = Nrepl.send_msg env msg in
@@ -183,6 +184,7 @@ module Jark =
       nfa "leiningen.core" ~f:"-main" ~a:args ()
 
     let vm_status () =
+      Gconf.show();
       let host = C.getopt "--host" in
       let port = C.getopt "--port" in
       Gstr.pe (Gstr.unlines ["PID      " ^ get_pid();

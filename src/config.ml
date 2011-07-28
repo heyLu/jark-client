@@ -13,34 +13,7 @@ module Config =
 
     let opts = ref ((Hashtbl.create 0) : (string, string) Hashtbl.t);;
 
-    let user_preferences = Hashtbl.create 0
-
-    let line_stream_of_channel channel =
-      Stream.from
-        (fun _ -> try Some (input_line channel) with End_of_file -> None)
- 
-    let cread config () =
-      let comments = Str.regexp "#.*" in
-      let leading_white = Str.regexp "^[ \t]+" in
-      let trailing_white = Str.regexp "[ \t]+$" in
-      let equals_delim = Str.regexp "[ \t]*=[ \t]*" in
-      let xs = ref [] in
-      Stream.iter
-        (fun s ->
-          let s = Str.replace_first comments "" s in
-          let s = Str.replace_first leading_white "" s in
-          let s = Str.replace_first trailing_white "" s in
-          if String.length s > 0 then
-            match Str.bounded_split_delim equals_delim s 2 with
-            | [var; value] -> Hashtbl.replace user_preferences var value
-            | _ -> failwith s)
-        (line_stream_of_channel config);
-      List.rev !xs
-
-    let getc () =
-      let config_file = (Sys.getenv "HOME") ^ "/.jarkc" in 
-      let xs = cread (open_in config_file) in
-      xs
+    (* let user_config = ref ((Hashtbl.create 0) : (string, string) Hashtbl.t);; *)
 
     let cljr = 
       if Gsys.is_windows() then

@@ -7,8 +7,6 @@ module Config :
 
     val cp_boot : unit -> string
 
-    val getc : unit -> unit -> 'a list
-
     val cljr : string
 
     val cljr_lib : string
