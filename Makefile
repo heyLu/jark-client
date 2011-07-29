@@ -68,9 +68,8 @@ gh-x86:
 
 deps:
 	wget -O - http://pauillac.inria.fr/~ddr/camlp5/distrib/src/camlp5-6.02.3.tgz 2> /dev/null | tar xzvf - 
-	cd camlp5-6.02.3 && ./configure && make world.opt
-	rm -rf /usr/lib/ocaml/camlp5
-	cp -r lib/  /usr/lib/ocaml/camlp5
+	cd camlp5-6.02.3 && ./configure && make world.opt && make install
+	cd camlp5-6.02.3 &&  cp -r lib/*.cmxa  /usr/lib/ocaml/camlp5
 	rm -rf camlp5-6.02.3
 	wget -O - http://cristal.inria.fr/~ddr/ledit/distrib/src/ledit-2.02.1.tgz 2> /dev/null | tar xzvf - 
 	cd ledit-2.02.1 && make && make install && make ledit.cmxa
