@@ -35,7 +35,7 @@ module Config =
 
     let standalone = true
 
-    let java_tools_path = Sys.getenv "JAVA_HOME" ^ "/lib/tools.jar"
+    let java_tools_path () = (Sys.getenv "JAVA_HOME") ^ "/lib/tools.jar"
 
     let component c = 
       match c with

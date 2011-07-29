@@ -34,7 +34,7 @@ module Vm =
       let c = String.concat " " ["java"; jvm_opts ; "-cp"; C.cp_boot(); "jark.vm"; port; "<&- & 2&>"; log_path] in
       ignore (Sys.command c);
       Unix.sleep 3;
-      Cp.add [C.java_tools_path];
+      Cp.add [C.java_tools_path()];
       printf "Started JVM on port %s\n" port
         
     let connect () =

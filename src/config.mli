@@ -27,7 +27,7 @@ module Config :
 
     val remove_config : unit -> unit
 
-    val java_tools_path : string
+    val java_tools_path : unit -> string
 
     val jark_version : string
 

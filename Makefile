@@ -6,12 +6,17 @@ BIN_NAME = jark-$(VERSION)-`uname -m`
 OLIB = /usr/lib/ocaml
 WLIB = /usr/lib/i486-mingw32-ocaml
 
-WIN_LIBS = $(WLIB)/unix,$(WLIB)/bigarray,$(WLIB)/str,$(WLIB)/nums,$(OLIB)/camlp5/camlp5,$(OLIB)/camlp5/gramlib,$(OLIB)/ledit/ledit
+WIN_LIBS = $(WLIB)/unix,$(WLIB)/bigarray,$(WLIB)/str,$(WLIB)/nums,$(WLIB)/camlp5/camlp5,$(WLIB)/camlp5/gramlib,$(WLIB)/ledit/ledit
 
 LIBS = unix,bigarray,str,nums,$(OLIB)/camlp5/camlp5,$(OLIB)/camlp5/gramlib,$(OLIB)/ledit/ledit
 
 OCAMLBUILD = ocamlbuild -j 2 -quiet -I src/utils -I src -I src/modules -lflags -I,/usr/lib/ocaml/pcre  \
            -lflags -I,/usr/lib/ocaml/camlp5 -cflags  -I,/usr/lib/ocaml/ledit
+
+WOCAMLBUILD = ocamlbuild -j 2 -quiet -I src/utils -I src -I src/modules -lflags -I,$(WLIB)/pcre  \
+           -lflags -I,$(WLIB)/camlp5 -cflags  -I,$(WLIB)/ledit
+
+
 
 all:: native
 
@@ -45,7 +50,7 @@ ocamldebug :
 	cp _build/src/main.byte jark.byte
 
 exe :
-	$(OCAMLBUILD) -libs $(WIN_LIBS) -ocamlc i486-mingw32-ocamlc -ocamlopt i486-mingw32-ocamlopt  main.native
+	$(WOCAMLBUILD) -libs $(WIN_LIBS) -ocamlc i486-mingw32-ocamlc -ocamlopt i486-mingw32-ocamlopt  main.native
 	cp _build/src/main.native build/jark.exe
 
 clean::
