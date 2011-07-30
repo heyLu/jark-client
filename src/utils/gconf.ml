@@ -11,8 +11,8 @@ module Gconf =
     open Gstr
     open Gfile
 
-    let config_path = (Sys.getenv "HOME") ^ "/.jarkrc"
-
+    let config_file = ref ""
+        
     let user_config = Hashtbl.create 0
 
     let line_stream_of_channel channel =

@@ -10,7 +10,7 @@ WIN_LIBS = $(WLIB)/unix,$(WLIB)/bigarray,$(WLIB)/str,$(WLIB)/nums,$(WLIB)/camlp5
 
 LIBS = unix,bigarray,str,nums,$(OLIB)/camlp5/camlp5,$(OLIB)/camlp5/gramlib,$(OLIB)/ledit/ledit
 
-OCAMLBUILD = ocamlbuild -j 2 -quiet -I src/utils -I src -I src/modules -lflags -I,/usr/lib/ocaml/pcre  \
+OCAMLBUILD = ocamlbuild -j 2 -quiet -I src/utils -I src -I src/modules  -lflags -I,/usr/lib/ocaml/pcre  \
            -lflags -I,/usr/lib/ocaml/camlp5 -cflags  -I,/usr/lib/ocaml/ledit
 
 WOCAMLBUILD = ocamlbuild -j 2 -quiet -I src/utils -I src -I src/modules -lflags -I,$(WLIB)/pcre  \
@@ -29,7 +29,7 @@ upx :
 	$(OCAMLBUILD) -libs $(LIBS) main.native
 	cp _build/src/main.native build/$(BIN_NAME)-un
 	rm build/$(BIN_NAME)
-	upx --best --brute -9 -o build/$(BIN_NAME) build/$(BIN_NAME)-un
+	upx --brute --best -f -o build/$(BIN_NAME) build/$(BIN_NAME)-un
 	rm -f build/$(BIN_NAME)-un
 
 byte :

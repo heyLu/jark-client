@@ -1,6 +1,8 @@
 module Gconf :
   sig
     
+    val config_file : string ref
+
     val user_config : (string, string) Hashtbl.t
 
     val show : unit -> unit

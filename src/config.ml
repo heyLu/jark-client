@@ -10,6 +10,9 @@ module Config =
     open Glist
     open Gstr
     open Gfile
+    open Gconf
+
+    let set_config_file = (Sys.getenv "HOME") ^ "/.jarkrc"
 
     let opts = ref ((Hashtbl.create 0) : (string, string) Hashtbl.t)
 
@@ -33,7 +36,9 @@ module Config =
       else
         "wget --user-agent jark "
 
-    let standalone = true
+    let standalone = 
+      Gconf.get !Gconf.config_file "STANDALONE";
+        true
 
     let java_tools_path () = (Sys.getenv "JAVA_HOME") ^ "/lib/tools.jar"
 
