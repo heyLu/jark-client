@@ -29,7 +29,7 @@ upx :
 	$(OCAMLBUILD) -libs $(LIBS) main.native
 	cp _build/src/main.native build/$(BIN_NAME)-un
 	rm build/$(BIN_NAME)
-	upx -9 -o build/$(BIN_NAME) build/$(BIN_NAME)-un
+	upx --best --brute -9 -o build/$(BIN_NAME) build/$(BIN_NAME)-un
 	rm -f build/$(BIN_NAME)-un
 
 byte :
