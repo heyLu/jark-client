@@ -14,6 +14,7 @@ module Self =
                      "Available commands for 'self' module:\n";
                      "    install     [--no-standalone] [--force]" ; 
                      "    uninstall ";
+                     "    update ";
                      "    status      VM connection status"]
 
 
@@ -37,6 +38,9 @@ module Self =
       Gstr.pe (Gstr.unlines ["PID      " ^ Stat.get_pid();
                              "Host     " ^ host;
                              "Port     " ^ port])
+
+    let uninstall () =
+      Gstr.pe "Removed jark configs successfully"
 
     let dispatch cmd arg =
       Config.opts := (Glist.list_to_hashtbl arg);

@@ -45,10 +45,6 @@ gprof :
 	$(OCAMLBUILD) -libs $(LIBS) -ocamlopt "ocamlopt -p" main.native
 	cp _build/src/main.native jark.native
 
-ocamldebug :
-	$(OCAMLBUILD) -libs $(LIBS) -lflag -g -cflag -g main.byte
-	cp _build/src/main.byte jark.byte
-
 exe :
 	$(WOCAMLBUILD) -libs $(WIN_LIBS) -ocamlc i486-mingw32-ocamlc -ocamlopt i486-mingw32-ocamlopt  main.native
 	cp _build/src/main.native build/jark.exe
@@ -62,14 +58,13 @@ clean::
 	rm -rf jark
 	ocamlbuild -clean
 
-upload:
-	cd build && upload.rb jark-$(VERSION)-x86_64 icylisper/jark-client
-	cd build && upload.rb jark-$(VERSION).exe icylisper/jark-client	
-	cd build && upload.rb jark-$(VERSION)-i686 icylisper/jark-client		
-	cd build && upload.rb jark-$(VERSION)-x86_64-macosx  icylisper/jark-client		
-
-gh-x86:
-	cd build && upload.rb jark-$(VERSION)-x86_64 icylisper/jark-client
+up:
+	rm -rf upload/jark-$(VERSION)-x86_64*
+	cd upload && mkdir jark-$(VERSION)-x86_64
+	cp upload/README upload/jark-$(VERSION)-x86_64/
+	cp build/jark-$(VERSION)-x86_64 upload/jark-$(VERSION)-x86_64/
+	cd upload && tar zcf jark-$(VERSION)-x86_64.tar.gz jark-$(VERSION)-x86_64/*
+	cd upload && upload.rb jark-$(VERSION)-x86_64.tar.gz icylisper/jark-client
 
 deps:
 	wget -O - http://pauillac.inria.fr/~ddr/camlp5/distrib/src/camlp5-6.02.3.tgz 2> /dev/null | tar xzvf - 

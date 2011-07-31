@@ -18,8 +18,6 @@ module Config =
 
     let jark_version = "jark client version 0.4"
 
-    
-
     let cljr = 
       if Gsys.is_windows() then
         "c:\\cljr"
