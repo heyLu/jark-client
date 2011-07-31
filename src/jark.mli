@@ -9,6 +9,4 @@ module Jark :
 
     val require : string -> string
 
-    val install : string -> unit
-
    end

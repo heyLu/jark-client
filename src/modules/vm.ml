@@ -23,15 +23,14 @@ module Vm =
                      "              Connect to a remote JVM\n" ;
                      "    threads   Print a list of JVM threads\n" ;
                      "    uptime    uptime of the current instance of the JVM\n" ;
-                     "    gc        Run garbage collection on the current instance of the JVM";
-                     "    status    Current vm connection status"; ]
+                     "    gc        Run garbage collection on the current instance of the JVM"]
 
     let start () =
       C.remove_config();
       let port = C.getopt "--port" in
       let jvm_opts = C.getopt "--jvm-opts" in 
       let log_path = C.getopt "--port" in 
-      let c = String.concat " " ["java"; jvm_opts ; "-cp"; C.cp_boot(); "jark.vm"; port; "<&- & 2&>"; log_path] in
+      let c = String.concat " " ["java"; jvm_opts ; "-cp"; C.cp_boot(); "jark.vm"; port; "<&- & 2&>" ; log_path] in
       ignore (Sys.command c);
       Unix.sleep 3;
       Cp.add [C.java_tools_path()];
@@ -47,14 +46,6 @@ module Vm =
       Unix.kill pid Sys.sigkill;
       C.remove_config()
 
-    let status () =
-      Gconf.show();
-      let host = C.getopt "--host" in
-      let port = C.getopt "--port" in
-      Gstr.pe (Gstr.unlines ["PID      " ^ Stat.get_pid();
-                             "Host     " ^ host;
-                             "Port     " ^ port])
-
     let dispatch cmd arg =
       Config.opts := (Glist.list_to_hashtbl arg);
       match cmd with
@@ -66,7 +57,6 @@ module Vm =
       | "uptime"  -> Jark.nfa "jark.vm" ~f:"uptime" ()
       | "gc"      -> Jark.nfa "jark.vm" ~f:"gc" ()
       | "threads" -> Jark.nfa "jark.vm" ~f:"threads" ()
-      | "status"  -> status()
       |  _        -> Gstr.pe usage 
 
 

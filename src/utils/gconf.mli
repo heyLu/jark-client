@@ -1,7 +1,7 @@
 module Gconf :
   sig
     
-    val config_file : string ref
+    val config_path : string ref
 
     val user_config : (string, string) Hashtbl.t
 
@@ -9,7 +9,6 @@ module Gconf :
 
     val load : unit -> unit
 
-    val get : string -> ?c:string -> unit -> string
-
+    val get : string -> unit -> string
 
   end

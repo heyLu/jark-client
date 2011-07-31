@@ -18,6 +18,8 @@ module Config =
 
     let jark_version = "jark client version 0.4"
 
+    
+
     let cljr = 
       if Gsys.is_windows() then
         "c:\\cljr"
@@ -37,8 +39,7 @@ module Config =
         "wget --user-agent jark "
 
     let standalone = 
-      Gconf.get !Gconf.config_file "STANDALONE";
-        true
+      true
 
     let java_tools_path () = (Sys.getenv "JAVA_HOME") ^ "/lib/tools.jar"
 

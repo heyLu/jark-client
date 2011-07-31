@@ -84,18 +84,4 @@ module Jark =
       end;
       nrepl_send env { mid = node_id env; code = !dm }
 
-    let install component =
-      (try Unix.mkdir C.cljr 0o740 with Unix.Unix_error(Unix.EEXIST,_,_) -> ());
-      (try Unix.mkdir C.cljr_lib 0o740 with Unix.Unix_error(Unix.EEXIST,_,_) -> ());
-      C.setup_cljr ();
-      if C.standalone then begin
-        if (Gfile.exists (C.jar "standalone")) then
-          Gstr.pe ((C.jar "standalone") ^ " already exists")
-        else
-          C.install_standalone()
-      end
-      else 
-        C.install_components();
-      Gstr.pe "Installed components successfully"
-
 end

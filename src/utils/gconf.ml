@@ -11,7 +11,7 @@ module Gconf =
     open Gstr
     open Gfile
 
-    let config_file = ref ""
+    let config_path = ref ""
         
     let user_config = Hashtbl.create 0
 
@@ -35,15 +35,15 @@ module Gconf =
       Glist.print_hashtbl user_config
           
     let load () =
-      if (Gfile.exists config_path) then begin
-        let config = (open_in config_path) in 
+      if (Gfile.exists !config_path) then begin
+        let config = (open_in !config_path) in 
         Stream.iter format  (line_stream_of_channel config);
         close_in config
       end
       else
         ()
 
-    let get key ?(c=config_path) () =
+    let get key () =
       if (Hashtbl.mem user_config key) then
         Hashtbl.find user_config key
       else

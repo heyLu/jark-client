@@ -17,6 +17,7 @@ open Repl
 open Lein
 open Swank
 open Stat
+open Self
 
 let usage =
   Gstr.unlines ["usage: jark [-v|--version] [-h|--help]" ;
@@ -32,6 +33,7 @@ let usage =
                  "    package  install uninstall versions deps search installed latest" ;
                  "    repl     <namespace>" ;
                  "    repo     list add remove" ;
+                 "    self     install uninstall status";
                  "    stat     instruments instrument vms mem";
                  "    swank    start stop" ;
                  "    vm       start connect stop uptime threads gc status";
@@ -75,13 +77,15 @@ let _ =
     | "stat"      :: xs      -> Stat.dispatch (Glist.first xs) (List.tl xs)
     | "repo"      :: []      -> Gstr.pe Repo.usage
     | "repo"      :: xs      -> Repo.dispatch (Glist.first xs) (List.tl xs)
+    | "self"      :: []      -> Gstr.pe Self.usage
+    | "self"      :: xs      -> Self.dispatch (Glist.first xs) (List.tl xs)
     | "-s"        :: []      -> Gstr.pe (input_line stdin)
     | "repl"      :: []      -> run_repl "user" ()
     | "version"   :: []      -> Gstr.pe Config.jark_version 
-    | "status"    :: []      -> Vm.status ()
+    | "status"    :: []      -> Self.status ()
     | "--version" :: []      -> Gstr.pe Config.jark_version
     | "-v"        :: []      -> Gstr.pe Config.jark_version
-    | "install"   :: []      -> Jark.install "jark"
+    | "install"   :: []      -> Self.install ()
     |  "lein"     :: []      -> Jark.nfa "leiningen.core" ~f:"-main" ()
     |  "lein"     :: xs      -> Lein.dispatch xs
     | "-e"        :: xs      -> Gstr.pe (Jark.eval (Glist.first xs) ())
