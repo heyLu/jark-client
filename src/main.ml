@@ -18,6 +18,7 @@ open Lein
 open Swank
 open Stat
 open Self
+open Doc
 
 let usage =
   Gstr.unlines ["usage: jark [-v|--version] [-h|--help]" ;
@@ -79,6 +80,8 @@ let _ =
     | "repo"      :: xs      -> Repo.dispatch (Glist.first xs) (List.tl xs)
     | "self"      :: []      -> Gstr.pe Self.usage
     | "self"      :: xs      -> Self.dispatch (Glist.first xs) (List.tl xs)
+    | "doc"       :: []      -> Gstr.pe Doc.usage
+    | "doc"       :: xs      -> Doc.dispatch (Glist.first xs) (List.tl xs)
     | "-s"        :: []      -> Gstr.pe (input_line stdin)
     | "repl"      :: []      -> run_repl "user" ()
     | "version"   :: []      -> Gstr.pe Config.jark_version 
