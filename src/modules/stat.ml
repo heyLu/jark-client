@@ -6,6 +6,7 @@ module Stat =
     open Gstr
     open Jark
     open Config
+    open Gopt
 
     let usage = 
       Gstr.unlines ["usage: jark stat <command> <args>";
@@ -31,17 +32,16 @@ module Stat =
         Jark.nfa "recon.jvmstat" ~f:"instrument-names" ~a:["localhost"; get_pid()] ()
 
     let vms () =
-      let remote_host = Config.getopt "--remote-host" in 
+      let remote_host = Gopt.getopt "--remote-host" () in 
       Jark.nfa "recon.jvmstat" ~f:"vms" ~a:[remote_host] ()
 
     let dispatch cmd arg =
-      Config.opts := (Glist.list_to_hashtbl arg);
+      Gopt.opts := (Glist.list_to_hashtbl arg);
       match cmd with
       | "instruments"   -> instruments arg ()
       | "instrument"    -> instruments arg ()
       | "vms"           -> vms () 
       | "mem"           -> Jark.nfa "jark.vm" ~f:"stats" ()
       |  _              -> Gstr.pe usage
-          
 
 end

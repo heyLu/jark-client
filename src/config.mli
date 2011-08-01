@@ -19,10 +19,6 @@ module Config :
         
     val install_standalone : unit -> unit
 
-    val opts : (string, string) Hashtbl.t ref
-
-    val getopt : string -> string
-        
     val jar : string -> string
 
     val remove_config : unit -> unit
@@ -30,5 +26,7 @@ module Config :
     val java_tools_path : unit -> string
 
     val jark_version : string
+
+    val default_opts :  (string * string list) list
 
   end

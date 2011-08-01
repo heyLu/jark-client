@@ -11,10 +11,9 @@ module Config =
     open Gstr
     open Gfile
     open Gconf
+    open Gopt
 
     let set_config_file = (Sys.getenv "HOME") ^ "/.jarkrc"
-
-    let opts = ref ((Hashtbl.create 0) : (string, string) Hashtbl.t)
 
     let jark_version = "jark client version 0.4"
 
@@ -170,38 +169,25 @@ module Config =
       else
         "9000"
 
-     
-    let opt_default opt_name = 
-      match opt_name with 
-      | "--port"         -> ["-p" ; port_default]
-      | "--host"         -> ["-h" ; host_default]
-      | "--jvm-opts"     -> ["-o" ; "-Xms64m -Xmx256m -DNOSECURITY=true"]
-      | "--log-path"     -> ["-l" ; "/dev/null"]
-      | "--package"      -> ["-p" ; "none"]
-      | "--swank-port"   -> ["-s" ; "4005"]
-      | "--ignore-jars"  -> ["-i" ; "no"]
-      | "--json"         -> ["-j" ; "no"]
-      | "--repo-name"    -> ["-n" ; "none"]
-      | "--repo-url"     -> ["-u" ; "none"]
-      | "--remote-host"  -> ["-r" ; "localhost"]
-      |  _               -> ["-x" ; "none"]
-
-    let getopt opt_name =
-      let alias = (Glist.first (opt_default opt_name)) in
-      let h = !opts in 
-      if (Hashtbl.mem h opt_name) then
-        Hashtbl.find h opt_name
-      else if (Hashtbl.mem h alias) then
-        Hashtbl.find h alias
-      else
-        (Glist.last (opt_default opt_name))
+    let default_opts = 
+      ["--port"        , ["-p" ; port_default];
+       "--host"        , ["-h" ; host_default];
+       "--jvm-opts"    , ["-o" ; "-Xms64m -Xmx256m -DNOSECURITY=true"];
+       "--log-path"    , ["-l" ; "/dev/null"];
+       "--package"     , ["-p" ; "none"];
+       "--swank-port"  , ["-s" ; "4005"];
+       "--ignore-jars" , ["-i" ; "no"];
+       "--json"        , ["-j" ; "no"];
+       "--repo-name"   , ["-n" ; "none"];
+       "--repo-url"    , ["-u" ; "none"];
+       "--remote-host" , ["-r" ; "localhost"]]
 
     let set_env () =
-      let host = (getopt "--host") in
-      let port = (getopt "--port") in
+      let host = (Gopt.getopt "--host" ()) in
+      let port = (Gopt.getopt "--port" ()) in
       set "host" host ();
       set "port" port ();
-      { 
+      {  
         ns          = "user";
         debug       = false;
         host        = host;
@@ -209,8 +195,8 @@ module Config =
       }
         
     let get_env () = 
-      let host = (getopt "--host") in
-      let port = (getopt "--port") in
+      let host = (Gopt.getopt "--host" ()) in
+      let port = (Gopt.getopt "--port" ()) in
       {
         ns          = "user";
         debug       = false;

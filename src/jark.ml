@@ -10,6 +10,7 @@ module Jark =
     open Glist
     open Nrepl
     open Gconf
+    open Gopt
 
     let nrepl_send env msg  =
       let res = Nrepl.send_msg env msg in
@@ -64,7 +65,7 @@ module Jark =
       eval (sprintf "(require '%s)" ns) ()
 
     let dispatch_fn () =
-      match (C.getopt "--json") with 
+      match (Gopt.getopt "--json" ()) with 
       | "no"  -> "(jark.ns/dispatch "
       | "yes" -> "(jark.ns/cli-json "
       |  _    -> "(jark.ns/dispatch "

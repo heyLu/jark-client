@@ -5,6 +5,7 @@ module Package =
     open Gstr
     open Jark
     open Config
+    open Gopt
 
     let usage = 
       Gstr.unlines ["usage: jark [options] package <command> <args>";
@@ -25,22 +26,22 @@ module Package =
 
 
     let install () =
-      let package = Config.getopt "--package" in 
+      let package = Gopt.getopt "--package" () in 
       Jark.nfa "jark.package" ~f:"install" ~a:[package] ()
 
     let versions () =
-      let package = Config.getopt "--package" in 
+      let package = Gopt.getopt "--package" () in 
       Jark.nfa "jark.package" ~f:"versions" ~a:[package] ()
 
     let latest () =
-      let package = Config.getopt "--package" in 
+      let package = Gopt.getopt "--package" () in 
       Jark.nfa "jark.package" ~f:"latest-version" ~a:[package] ()
 
     let search term () =
       Jark.nfa "jark.package" ~f:"search" ~a:[term] ()
 
     let dispatch cmd arg =
-      Config.opts := (Glist.list_to_hashtbl arg);
+      Gopt.opts := (Glist.list_to_hashtbl arg);
       match cmd with
       | "usage"     -> Gstr.pe usage
       | "install"   -> install() 

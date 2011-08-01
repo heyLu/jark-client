@@ -11,6 +11,7 @@ module Vm =
     open Cp
     open Gconf
     open Stat
+    open Gopt
 
     let usage = 
       Gstr.unlines ["usage: jark vm <command> <args> [options]";
@@ -27,9 +28,9 @@ module Vm =
 
     let start () =
       C.remove_config();
-      let port = C.getopt "--port" in
-      let jvm_opts = C.getopt "--jvm-opts" in 
-      let log_path = C.getopt "--port" in 
+      let port = Gopt.getopt "--port" () in
+      let jvm_opts = Gopt.getopt "--jvm-opts" () in 
+      let log_path = Gopt.getopt "--port" () in 
       let c = String.concat " " ["java"; jvm_opts ; "-cp"; C.cp_boot(); "jark.vm"; port; "<&- & 2&>" ; log_path] in
       ignore (Sys.command c);
       Unix.sleep 3;
@@ -47,7 +48,7 @@ module Vm =
       C.remove_config()
 
     let dispatch cmd arg =
-      Config.opts := (Glist.list_to_hashtbl arg);
+      Gopt.opts := (Glist.list_to_hashtbl arg);
       match cmd with
       | "usage"   -> Gstr.pe usage
       | "start"   -> start()

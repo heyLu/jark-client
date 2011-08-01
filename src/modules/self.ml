@@ -8,6 +8,7 @@ module Self =
     open Config
     module C = Config
     open Stat
+    open Gopt
 
     let usage =
       Gstr.unlines ["usage: jark [options] self <command> <args>";
@@ -33,8 +34,8 @@ module Self =
       Gstr.pe "Installed components successfully"
 
     let status () =
-      let host = C.getopt "--host" in
-      let port = C.getopt "--port" in
+      let host = Gopt.getopt "--host" () in
+      let port = Gopt.getopt "--port" () in
       Gstr.pe (Gstr.unlines ["PID      " ^ Stat.get_pid();
                              "Host     " ^ host;
                              "Port     " ^ port])
@@ -43,7 +44,7 @@ module Self =
       Gstr.pe "Removed jark configs successfully"
 
     let dispatch cmd arg =
-      Config.opts := (Glist.list_to_hashtbl arg);
+      Gopt.opts := (Glist.list_to_hashtbl arg);
       match cmd with
       | "usage"   -> Gstr.pe usage
       | "install" -> install ()

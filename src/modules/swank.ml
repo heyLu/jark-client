@@ -5,6 +5,7 @@ module Swank =
     open Gstr
     open Jark
     open Config
+    open Gopt
 
     let usage =
       Gstr.unlines ["usage: jark [options] swank <command> <args>";
@@ -15,11 +16,11 @@ module Swank =
 
 
     let start () =
-      let port = Config.getopt "--swank-port" in 
+      let port = Gopt.getopt "--swank-port" () in 
       Jark.nfa "jark.swank" ~f:"start" ~a:["0.0.0.0"; port] ()
 
     let dispatch cmd arg =
-      Config.opts := (Glist.list_to_hashtbl arg);
+      Gopt.opts := (Glist.list_to_hashtbl arg);
       match cmd with
       | "usage"   -> Gstr.pe usage
       | "start"   -> start()

@@ -7,6 +7,7 @@ module Cp =
     open Gfile
     open Jark
     open Config
+    open Gopt
 
     let usage = 
       Gstr.unlines ["usage: jark [options] cp <command> <args>";
@@ -23,7 +24,7 @@ module Cp =
       let apath = (Gfile.abspath path) in
       if (Gfile.exists apath) then begin
         if (Gfile.isdir apath) then 
-          if not ((Config.getopt "--ignore-jars") = "yes") then
+          if not ((Gopt.getopt "--ignore-jars" ()) = "yes") then
             List.iter (fun x -> do_cp x) (Gfile.glob (sprintf "%s/*.jar" apath));
         do_cp(apath);
         ()
@@ -46,7 +47,7 @@ module Cp =
       | "add"     -> begin
           let last_arg = Glist.last arg in
           if (Gstr.starts_with last_arg  "--") then
-            Config.opts := Glist.list_to_hashtbl [last_arg; "yes"];
+            Gopt.opts := Glist.list_to_hashtbl [last_arg; "yes"];
           add arg
       end
       |  _        -> Gstr.pe usage

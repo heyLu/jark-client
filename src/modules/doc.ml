@@ -5,6 +5,7 @@ module Doc =
     open Gstr
     open Jark
     open Config
+    open Gopt
 
     let usage =
       Gstr.unlines ["usage: jark [options] doc <command> <args>";
@@ -17,7 +18,7 @@ module Doc =
       ()
 
     let dispatch cmd arg =
-      Config.opts := (Glist.list_to_hashtbl arg);
+      Gopt.opts := (Glist.list_to_hashtbl arg);
       match cmd with
       | "usage"   -> Gstr.pe usage
       | "search"  -> search()

@@ -19,6 +19,7 @@ open Swank
 open Stat
 open Self
 open Doc
+open Gopt
 
 let usage =
   Gstr.unlines ["usage: jark [-v|--version] [-h|--help]" ;
@@ -62,6 +63,7 @@ let run_repl ns () =
 let _ =
   try
     Gconf.load ();
+    Gopt.default_opts := Glist.assoc_to_hashtbl(Config.default_opts);
     let al = (List.tl (Array.to_list Sys.argv)) in
     match al with
       "vm"        :: []      -> Gstr.pe Vm.usage

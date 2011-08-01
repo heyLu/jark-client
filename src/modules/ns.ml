@@ -7,6 +7,7 @@ module Ns =
     open Gfile
     open Jark
     open Config
+    open Gopt
 
     let usage = 
       Gstr.unlines ["usage: jark [options] ns <command> <args>";
@@ -29,7 +30,7 @@ module Ns =
       let arg = ref [] in
       let last_arg = Glist.last al in
       if (Gstr.starts_with last_arg  "--") then begin
-        Config.opts := Glist.list_to_hashtbl [last_arg; "yes"];
+        Gopt.opts := Glist.list_to_hashtbl [last_arg; "yes"];
         arg := (Glist.remove_last al)
       end
       else
@@ -50,7 +51,7 @@ module Ns =
         dispatch_nfa xs
 
     let dispatch cmd arg =
-      Config.opts := (Glist.list_to_hashtbl arg);
+      Gopt.opts := (Glist.list_to_hashtbl arg);
       match cmd with
       | "usage"   -> Gstr.pe usage
       | "list"    -> Jark.nfa "jark.ns" ~f:"list" ()
