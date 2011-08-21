@@ -23,17 +23,17 @@ module Stat =
       Gstr.strip (Jark.eval (sprintf "(jark.ns/dispatch \"jark.vm\" \"get-pid\")") ())
 
     let instrument instrument_name () =
-      Jark.nfa "recon.jvmstat" ~f:"instrument-value" ~a:["localhost"; get_pid() ; instrument_name] ()
+      Jark.nfa "recon.core" ~f:"instrument-value" ~a:["localhost"; get_pid() ; instrument_name] ()
 
     let instruments xs () =
       try
         instrument (List.hd xs) ()
       with Failure("hd") ->
-        Jark.nfa "recon.jvmstat" ~f:"instrument-names" ~a:["localhost"; get_pid()] ()
+        Jark.nfa "recon.core" ~f:"instrument-names" ~a:["localhost"; get_pid()] ()
 
     let vms () =
       let remote_host = Gopt.getopt "--remote-host" () in 
-      Jark.nfa "recon.jvmstat" ~f:"vms" ~a:[remote_host] ()
+      Jark.nfa "recon.core" ~f:"vms" ~a:[remote_host] ()
 
     let dispatch cmd arg =
       Gopt.opts := (Glist.list_to_hashtbl arg);

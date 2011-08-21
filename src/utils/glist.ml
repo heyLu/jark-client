@@ -35,6 +35,12 @@ module Glist =
       | h::t -> List.rev t
       | []   -> []
 
+    let rec insert_at x l i =
+      if ( i = 1 ) then x::l else
+      match l with
+	[]	-> []
+      |	h::t	-> h::( insert_at x t ( i - 1 ) )
+
     let is_empty = function
       | [] -> true
       | _::_ -> false

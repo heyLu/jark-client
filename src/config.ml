@@ -172,7 +172,7 @@ module Config =
     let default_opts = 
       ["--port"        , ["-p" ; port_default];
        "--host"        , ["-h" ; host_default];
-       "--jvm-opts"    , ["-o" ; "-Xms64m -Xmx256m -DNOSECURITY=true"];
+       "--jvm-opts"    , ["-o" ; "-Xms256m -Xmx512m -DNOSECURITY=true"];
        "--log-path"    , ["-l" ; "/dev/null"];
        "--package"     , ["-p" ; "none"];
        "--swank-port"  , ["-s" ; "4005"];
