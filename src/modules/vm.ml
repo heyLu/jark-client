@@ -31,7 +31,7 @@ module Vm =
       let port = Gopt.getopt "--port" () in
       let jvm_opts = Gopt.getopt "--jvm-opts" () in 
       let log_path = Gopt.getopt "--port" () in 
-      let c = String.concat " " ["java"; jvm_opts ; "-cp"; C.cp_boot(); "jark.vm"; port; "<&- & 2&>" ; log_path] in
+      let c = String.concat " " ["java"; jvm_opts ; "-cp"; C.cp_boot(); "jark.vm"; port; "2> &" ; log_path] in
       ignore (Sys.command c);
       Unix.sleep 3;
       Cp.add [C.java_tools_path()];
