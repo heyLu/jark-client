@@ -31,12 +31,12 @@ all:: native
 
 native :
 	$(OCAMLBUILD) -libs $(LIBS) main.native
-	mkdir build
+	if [ ! -d build ]; then mkdir build; fi
 	cp _build/src/main.native build/$(BIN_NAME)
 
 upx :
 	$(OCAMLBUILD) -libs $(LIBS) main.native
-	mkdir build
+	if [ ! -d build ]; then mkdir build; fi
 	cp _build/src/main.native build/$(BIN_NAME)-un
 	rm build/$(BIN_NAME)
 	upx --brute --best -f -o build/$(BIN_NAME) build/$(BIN_NAME)-un
