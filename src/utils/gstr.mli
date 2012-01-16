@@ -15,12 +15,10 @@ module Gstr :
 
     val qq : string -> string
 
-    val strip_fake_newline : string -> string
-
-    val nilp : string option -> bool
-
     val pe : string -> unit
        
+    val println_unless_empty : string -> unit
+
     val us : string option -> string
 
     val notnone : 'a option -> bool

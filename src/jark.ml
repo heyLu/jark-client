@@ -1,49 +1,23 @@
 module Jark =
   struct
 
-    open Printf
-    open Datatypes
     open Config
-    module C = Config
-    open Gfile
-    open Gstr
-    open Glist
-    open Nrepl
+    open Datatypes
     open Gconf
+    open Gfile
+    open Glist
     open Gopt
+    open Gstr
+    open Nrepl
+    open Printf
+    open Response
+    module C = Config
 
-    let nrepl_send env msg  =
-      let res = Nrepl.send_msg env msg in
-      if Gstr.notnone res.err then
-        printf "%s\n" (Gstr.strip_fake_newline (Gstr.us res.err))
-      else
-        begin
-          ignore (Gstr.strip_fake_newline (Gstr.us res.out));
-          if Gstr.notnone res.out then printf "%s\n" (Gstr.strip_fake_newline (Gstr.us res.out));
-          if Gstr.notnone res.value then begin
-            if not (Gstr.nilp res.value) then
-              printf "%s\n" (Gstr.strip_fake_newline (Gstr.us res.value));
-          end
-        end;
-        flush stdout
+    let nrepl_send env msg =
+      Response.output_res (Nrepl.send_msg env msg)
 
-    let nrepl_send_np env msg  () =
-      let res = Nrepl.send_msg env msg in
-      if (Gstr.notnone res.err) then
-          sprintf "%s" (Gstr.strip_fake_newline (Gstr.us res.err))
-      else
-        begin
-          ignore (Gstr.strip_fake_newline (Gstr.us res.out));
-          if (Gstr.notnone res.out) then
-            sprintf "%s" (Gstr.strip_fake_newline (Gstr.us res.out))
-          else if Gstr.notnone res.value then begin
-            if not (Gstr.nilp res.value) then
-              sprintf "%s" (Gstr.strip_fake_newline (Gstr.us res.value))
-            else
-              "nil"
-          end
-          else "nil"
-        end
+    let nrepl_send_np env msg () =
+      Response.string_of_res (Nrepl.send_msg env msg)
 
     let node_id env = sprintf "%s:%d" env.host env.port
 
@@ -71,18 +45,15 @@ module Jark =
       |  _    -> "(jark.ns/dispatch "
 
     let nfa n ?(f="nil") ?(a=[]) () =
-      let dm = ref "" in
-      let d  = dispatch_fn() in
-      let env = C.get_env() in
-      if f = "nil" then
-        dm := (sprintf "%s %s)" d (Gstr.qq n)) 
-      else if (Glist.is_empty a) then
-        dm := (sprintf "%s %s %s)" d (Gstr.qq n) (Gstr.qq f))
-      else begin
-        let sa = String.concat " " (List.map (fun x -> (Gstr.qq x)) a) in
-        dm := String.concat " " 
-            [d; (Gstr.qq n); (Gstr.qq f); sa ; ")"]
-      end;
-      nrepl_send env { mid = node_id env; code = !dm }
+      let d = dispatch_fn () in
+      let env = C.get_env () in
+      let qn = Gstr.qq n in
+      let qf = Gstr.qq f in
+      let sa = String.concat " " (List.map Gstr.qq a) in
+      let dm = match f with
+      "nil" -> sprintf "%s %s)" d qn
+      | _   -> sprintf "%s %s %s %s)" d qn qf sa
+      in
+      nrepl_send env { mid = node_id env; code = dm }
 
 end
