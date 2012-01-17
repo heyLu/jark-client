@@ -1,6 +1,7 @@
 module Package =
   struct
 
+    open Datatypes
     open Glist
     open Gstr
     open Jark
@@ -47,8 +48,8 @@ module Package =
       | "install"   -> install() 
       | "versions"  -> versions()
       | "deps"      -> Gstr.pe "deps"
-      | "installed" -> Jark.nfa "jark.package" ~f:"list" ()
-      | "list"      -> Jark.nfa "jark.package" ~f:"list" ()
+      | "installed" -> Jark.nfa "jark.package" ~f:"list" ~fmt:ResHash ()
+      | "list"      -> Jark.nfa "jark.package" ~f:"list" ~fmt:ResHash ()
       | "latest"    -> latest()
       | "search"    -> search (List.hd arg) ()
       |  _          -> Gstr.pe usage

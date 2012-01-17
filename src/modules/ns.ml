@@ -1,6 +1,7 @@
 module Ns =
   struct
 
+    open Datatypes
     open Printf
     open Glist
     open Gstr
@@ -54,7 +55,7 @@ module Ns =
       Gopt.opts := (Glist.list_to_hashtbl arg);
       match cmd with
       | "usage"   -> Gstr.pe usage
-      | "list"    -> Jark.nfa "jark.ns" ~f:"list" ()
+      | "list"    -> Jark.nfa "jark.ns" ~f:"list" ~fmt:ResList ()
       | "load"    -> load (Glist.first arg)
       |  _        -> Gstr.pe usage
 

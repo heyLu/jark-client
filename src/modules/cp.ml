@@ -1,6 +1,7 @@
 module Cp =
   struct
 
+    open Datatypes
     open Printf
     open Glist
     open Gstr
@@ -42,8 +43,8 @@ module Cp =
       match cmd with
       | "usage"   -> Gstr.pe usage
       | "help"    -> Gstr.pe usage
-      | "list"    -> Jark.nfa "jark.cp" ~f:"ls" ()
-      | "ls"      -> Jark.nfa "jark.cp" ~f:"ls" ()
+      | "list"    -> Jark.nfa "jark.cp" ~f:"ls" ~fmt:ResList ()
+      | "ls"      -> Jark.nfa "jark.cp" ~f:"ls" ~fmt:ResList ()
       | "add"     -> begin
           let last_arg = Glist.last arg in
           if (Gstr.starts_with last_arg  "--") then

@@ -13,10 +13,10 @@ module Jark =
     open Response
     module C = Config
 
-    let nrepl_send env msg =
-      Response.output_res (Nrepl.send_msg env msg)
+    let nrepl_send env fmt msg =
+      Response.print_res ~fmt:fmt (Nrepl.send_msg env msg)
 
-    let nrepl_send_np env msg () =
+    let nrepl_send_np env msg =
       Response.string_of_res (Nrepl.send_msg env msg)
 
     let node_id env = sprintf "%s:%d" env.host env.port
@@ -33,7 +33,7 @@ module Jark =
     let eval code () = 
       let env = C.get_env() in
       let expr = clj_string env code in
-      nrepl_send_np env (make_eval_message env expr) ()
+      nrepl_send_np env (make_eval_message env expr)
 
     let require ns =
       eval (sprintf "(require '%s)" ns) ()
@@ -44,7 +44,7 @@ module Jark =
       | "yes" -> "(jark.ns/cli-json "
       |  _    -> "(jark.ns/dispatch "
 
-    let nfa n ?(f="nil") ?(a=[]) () =
+    let nfa n ?(f="nil") ?(a=[]) ?(fmt=ResText) () =
       let d = dispatch_fn () in
       let env = C.get_env () in
       let qn = Gstr.qq n in
@@ -54,6 +54,6 @@ module Jark =
       "nil" -> sprintf "%s %s)" d qn
       | _   -> sprintf "%s %s %s %s)" d qn qf sa
       in
-      nrepl_send env { mid = node_id env; code = dm }
+      nrepl_send env fmt { mid = node_id env; code = dm }
 
 end

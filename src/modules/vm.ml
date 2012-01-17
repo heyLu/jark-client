@@ -1,6 +1,7 @@
 module Vm =
   struct
 
+    open Datatypes
     open Printf
     open Glist
     open Gstr
@@ -53,10 +54,10 @@ module Vm =
       | "start"   -> start()
       | "stop"    -> stop()
       | "connect" -> connect()
-      | "stat"    -> Jark.nfa "jark.vm" ~f:"stats" ()
+      | "stat"    -> Jark.nfa "jark.vm" ~f:"stats" ~fmt:ResHash ()
       | "uptime"  -> Jark.nfa "jark.vm" ~f:"uptime" ()
       | "gc"      -> Jark.nfa "jark.vm" ~f:"gc" ()
-      | "threads" -> Jark.nfa "jark.vm" ~f:"threads" ()
+      | "threads" -> Jark.nfa "jark.vm" ~f:"threads" ~fmt:ResList ()
       |  _        -> Gstr.pe usage 
 
 

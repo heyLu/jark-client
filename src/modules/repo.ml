@@ -1,6 +1,7 @@
 module Repo =
   struct
 
+    open Datatypes
     open Glist
     open Gstr
     open Jark
@@ -29,7 +30,7 @@ module Repo =
     let dispatch cmd arg =
       Gopt.opts := (Glist.list_to_hashtbl arg);
       match cmd with
-      | "list"    -> Jark.nfa "jark.package" ~f:"repo-list" ()
+      | "list"    -> Jark.nfa "jark.package" ~f:"repo-list" ~fmt:ResHash ()
       | "add"     -> add ()
       |  _        -> Gstr.pe usage
 
