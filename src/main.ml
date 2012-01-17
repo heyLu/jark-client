@@ -95,7 +95,7 @@ let list_plugins () =
 
 let show_usage () =
   Gstr.pe usage;
-  Gstr.pe;
+  Gstr.pe "";
   Gstr.pe "Available modules:";
   list_plugins ()
 

@@ -9,6 +9,11 @@ module Cp =
     open Jark
     open Config
     open Gopt
+    open Plugin
+
+    let registry = Plugin.create ()
+    let register_fn = Plugin.register_fn registry
+    let alias_fn = Plugin.alias_fn registry
 
     let usage = 
       Gstr.unlines ["usage: jark [options] cp <command> <args>";
@@ -17,7 +22,7 @@ module Cp =
                      "    add       path+ [--ignore-jars]" ;
                      "              Add to the classpath for the current instance of the JVM"]
 
-    let show_usage () = Gstr.pe usage
+    let show_usage args = Gstr.pe usage
 
     let do_cp path =
       printf "Adding classpath %s\n" path;
@@ -41,18 +46,29 @@ module Cp =
       List.iter (fun x -> add_file x) path_list;
       ()
 
+    let list_cp args =
+      Jark.nfa "jark.cp" ~f:"ls" ~fmt:ResList ()
+
+    let add_cp args =
+      let last_arg = Glist.last args in
+      if (Gstr.starts_with last_arg  "--") then
+        Gopt.opts := Glist.list_to_hashtbl [last_arg; "yes"];
+        add args
+
+    let _ =
+      register_fn "list" list_cp
+      ["List the classpath for the current instance of the JVM"];
+
+      register_fn "add" add_cp [
+        "path+ [--ignore-jars]";
+        "Add to the classpath for the current instance of the JVM"];
+
+      register_fn "usage" show_usage [];
+
+      alias_fn "list" ["ls"];
+      alias_fn "usage" ["help"]
+
     let dispatch cmd arg =
-      match cmd with
-      | "usage"   -> Gstr.pe usage
-      | "help"    -> Gstr.pe usage
-      | "list"    -> Jark.nfa "jark.cp" ~f:"ls" ~fmt:ResList ()
-      | "ls"      -> Jark.nfa "jark.cp" ~f:"ls" ~fmt:ResList ()
-      | "add"     -> begin
-          let last_arg = Glist.last arg in
-          if (Gstr.starts_with last_arg  "--") then
-            Gopt.opts := Glist.list_to_hashtbl [last_arg; "yes"];
-          add arg
-      end
-      |  _        -> Gstr.pe usage
+      Plugin.dispatch registry cmd arg
 
 end
