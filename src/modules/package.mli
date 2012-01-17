@@ -7,13 +7,12 @@ module Package :
 
     val show_usage : unit -> unit
 
-    val install : unit -> unit
+    val install : string list -> unit
 
-    val versions : unit -> unit
+    val versions : string list -> unit
 
-    val latest : unit -> unit
+    val latest : string list -> unit
 
-    val search : string -> unit -> unit
-
+    val search : string list -> unit
 
   end

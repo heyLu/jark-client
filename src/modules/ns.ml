@@ -62,7 +62,7 @@ module Ns =
       Jark.nfa "jark.ns" ~f:"list" ~fmt:ResList ()
 
     let ns_load args = match args with
-    [] -> (); Gstr.pe (Gstr.unlines (Plugin.get_desc registry "load"))
+    [] -> (); Plugin.show_cmd_usage registry "load"
     | x :: xs -> load x
 
     let _ =
@@ -81,6 +81,7 @@ module Ns =
       alias_fn "usage" ["help"]
 
     let dispatch cmd arg =
+      Gopt.opts := (Glist.list_to_hashtbl arg);
       Plugin.dispatch registry cmd arg
 
   end

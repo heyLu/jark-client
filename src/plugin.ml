@@ -31,5 +31,4 @@ module Plugin = struct
   let show_cmd_usage pl name =
     Gstr.pe (Gstr.unlines (get_desc pl name))
 
-
 end
