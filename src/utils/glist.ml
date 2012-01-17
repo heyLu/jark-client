@@ -41,10 +41,7 @@ module Glist =
 	[]	-> []
       |	h::t	-> h::( insert_at x t ( i - 1 ) )
 
-    let is_empty = function
-      | [] -> true
-      | _::_ -> false
-      | _ -> false
+    let is_empty x = x = []
 
     let rec zip l1 l2 = match l1,l2 with
     | [],_ -> []
