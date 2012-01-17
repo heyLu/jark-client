@@ -88,6 +88,17 @@ let plugin_dispatch m args =
     []      -> Handler.show_usage ()
   | x :: xs -> Handler.dispatch x xs
 
+let list_plugins () =
+  let builtins = ["repl"] in
+  let ps = Hashtbl.fold (fun s m e -> s :: e) registry builtins in
+  Gstr.pe (Gstr.unlines (List.sort compare ps))
+
+let show_usage () =
+  Gstr.pe usage;
+  Gstr.pe;
+  Gstr.pe "Available modules:";
+  list_plugins ()
+
 (* handle actions that don't dispatch to a plugin *)
 let main_handler m args =
   match m :: args with
@@ -106,7 +117,7 @@ let _ =
     Gopt.default_opts := Glist.assoc_to_hashtbl(Config.default_opts);
     let al = (List.tl (Array.to_list Sys.argv)) in
     match al with
-      [] -> Gstr.pe usage
+      [] -> show_usage ()
     | m :: args ->
         if Hashtbl.mem registry m then
           plugin_dispatch m args
