@@ -63,7 +63,6 @@ let run_repl ns () =
 (* plugin system *)
 module type Plugin =
   sig
-    val usage      : string
     val show_usage : unit -> unit
     val dispatch   : string -> string list -> unit
   end
@@ -74,6 +73,7 @@ let register x = Hashtbl.add registry x
 
 let _ = register "cp"     (module Cp: Plugin)
 let _ = register "doc"    (module Doc: Plugin)
+let _ = register "lein"   (module Lein: Plugin)
 let _ = register "ns"     (module Ns: Plugin)
 let _ = register "package"(module Package: Plugin)
 let _ = register "repo"   (module Repo: Plugin)
@@ -97,8 +97,6 @@ let main_handler m args =
   | "--version" :: []
   | "-v"        :: []      -> Gstr.pe Config.jark_version
   | "install"   :: []      -> Self.install ()
-  | "lein"      :: []      -> Jark.nfa "leiningen.core" ~f:"-main" ()
-  | "lein"      :: xs      -> Lein.dispatch xs
   | "-e"        :: xs      -> Gstr.pe (Jark.eval (Glist.first xs) ())
   | xs                     -> Ns.run xs
 
