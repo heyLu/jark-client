@@ -9,6 +9,11 @@ module Ns =
     open Jark
     open Config
     open Gopt
+    open Plugin
+
+    let registry = Plugin.create ()
+    let register_fn = Plugin.register_fn registry
+    let alias_fn = Plugin.alias_fn registry
 
     let usage = 
       Gstr.unlines ["usage: jark [options] ns <command> <args>";
@@ -18,7 +23,7 @@ module Ns =
                      "    load      [--env=<string>] file" ;
                      "              Loads the given clj file, and adds relative classpath"]
 
-    let show_usage () = Gstr.pe usage
+    let show_usage args = Gstr.pe usage
 
     let load path =
       let apath = (Gfile.abspath path) in
@@ -53,12 +58,29 @@ module Ns =
       else 
         dispatch_nfa xs
 
-    let dispatch cmd arg =
-      Gopt.opts := (Glist.list_to_hashtbl arg);
-      match cmd with
-      | "usage"   -> Gstr.pe usage
-      | "list"    -> Jark.nfa "jark.ns" ~f:"list" ~fmt:ResList ()
-      | "load"    -> load (Glist.first arg)
-      |  _        -> Gstr.pe usage
+    let ns_list args =
+      Jark.nfa "jark.ns" ~f:"list" ~fmt:ResList ()
 
-end
+    let ns_load args = match args with
+    [] -> (); Gstr.pe (Gstr.unlines (Plugin.get_desc registry "load"))
+    | x :: xs -> load x
+
+    let _ =
+      register_fn "usage" show_usage [];
+
+      register_fn "list" ns_list [
+                     " [prefix]" ;
+                     "List all namespaces in the classpath. Optionally takes a";
+                     "namespace prefix"];
+
+      register_fn "load" ns_load [
+                     "[--env=<string>] file" ;
+                     "Loads the given clj file, and adds relative classpath"];
+
+      alias_fn "list" ["ls"];
+      alias_fn "usage" ["help"]
+
+    let dispatch cmd arg =
+      Plugin.dispatch registry cmd arg
+
+  end

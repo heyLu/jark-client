@@ -25,6 +25,6 @@ module Plugin = struct
 
   let get_desc pl name =
     let (f, d) = lookup pl name in
-    d
+    name :: d
 
 end
