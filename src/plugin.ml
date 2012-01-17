@@ -1,5 +1,6 @@
 module Plugin = struct
   open Printf
+  open Gstr
 
   type registry = (string, ((string list -> unit) * string list)) Hashtbl.t
   type aliases = (string, string list) Hashtbl.t
@@ -26,5 +27,9 @@ module Plugin = struct
   let get_desc pl name =
     let (f, d) = lookup pl name in
     name :: d
+
+  let show_cmd_usage pl name =
+    Gstr.pe (Gstr.unlines (get_desc pl name))
+
 
 end
