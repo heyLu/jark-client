@@ -60,42 +60,58 @@ let run_repl ns () =
     Repl.run "user" ()
    end
 
+(* plugin system *)
+module type Plugin =
+  sig
+    val usage : string
+    val dispatch : string -> string list -> unit
+  end
+
+let registry : (string, (module Plugin)) Hashtbl.t = Hashtbl.create 16
+
+let register x = Hashtbl.add registry x
+
+let _ = register "cp"     (module Cp: Plugin)
+let _ = register "doc"    (module Doc: Plugin)
+let _ = register "ns"     (module Ns: Plugin)
+let _ = register "package"(module Package: Plugin)
+let _ = register "repo"   (module Repo: Plugin)
+let _ = register "self"   (module Self: Plugin)
+let _ = register "stat"   (module Stat: Plugin)
+let _ = register "swank"  (module Swank: Plugin)
+let _ = register "vm"     (module Vm: Plugin)
+
+let plugin_dispatch m args =
+  let module Handler = (val (Hashtbl.find registry m) : Plugin) in
+  match args with
+    []      -> Gstr.pe Handler.usage
+  | x :: xs -> Handler.dispatch x xs
+
+(* handle actions that don't dispatch to a plugin *)
+let main_handler m args =
+  match m :: args with
+  | "repl"      :: []      -> run_repl "user" ()
+  | "status"    :: []      -> Self.status ()
+  | "version"   :: []
+  | "--version" :: []
+  | "-v"        :: []      -> Gstr.pe Config.jark_version
+  | "install"   :: []      -> Self.install ()
+  | "lein"      :: []      -> Jark.nfa "leiningen.core" ~f:"-main" ()
+  | "lein"      :: xs      -> Lein.dispatch xs
+  | "-e"        :: xs      -> Gstr.pe (Jark.eval (Glist.first xs) ())
+  | xs                     -> Ns.run xs
+
 let _ =
   try
     Gconf.load ();
     Gopt.default_opts := Glist.assoc_to_hashtbl(Config.default_opts);
     let al = (List.tl (Array.to_list Sys.argv)) in
     match al with
-      "vm"        :: []      -> Gstr.pe Vm.usage
-    | "vm"        :: xs      -> Vm.dispatch (Glist.first xs) (List.tl xs)
-    | "cp"        :: []      -> Gstr.pe Cp.usage
-    | "cp"        :: xs      -> Cp.dispatch (Glist.first xs) (List.tl xs)
-    | "ns"        :: []      -> Gstr.pe Ns.usage
-    | "ns"        :: xs      -> Ns.dispatch (Glist.first xs) (List.tl xs)
-    | "package"   :: []      -> Gstr.pe Package.usage
-    | "package"   :: xs      -> Package.dispatch (Glist.first xs) (List.tl xs)
-    | "swank"     :: []      -> Gstr.pe Swank.usage
-    | "swank"     :: xs      -> Swank.dispatch (Glist.first xs) (List.tl xs)
-    | "stat"      :: []      -> Gstr.pe Stat.usage
-    | "stat"      :: xs      -> Stat.dispatch (Glist.first xs) (List.tl xs)
-    | "repo"      :: []      -> Gstr.pe Repo.usage
-    | "repo"      :: xs      -> Repo.dispatch (Glist.first xs) (List.tl xs)
-    | "self"      :: []      -> Gstr.pe Self.usage
-    | "self"      :: xs      -> Self.dispatch (Glist.first xs) (List.tl xs)
-    | "doc"       :: []      -> Gstr.pe Doc.usage
-    | "doc"       :: xs      -> Doc.dispatch (Glist.first xs) (List.tl xs)
-    | "-s"        :: []      -> Gstr.pe (input_line stdin)
-    | "repl"      :: []      -> run_repl "user" ()
-    | "version"   :: []      -> Gstr.pe Config.jark_version 
-    | "status"    :: []      -> Self.status ()
-    | "--version" :: []      -> Gstr.pe Config.jark_version
-    | "-v"        :: []      -> Gstr.pe Config.jark_version
-    | "install"   :: []      -> Self.install ()
-    |  "lein"     :: []      -> Jark.nfa "leiningen.core" ~f:"-main" ()
-    |  "lein"     :: xs      -> Lein.dispatch xs
-    | "-e"        :: xs      -> Gstr.pe (Jark.eval (Glist.first xs) ())
-    |  []                    -> Gstr.pe usage
-    |  xs                    -> Ns.run xs
-
+      []      -> Gstr.pe usage
+    | m :: args ->
+        if Hashtbl.mem registry m then
+          plugin_dispatch m args
+        else
+          main_handler m args
   with Unix.Unix_error(_, "connect", "") ->
     Gstr.pe connection_usage
