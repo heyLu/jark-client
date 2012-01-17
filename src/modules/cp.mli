@@ -5,6 +5,8 @@ module Cp :
 
     val usage : string
 
+    val show_usage : unit -> unit
+
     val add : string list -> unit
 
 

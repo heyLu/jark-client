@@ -14,6 +14,7 @@ module Swank =
                      "              Start a swank server on given port\n" ;
                      "    stop      Stop an instance of the server"]
 
+    let show_usage () = Gstr.pe usage
 
     let start () =
       let port = Gopt.getopt "--swank-port" () in 

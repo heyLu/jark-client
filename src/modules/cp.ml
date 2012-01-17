@@ -17,6 +17,8 @@ module Cp =
                      "    add       path+ [--ignore-jars]" ;
                      "              Add to the classpath for the current instance of the JVM"]
 
+    let show_usage () = Gstr.pe usage
+
     let do_cp path =
       printf "Adding classpath %s\n" path;
       Jark.nfa "jark.cp" ~f:"add" ~a:[path] ()

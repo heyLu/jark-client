@@ -5,4 +5,5 @@ module Vm :
 
     val usage : string
 
+    val show_usage : unit -> unit
   end

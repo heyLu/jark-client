@@ -19,6 +19,8 @@ module Stat =
                      "    vms            --remote-host <host>" ;
                      "                   List the vms running on remote host\n"]
 
+    let show_usage () = Gstr.pe usage
+
     let get_pid () =
       Gstr.strip (Jark.eval (sprintf "(jark.ns/dispatch \"jark.vm\" \"get-pid\")") ())
 

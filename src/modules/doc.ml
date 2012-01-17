@@ -13,6 +13,7 @@ module Doc =
                      "    search     <term>" ; 
                      "    examples   [--show-browser]"]
 
+    let show_usage () = Gstr.pe usage
 
     let search () =
       ()

@@ -17,6 +17,8 @@ module Repo =
                      "    remove    --repo-name <repo-name>" ;
                      "              Remove repository"]
 
+    let show_usage () = Gstr.pe usage
+
     let add () =
       let repo_name = Gopt.getopt "--repo-name" () in 
       let repo_url  = Gopt.getopt "--repo-url" () in 

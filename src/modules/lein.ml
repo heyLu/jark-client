@@ -6,6 +6,12 @@ module Lein =
     open Jark
     open Config
 
+    let usage =
+      Gstr.unlines ["usage: jark [options] lein <args>";
+                    "Plugin to call leiningen from jark"]
+
+    let show_usage () = Gstr.pe usage
+
     let set_lein_pwd () = 
       Jark.nfa "jark.vm" ~f:"set-prop" ~a:["leiningen.original.pwd"; (Sys.getenv "PWD")] ()
 

@@ -3,4 +3,5 @@ module Lein :
 
     val dispatch : string list -> unit
 
+    val show_usage : unit -> unit
   end

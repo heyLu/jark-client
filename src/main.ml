@@ -63,8 +63,9 @@ let run_repl ns () =
 (* plugin system *)
 module type Plugin =
   sig
-    val usage : string
-    val dispatch : string -> string list -> unit
+    val usage      : string
+    val show_usage : unit -> unit
+    val dispatch   : string -> string list -> unit
   end
 
 let registry : (string, (module Plugin)) Hashtbl.t = Hashtbl.create 16
@@ -84,7 +85,7 @@ let _ = register "vm"     (module Vm: Plugin)
 let plugin_dispatch m args =
   let module Handler = (val (Hashtbl.find registry m) : Plugin) in
   match args with
-    []      -> Gstr.pe Handler.usage
+    []      -> Handler.show_usage ()
   | x :: xs -> Handler.dispatch x xs
 
 (* handle actions that don't dispatch to a plugin *)
@@ -107,7 +108,7 @@ let _ =
     Gopt.default_opts := Glist.assoc_to_hashtbl(Config.default_opts);
     let al = (List.tl (Array.to_list Sys.argv)) in
     match al with
-      []      -> Gstr.pe usage
+      [] -> Gstr.pe usage
     | m :: args ->
         if Hashtbl.mem registry m then
           plugin_dispatch m args

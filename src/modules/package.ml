@@ -25,6 +25,7 @@ module Package =
                      "    latest     -p|--package <package>" ;
                      "               Print the latest version of the package" ]
 
+    let show_usage () = Gstr.pe usage
 
     let install () =
       let package = Gopt.getopt "--package" () in 

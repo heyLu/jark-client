@@ -18,6 +18,8 @@ module Ns =
                      "    load      [--env=<string>] file" ;
                      "              Loads the given clj file, and adds relative classpath"]
 
+    let show_usage () = Gstr.pe usage
+
     let load path =
       let apath = (Gfile.abspath path) in
       if (Gfile.exists apath) then

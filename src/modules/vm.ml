@@ -27,6 +27,8 @@ module Vm =
                      "    uptime    uptime of the current instance of the JVM\n" ;
                      "    gc        Run garbage collection on the current instance of the JVM"]
 
+    let show_usage () = Gstr.pe usage
+
     let start () =
       C.remove_config();
       let port = Gopt.getopt "--port" () in

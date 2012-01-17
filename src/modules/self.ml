@@ -18,6 +18,7 @@ module Self =
                      "    update ";
                      "    status      VM connection status"]
 
+    let show_usage () = Gstr.pe usage
 
     let install () =
       (try Unix.mkdir Config.cljr 0o740 with Unix.Unix_error(Unix.EEXIST,_,_) -> ());
