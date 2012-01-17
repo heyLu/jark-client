@@ -44,9 +44,9 @@ module Package =
       let package = Gopt.getopt "--package" () in 
       Jark.nfa "jark.package" ~f:"latest-version" ~a:[package] ()
 
-    let search args = match args with
-    [] -> (); Plugin.show_cmd_usage registry "search"
-    | term :: xs -> Jark.nfa "jark.package" ~f:"search" ~a:[term] ()
+    let search args =
+      let package = Gopt.getopt "--package" () in
+      Jark.nfa "jark.package" ~f:"search" ~a:[package] ~fmt:ResHash ()
 
     let deps args =
       Gstr.pe "deps not implemented yet"
