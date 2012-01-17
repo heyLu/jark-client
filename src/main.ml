@@ -61,29 +61,29 @@ let run_repl ns () =
    end
 
 (* plugin system *)
-module type Plugin =
+module type PLUGIN =
   sig
     val show_usage : unit -> unit
     val dispatch   : string -> string list -> unit
   end
 
-let registry : (string, (module Plugin)) Hashtbl.t = Hashtbl.create 16
+let registry : (string, (module PLUGIN)) Hashtbl.t = Hashtbl.create 16
 
 let register x = Hashtbl.add registry x
 
-let _ = register "cp"     (module Cp: Plugin)
-let _ = register "doc"    (module Doc: Plugin)
-let _ = register "lein"   (module Lein: Plugin)
-let _ = register "ns"     (module Ns: Plugin)
-let _ = register "package"(module Package: Plugin)
-let _ = register "repo"   (module Repo: Plugin)
-let _ = register "self"   (module Self: Plugin)
-let _ = register "stat"   (module Stat: Plugin)
-let _ = register "swank"  (module Swank: Plugin)
-let _ = register "vm"     (module Vm: Plugin)
+let _ = register "cp"     (module Cp: PLUGIN)
+let _ = register "doc"    (module Doc: PLUGIN)
+let _ = register "lein"   (module Lein: PLUGIN)
+let _ = register "ns"     (module Ns: PLUGIN)
+let _ = register "package"(module Package: PLUGIN)
+let _ = register "repo"   (module Repo: PLUGIN)
+let _ = register "self"   (module Self: PLUGIN)
+let _ = register "stat"   (module Stat: PLUGIN)
+let _ = register "swank"  (module Swank: PLUGIN)
+let _ = register "vm"     (module Vm: PLUGIN)
 
 let plugin_dispatch m args =
-  let module Handler = (val (Hashtbl.find registry m) : Plugin) in
+  let module Handler = (val (Hashtbl.find registry m) : PLUGIN) in
   match args with
     []      -> Handler.show_usage ()
   | x :: xs -> Handler.dispatch x xs
