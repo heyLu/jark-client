@@ -4,8 +4,6 @@ module Response =
     open Datatypes
     open Gstr
 
-    type response_output = Err of string | Out of string | Val of string
-
     (* helper functions for response deserialization *)
     let rq x = Str.regexp (Str.quote x)
 
@@ -67,16 +65,12 @@ module Response =
       | ResList -> deserialize_list v
       | ResHash -> deserialize_hash v
 
-    (* first non-null in err, out, value *)
-    (* TODO: surely we should handle both out and val everywhere *)
-    let output_of_res res = match (res.err, res.out, res.value) with
-      (Some e, _, _)       -> Err (fmt_txt res.err)
-    | (None, Some o, _)    -> Out (fmt_txt res.out)
-    | (None, None, Some v) -> Val (fmt_val res.value "nil")
-    | (None, None, None)   -> Val ("nil")
-
-    let string_of_res res = match output_of_res res with
-    Err x | Out x | Val x -> x
+    (* called by `eval` in the repl
+     * NOTE: unlike clojure's repl, we put a newline between out and val
+     * even if out is not \n-terminated *)
+    let string_of_res res = match res.err with
+      Some e -> fmt_txt res.err
+    | None   -> Gstr.join_nonempty "\n" [fmt_txt res.out; fmt_val res.value "nil"]
 
     (* output err or (both out and value) *)
     let print_res ?(fmt=ResText) res =

@@ -30,4 +30,8 @@ module Gstr :
     val ends_with : string -> string -> bool
 
     val starts_with : string -> string -> bool
+
+    val join_if_exists : string -> string option list -> string
+
+    val join_nonempty : string -> string list -> string
   end

@@ -63,7 +63,13 @@ module Gstr =
     let pe str = print_endline str
 
     let println_unless_empty str =
-      if (str != "") then print_endline str
+      if (str <> "") then print_endline str
+
+    let join_if_exists str xs =
+      String.concat str (List.map us (List.filter notnone xs))
+
+    let join_nonempty str xs =
+      String.concat str (List.filter (fun x -> x <> "") xs)
 
     let to_int s =
       try
