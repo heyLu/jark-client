@@ -17,3 +17,5 @@ type response = {
   value  : string option;
   status : string option;
 }
+
+type response_format = ResText | ResHash | ResList

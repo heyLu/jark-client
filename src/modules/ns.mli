@@ -5,6 +5,8 @@ module Ns :
 
     val usage : string
 
+    val show_usage : unit -> unit
+
     val load : string -> unit
 
     val run : string list -> unit

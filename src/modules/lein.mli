@@ -1,6 +1,7 @@
 module Lein :
   sig
 
-    val dispatch : string list -> unit
+    val dispatch : string -> string list -> unit
 
+    val show_usage : unit -> unit
   end

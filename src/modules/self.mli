@@ -5,6 +5,8 @@ module Self :
 
     val usage : string
 
+    val show_usage : unit -> unit
+
     val install : unit -> unit
 
     val status : unit -> unit

@@ -27,9 +27,10 @@ module Gconf =
       let s = Str.replace_first comments "" s in
       let s = Str.replace_first leading_white "" s in
       let s = Str.replace_first trailing_white "" s in
-      if String.length s > 0 then
-        let [k ; v] = Str.bounded_split_delim equals_delim s 2 in
-        Hashtbl.replace user_config k v
+      let x = Str.bounded_split_delim equals_delim s 2 in
+      match x with
+        [k ; v] -> Hashtbl.replace user_config k v
+      | _ -> ()
 
     let show () =
       Glist.print_hashtbl user_config

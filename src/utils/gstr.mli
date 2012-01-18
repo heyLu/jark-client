@@ -15,12 +15,10 @@ module Gstr :
 
     val qq : string -> string
 
-    val strip_fake_newline : string -> string
-
-    val nilp : string option -> bool
-
     val pe : string -> unit
        
+    val println_unless_empty : string -> unit
+
     val us : string option -> string
 
     val notnone : 'a option -> bool
@@ -32,4 +30,8 @@ module Gstr :
     val ends_with : string -> string -> bool
 
     val starts_with : string -> string -> bool
+
+    val join_if_exists : string -> string option list -> string
+
+    val join_nonempty : string -> string list -> string
   end

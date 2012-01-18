@@ -60,19 +60,16 @@ module Gstr =
 
     let notnone x = x != None
         
-    let strip_fake_newline str =
-      if ends_with str "\\n" then
-        rchop (rchop str)
-      else
-        str
-
-    let strip_fake_newline str =
-      Str.global_replace (Str.regexp "\\\\n$") " " str
-
-    let nilp str = 
-      (strip (strip_fake_newline (us str))) = "nil"
-
     let pe str = print_endline str
+
+    let println_unless_empty str =
+      if (str <> "") then print_endline str
+
+    let join_if_exists str xs =
+      String.concat str (List.map us (List.filter notnone xs))
+
+    let join_nonempty str xs =
+      String.concat str (List.filter (fun x -> x <> "") xs)
 
     let to_int s =
       try
