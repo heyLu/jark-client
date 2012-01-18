@@ -49,6 +49,8 @@ module Stat =
     let mem args =
       Jark.nfa "jark.vm" ~f:"stats" ~fmt:ResHash ()
 
+    let pid args = Gstr.pe (get_pid ())
+
     let _ =
       register_fn "usage" show_usage [];
 
@@ -65,6 +67,8 @@ module Stat =
       register_fn "vms" vms [
         "--remote-host <host>" ;
         "List the vms running on remote host\n"];
+
+      register_fn "pid" pid ["Show pid of running JVM"];
 
       alias_fn "usage" ["help"]
 
