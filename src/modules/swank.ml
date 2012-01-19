@@ -19,13 +19,9 @@ module Swank =
       Jark.nfa "jark.swank" ~f:"start" ~a:["0.0.0.0"; port] ()
 
     let _ =
-      register_fn "usage" show_usage [];
-
       register_fn "start" start [
         "[-s|--swank-port 4005]" ;
-        "Start a swank server on given port\n"];
-
-      alias_fn "usage" ["help"]
+        "Start a swank server on given port\n"]
 
     let dispatch cmd arg =
       Gopt.opts := (Glist.list_to_hashtbl arg);

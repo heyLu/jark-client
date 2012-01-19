@@ -41,8 +41,6 @@ module Package =
       Jark.nfa "jark.package" ~f:"list" ~fmt:ResHash ()
 
     let _ =
-      register_fn "usage" show_usage [];
-
       register_fn "install" install [
         "-p|--package <package> [-v|--version <version>]" ;
         "Install the relevant version of package from clojars"] ;
@@ -69,8 +67,7 @@ module Package =
 
       register_fn "list" pkg_list ["List all packages installed\n"];
 
-      alias_fn "list" ["ls"; "installed"];
-      alias_fn "usage" ["help"]
+      alias_fn "list" ["ls"; "installed"]
 
     let dispatch cmd arg =
       Gopt.opts := (Glist.list_to_hashtbl arg);

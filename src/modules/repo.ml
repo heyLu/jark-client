@@ -27,16 +27,13 @@ module Repo =
       Jark.nfa "jark.package" ~f:"repo-list" ~fmt:ResHash ()
 
     let _ =
-      register_fn "usage" show_usage [];
-
       register_fn "add" add [
         "--repo-name <repo-name> --repo-url <repo-url>";
         "Add repository"];
 
       register_fn "list" repo_list ["List current repositories"];
 
-      alias_fn "list" ["ls"];
-      alias_fn "usage" ["help"]
+      alias_fn "list" ["ls"]
 
     let dispatch cmd arg =
       Gopt.opts := (Glist.list_to_hashtbl arg);

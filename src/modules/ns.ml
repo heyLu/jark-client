@@ -58,8 +58,6 @@ module Ns =
     | x :: xs -> load x
 
     let _ =
-      register_fn "usage" show_usage [];
-
       register_fn "list" ns_list [
                      " [prefix]" ;
                      "List all namespaces in the classpath. Optionally takes a";
@@ -69,8 +67,7 @@ module Ns =
                      "[--env=<string>] file" ;
                      "Loads the given clj file, and adds relative classpath"];
 
-      alias_fn "list" ["ls"];
-      alias_fn "usage" ["help"]
+      alias_fn "list" ["ls"]
 
     let dispatch cmd arg =
       Gopt.opts := (Glist.list_to_hashtbl arg);

@@ -41,8 +41,6 @@ module Stat =
     let pid args = Gstr.pe (get_pid ())
 
     let _ =
-      register_fn "usage" show_usage [];
-
       register_fn "instruments" instruments [
         "[prefix]" ;
         "List all available instruments. Optionally takes a regex\n"];
@@ -57,9 +55,7 @@ module Stat =
         "--remote-host <host>" ;
         "List the vms running on remote host\n"];
 
-      register_fn "pid" pid ["Show pid of running JVM"];
-
-      alias_fn "usage" ["help"]
+      register_fn "pid" pid ["Show pid of running JVM"]
 
     let dispatch cmd arg =
       Gopt.opts := (Glist.list_to_hashtbl arg);

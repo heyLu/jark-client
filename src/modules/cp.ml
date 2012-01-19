@@ -56,10 +56,7 @@ module Cp =
         "path+ [--ignore-jars]";
         "Add to the classpath for the current instance of the JVM"];
 
-      register_fn "usage" show_usage [];
-
-      alias_fn "list" ["ls"];
-      alias_fn "usage" ["help"]
+      alias_fn "list" ["ls"]
 
     let dispatch cmd arg =
       Plugin.dispatch registry cmd arg

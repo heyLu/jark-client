@@ -19,14 +19,9 @@ module Doc =
     let examples args = Gstr.pe "Not implemented yet"
 
     let _ =
-      register_fn "usage" show_usage [];
-
       register_fn "search" search ["<term>"];
 
-      register_fn "examples" examples ["[--show-browser]"];
-
-      alias_fn "usage" ["help"]
-
+      register_fn "examples" examples ["[--show-browser]"]
 
     let dispatch cmd arg =
       Gopt.opts := (Glist.list_to_hashtbl arg);

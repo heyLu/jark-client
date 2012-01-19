@@ -85,7 +85,7 @@ let _ = register "vm"     (module Vm: PLUGIN)
 let plugin_dispatch m args =
   let module Handler = (val (Hashtbl.find registry m) : PLUGIN) in
   match args with
-    []      -> Handler.show_usage ()
+  [] | "usage" :: _ | "help" :: _ -> Handler.show_usage ()
   | x :: xs -> Handler.dispatch x xs
 
 let list_plugins () =

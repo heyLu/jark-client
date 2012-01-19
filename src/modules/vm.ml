@@ -53,8 +53,6 @@ module Vm =
     let uptime args = Jark.nfa "jark.vm" ~f:"uptime" ()
 
     let _ =
-      register_fn "usage" show_usage [];
-
       register_fn "start" start [
         "[-p|--port=<9000>] [-j|--jvm-opts=<opts>] [--log=<path>]" ;
         "Start a local Jark server. Takes optional JVM options as a \" delimited string"];
@@ -73,9 +71,7 @@ module Vm =
 
       register_fn "uptime" uptime ["Uptime of the current instance of the JVM"];
 
-      register_fn "gc" gc ["Run garbage collection on the current instance of the JVM"];
-
-      alias_fn "usage" ["help"]
+      register_fn "gc" gc ["Run garbage collection on the current instance of the JVM"]
 
     let dispatch cmd arg =
       Gopt.opts := (Glist.list_to_hashtbl arg);

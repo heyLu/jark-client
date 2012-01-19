@@ -48,17 +48,13 @@ module Self =
       Gstr.pe "Removed jark configs successfully"
 
     let _ =
-      register_fn "usage" show_usage [];
-
       register_fn "install" install [
         "[--no-standalone] [--force]";
         "Install jark"];
 
       register_fn "status" status ["VM connection status"];
 
-      register_fn "uninstall" uninstall ["Uninstall jark"];
-
-      alias_fn "usage" ["help"]
+      register_fn "uninstall" uninstall ["Uninstall jark"]
 
     let dispatch cmd arg =
       Gopt.opts := (Glist.list_to_hashtbl arg);
