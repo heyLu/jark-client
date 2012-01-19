@@ -15,14 +15,7 @@ module Cp =
     let register_fn = Plugin.register_fn registry
     let alias_fn = Plugin.alias_fn registry
 
-    let usage = 
-      Gstr.unlines ["usage: jark [options] cp <command> <args>";
-                     "Available commands for 'cp' module:\n";
-                     "    list      List the classpath for the current instance of the JVM\n" ;
-                     "    add       path+ [--ignore-jars]" ;
-                     "              Add to the classpath for the current instance of the JVM"]
-
-    let show_usage args = Gstr.pe usage
+    let show_usage args = Plugin.show_usage registry "cp"
 
     let do_cp path =
       printf "Adding classpath %s\n" path;
@@ -63,10 +56,7 @@ module Cp =
         "path+ [--ignore-jars]";
         "Add to the classpath for the current instance of the JVM"];
 
-      register_fn "usage" show_usage [];
-
-      alias_fn "list" ["ls"];
-      alias_fn "usage" ["help"]
+      alias_fn "list" ["ls"]
 
     let dispatch cmd arg =
       Plugin.dispatch registry cmd arg

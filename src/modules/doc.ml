@@ -6,22 +6,24 @@ module Doc =
     open Jark
     open Config
     open Gopt
+    open Plugin
 
-    let usage =
-      Gstr.unlines ["usage: jark [options] doc <command> <args>";
-                     "Available commands for 'doc' module:\n";
-                     "    search     <term>" ; 
-                     "    examples   [--show-browser]"]
+    let registry = Plugin.create ()
+    let register_fn = Plugin.register_fn registry
+    let alias_fn = Plugin.alias_fn registry
 
-    let show_usage () = Gstr.pe usage
+    let show_usage args = Plugin.show_usage registry "doc"
 
-    let search () =
-      ()
+    let search args = Gstr.pe "Not implemented yet"
+
+    let examples args = Gstr.pe "Not implemented yet"
+
+    let _ =
+      register_fn "search" search ["<term>"];
+
+      register_fn "examples" examples ["[--show-browser]"]
 
     let dispatch cmd arg =
       Gopt.opts := (Glist.list_to_hashtbl arg);
-      match cmd with
-      | "usage"   -> Gstr.pe usage
-      | "search"  -> search()
-      |  _        -> Gstr.pe usage
+      Plugin.dispatch registry cmd arg
 end

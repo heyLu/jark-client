@@ -15,15 +15,7 @@ module Self =
     let register_fn = Plugin.register_fn registry
     let alias_fn = Plugin.alias_fn registry
 
-    let usage =
-      Gstr.unlines ["usage: jark [options] self <command> <args>";
-                     "Available commands for 'self' module:\n";
-                     "    install     [--no-standalone] [--force]" ;
-                     "    uninstall ";
-                     "    update ";
-                     "    status      VM connection status"]
-
-    let show_usage args = Gstr.pe usage
+    let show_usage args = Plugin.show_usage registry "self"
 
     let install_standalone_jar () =
       let st_jar = (C.jar "standalone") in
@@ -56,17 +48,13 @@ module Self =
       Gstr.pe "Removed jark configs successfully"
 
     let _ =
-      register_fn "usage" show_usage [];
-
       register_fn "install" install [
         "[--no-standalone] [--force]";
         "Install jark"];
 
       register_fn "status" status ["VM connection status"];
 
-      register_fn "uninstall" uninstall ["Uninstall jark"];
-
-      alias_fn "usage" ["help"]
+      register_fn "uninstall" uninstall ["Uninstall jark"]
 
     let dispatch cmd arg =
       Gopt.opts := (Glist.list_to_hashtbl arg);

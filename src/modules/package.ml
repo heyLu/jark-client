@@ -13,24 +13,7 @@ module Package =
     let register_fn = Plugin.register_fn registry
     let alias_fn = Plugin.alias_fn registry
 
-    let usage = 
-      Gstr.unlines ["usage: jark [options] package <command> <args>";
-                     "Available commands for 'package' module:\n";
-                     "    install    -p|--package <package> [-v|--version <version>]" ;
-                     "               Install the relevant version of package from clojars\n" ;
-                     "    uninstall  -p|--package <package>" ;
-                     "               Uninstall the package\n" ;
-                     "    versions   -p|--package <package>" ;
-                     "               List the versions of package installed\n" ;
-                     "    deps       -p|--package <package> [-v|--version <version>]" ;
-                     "               Print the library dependencies of package\n" ;
-                     "    search     -p|--package <package>" ;
-                     "               Search clojars for package\n" ;
-                     "    list       List all packages installed\n" ;
-                     "    latest     -p|--package <package>" ;
-                     "               Print the latest version of the package" ]
-
-    let show_usage args = Gstr.pe usage
+    let show_usage args = Plugin.show_usage registry "package"
 
     let install args =
       let package = Gopt.getopt "--package" () in 
@@ -58,8 +41,6 @@ module Package =
       Jark.nfa "jark.package" ~f:"list" ~fmt:ResHash ()
 
     let _ =
-      register_fn "usage" show_usage [];
-
       register_fn "install" install [
         "-p|--package <package> [-v|--version <version>]" ;
         "Install the relevant version of package from clojars"] ;
@@ -86,8 +67,7 @@ module Package =
 
       register_fn "list" pkg_list ["List all packages installed\n"];
 
-      alias_fn "list" ["ls"; "installed"];
-      alias_fn "usage" ["help"]
+      alias_fn "list" ["ls"; "installed"]
 
     let dispatch cmd arg =
       Gopt.opts := (Glist.list_to_hashtbl arg);

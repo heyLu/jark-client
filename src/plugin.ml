@@ -24,11 +24,29 @@ module Plugin = struct
     let (f, d) = lookup pl name in
     f args
 
+  (* TODO: handle tabular formatting properly *)
   let get_desc pl name =
     let (f, d) = lookup pl name in
-    name :: d
+    match d with
+    [] -> []
+    | x :: xs -> ("\t" ^ name ^ "\t" ^ x) :: (List.map (fun x -> "\t\t" ^ x) xs)
 
   let show_cmd_usage pl name =
     Gstr.pe (Gstr.unlines (get_desc pl name))
+
+  let append_usage pl acc name =
+    let d = get_desc pl name in
+    match d with
+      [] -> acc
+    | _  -> acc ^ "\n" ^ (Gstr.unlines d) ^ "\n"
+
+  let get_usage pl m =
+    let (reg, al) = pl in
+    let pref = Gstr.unlines [
+      "usage: jark " ^ m ^ " <command> <args> [options]\n";
+      "Available commands for module " ^ m ^ ":"] in
+    Hashtbl.fold (fun k v a -> append_usage pl a k) reg pref
+
+  let show_usage pl m = Gstr.pe (get_usage pl m)
 
 end

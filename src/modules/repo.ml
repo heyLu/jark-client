@@ -13,16 +13,7 @@ module Repo =
     let register_fn = Plugin.register_fn registry
     let alias_fn = Plugin.alias_fn registry
 
-    let usage =
-      Gstr.unlines ["usage: jark [options] repo <command> <args>";
-                     "Available commands for 'repo' module:\n";
-                     "    list      List current repositories\n" ;
-                     "    add       --repo-name <repo-name> --repo-url <repo-url>" ;
-                     "              Add repository\n" ;
-                     "    remove    --repo-name <repo-name>" ;
-                     "              Remove repository"]
-
-    let show_usage args = Gstr.pe usage
+    let show_usage args = Plugin.show_usage registry "repo"
 
     let add args =
       let repo_name = Gopt.getopt "--repo-name" () in 
@@ -36,16 +27,13 @@ module Repo =
       Jark.nfa "jark.package" ~f:"repo-list" ~fmt:ResHash ()
 
     let _ =
-      register_fn "usage" show_usage [];
-
       register_fn "add" add [
         "--repo-name <repo-name> --repo-url <repo-url>";
         "Add repository"];
 
       register_fn "list" repo_list ["List current repositories"];
 
-      alias_fn "list" ["ls"];
-      alias_fn "usage" ["help"]
+      alias_fn "list" ["ls"]
 
     let dispatch cmd arg =
       Gopt.opts := (Glist.list_to_hashtbl arg);

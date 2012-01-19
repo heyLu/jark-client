@@ -19,20 +19,7 @@ module Vm =
     let register_fn = Plugin.register_fn registry
     let alias_fn = Plugin.alias_fn registry
 
-    let usage = 
-      Gstr.unlines ["usage: jark vm <command> <args> [options]";
-                     "Available commands for 'vm' module:\n";
-                     "    start     [-p|--port=<9000>] [-j|--jvm-opts=<opts>] [--log=<path>]" ;
-                     "              Start a local Jark server. Takes optional JVM options as a \" delimited string\n" ;
-                     "    stop      [-n|--name=<vm-name>]";
-                     "              Shuts down the current instance of the JVM\n" ;
-                     "    connect   [-a|--host=<localhost>] [-p|--port=<port>] [-n|--name=<vm-name>]" ;
-                     "              Connect to a remote JVM\n" ;
-                     "    threads   Print a list of JVM threads\n" ;
-                     "    uptime    uptime of the current instance of the JVM\n" ;
-                     "    gc        Run garbage collection on the current instance of the JVM"]
-
-    let show_usage args = Gstr.pe usage
+    let show_usage args = Plugin.show_usage registry "vm"
 
     let start_cmd jvm_opts port =
       String.concat " " ["java"; jvm_opts ; "-cp"; C.cp_boot (); "jark.vm"; port; "&"]
@@ -66,8 +53,6 @@ module Vm =
     let uptime args = Jark.nfa "jark.vm" ~f:"uptime" ()
 
     let _ =
-      register_fn "usage" show_usage [];
-
       register_fn "start" start [
         "[-p|--port=<9000>] [-j|--jvm-opts=<opts>] [--log=<path>]" ;
         "Start a local Jark server. Takes optional JVM options as a \" delimited string"];
@@ -86,9 +71,7 @@ module Vm =
 
       register_fn "uptime" uptime ["Uptime of the current instance of the JVM"];
 
-      register_fn "gc" gc ["Run garbage collection on the current instance of the JVM"];
-
-      alias_fn "usage" ["help"]
+      register_fn "gc" gc ["Run garbage collection on the current instance of the JVM"]
 
     let dispatch cmd arg =
       Gopt.opts := (Glist.list_to_hashtbl arg);

@@ -1,9 +1,6 @@
 module Package :
   sig
-
     val dispatch : string -> string list -> unit
-
-    val usage : string
 
     val show_usage : unit -> unit
 
@@ -14,5 +11,4 @@ module Package :
     val latest : string list -> unit
 
     val search : string list -> unit
-
   end
