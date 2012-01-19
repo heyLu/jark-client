@@ -19,19 +19,6 @@ module Vm =
     let register_fn = Plugin.register_fn registry
     let alias_fn = Plugin.alias_fn registry
 
-    let usage = 
-      Gstr.unlines ["usage: jark vm <command> <args> [options]";
-                     "Available commands for 'vm' module:\n";
-                     "    start     [-p|--port=<9000>] [-j|--jvm-opts=<opts>] [--log=<path>]" ;
-                     "              Start a local Jark server. Takes optional JVM options as a \" delimited string\n" ;
-                     "    stop      [-n|--name=<vm-name>]";
-                     "              Shuts down the current instance of the JVM\n" ;
-                     "    connect   [-a|--host=<localhost>] [-p|--port=<port>] [-n|--name=<vm-name>]" ;
-                     "              Connect to a remote JVM\n" ;
-                     "    threads   Print a list of JVM threads\n" ;
-                     "    uptime    uptime of the current instance of the JVM\n" ;
-                     "    gc        Run garbage collection on the current instance of the JVM"]
-
     let show_usage args = Plugin.show_usage registry "vm"
 
     let start_cmd jvm_opts port =

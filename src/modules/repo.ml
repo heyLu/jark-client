@@ -13,16 +13,7 @@ module Repo =
     let register_fn = Plugin.register_fn registry
     let alias_fn = Plugin.alias_fn registry
 
-    let usage =
-      Gstr.unlines ["usage: jark [options] repo <command> <args>";
-                     "Available commands for 'repo' module:\n";
-                     "    list      List current repositories\n" ;
-                     "    add       --repo-name <repo-name> --repo-url <repo-url>" ;
-                     "              Add repository\n" ;
-                     "    remove    --repo-name <repo-name>" ;
-                     "              Remove repository"]
-
-    let show_usage args = Gstr.pe usage
+    let show_usage args = Plugin.show_usage registry "repo"
 
     let add args =
       let repo_name = Gopt.getopt "--repo-name" () in 

@@ -14,18 +14,7 @@ module Stat =
     let register_fn = Plugin.register_fn registry
     let alias_fn = Plugin.alias_fn registry
 
-    let usage = 
-      Gstr.unlines ["usage: jark stat <command> <args>";
-                     "Available commands for 'stat' module:\n";
-                     "    instruments    [prefix]" ;
-                     "                   List all available instruments. Optionally takes a regex\n" ;
-                     "    instrument     <instrument-name>" ;
-                     "                   Print the value for the given instrument name\n" ;
-                     "    mem            Print the memory usage of the JVM\n" ;
-                     "    vms            --remote-host <host>" ;
-                     "                   List the vms running on remote host\n"]
-
-    let show_usage args = Gstr.pe usage
+    let show_usage args = Plugin.show_usage registry "stat"
 
     let get_pid () =
       Gstr.strip (Jark.eval (sprintf "(jark.ns/dispatch \"jark.vm\" \"get-pid\")") ())

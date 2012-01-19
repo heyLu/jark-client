@@ -15,15 +15,7 @@ module Ns =
     let register_fn = Plugin.register_fn registry
     let alias_fn = Plugin.alias_fn registry
 
-    let usage = 
-      Gstr.unlines ["usage: jark [options] ns <command> <args>";
-                     "Available commands for 'ns' module:\n";
-                     "    list      [prefix]" ;
-                     "              List all namespaces in the classpath. Optionally takes a namespace prefix\n" ;
-                     "    load      [--env=<string>] file" ;
-                     "              Loads the given clj file, and adds relative classpath"]
-
-    let show_usage args = Gstr.pe usage
+    let show_usage args = Plugin.show_usage registry "ns"
 
     let load path =
       let apath = (Gfile.abspath path) in
@@ -45,7 +37,7 @@ module Ns =
         arg := al;
       let xs = !arg in
       match (List.length xs) with 
-        0 -> Gstr.pe usage
+        0 -> show_usage ()
       | 1 -> Jark.nfa (List.nth xs 0) ()
       | 2 -> Jark.nfa  (List.nth xs 0) ~f:(List.nth xs 1) ()
       | _ -> Jark.nfa (List.nth xs 0) ~f:(List.nth xs 1) ~a:(Glist.drop 2 xs) ()
