@@ -32,7 +32,7 @@ module Vm =
                      "    uptime    uptime of the current instance of the JVM\n" ;
                      "    gc        Run garbage collection on the current instance of the JVM"]
 
-    let show_usage args = Gstr.pe usage
+    let show_usage args = Plugin.show_usage registry "vm"
 
     let start_cmd jvm_opts port =
       String.concat " " ["java"; jvm_opts ; "-cp"; C.cp_boot (); "jark.vm"; port; "&"]
