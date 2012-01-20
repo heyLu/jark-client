@@ -66,13 +66,9 @@ module Response =
       | ResHash -> deserialize_hash v
 
     let make_res_string out value res =
-      let o = fmt_txt res.out in
-      let v = fmt_val res.value "nil" in
-      let a = match (out, value) with
-      | (true, true)  -> [o; v]
-      | (false, true) -> [v]
-      | (true, false) -> [o]
-      | (false, false) -> []
+      let (>>?) x y = if x then [y] else [] in
+      let a = (out   >>? (fmt_txt res.out)) @
+              (value >>? (fmt_val res.value "nil"))
       in
       Gstr.join_nonempty "\n" a
 
