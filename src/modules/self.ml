@@ -26,11 +26,8 @@ module Self =
         C.install_standalone ()
 
     let install args =
-      let mkdir dir =
-        try Unix.mkdir dir 0o740 with Unix.Unix_error (Unix.EEXIST,_,_) -> ()
-      in
-      mkdir Config.cljr;
-      mkdir C.cljr_lib;
+      Gfile.mkdir Config.cljr;
+      Gfile.mkdir C.cljr_lib;
       C.setup_cljr ();
       match C.standalone with
         true -> install_standalone_jar ()

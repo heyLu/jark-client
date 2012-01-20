@@ -17,4 +17,7 @@ module Gfile :
         
     val glob : string -> string list
 
+    val mkdir : string -> unit
+
+    val remove : string -> unit
   end

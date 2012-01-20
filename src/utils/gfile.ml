@@ -4,7 +4,15 @@ module Gfile =
     open Unix
     open Str
 
+    (* mkdir, ignore if dir exists *)
+    let mkdir dir =
+      try Unix.mkdir dir 0o740
+      with Unix.Unix_error (Unix.EEXIST,_,_) -> ()
+
     let exists filename = try ignore (lstat filename); true with error -> false
+
+    let remove file =
+      if exists file then Sys.remove file else ()
 
     let list_of_dir dirname =
       let dirh = opendir dirname in
