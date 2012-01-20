@@ -65,16 +65,27 @@ module Response =
       | ResList -> deserialize_list v
       | ResHash -> deserialize_hash v
 
+    let make_res_string out value res =
+      let o = fmt_txt res.out in
+      let v = fmt_val res.value "nil" in
+      let a = match (out, value) with
+      | (true, true)  -> [o; v]
+      | (false, true) -> [v]
+      | (true, false) -> [o]
+      | (false, false) -> []
+      in
+      Gstr.join_nonempty "\n" a
+
     (* called by `eval` in the repl
      * NOTE: unlike clojure's repl, we put a newline between out and val
      * even if out is not \n-terminated *)
-    let string_of_res res = match res.err with
+    let string_of_res ?(out=true) ?(value=true) res = match res.err with
       Some e -> fmt_txt res.err
-    | None   -> Gstr.join_nonempty "\n" [fmt_txt res.out; fmt_val res.value "nil"]
+    | None   -> make_res_string out value res
 
     (* output err or (both out and value) *)
     let print_res ?(fmt=ResText) res =
-      if (Gstr.notnone res.err) then 
+      if (Gstr.notnone res.err) then
         print_endline (fmt_txt res.err)
       else
         begin

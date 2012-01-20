@@ -13,11 +13,16 @@ module Jark =
     open Response
     module C = Config
 
+    (* evaluate msg, print output+value to stdout *)
+    (* pretty-print value based on fmt *)
+    (* used by the cli client to display hashes/lists from the server *)
     let nrepl_send env fmt msg =
       Response.print_res ~fmt:fmt (Nrepl.send_msg env msg)
 
-    let nrepl_send_np env msg =
-      Response.string_of_res (Nrepl.send_msg env msg)
+    (* evaluate msg, return output+value as string *)
+    (* used by the repl client *)
+    let nrepl_send_np ~out ~value env msg =
+      Response.string_of_res ~out:out ~value:value (Nrepl.send_msg env msg)
 
     let node_id env = sprintf "%s:%d" env.host env.port
 
@@ -30,10 +35,11 @@ module Jark =
       let s = sprintf "(do (in-ns '%s) %s)" env.ns exp in
       Str.global_replace (Str.regexp "\"") "\\\"" s
 
-    let eval code () = 
+    let eval code ?(out=true) ?(value=true) () =
       let env = C.get_env() in
       let expr = clj_string env code in
-      nrepl_send_np env (make_eval_message env expr)
+      let msg = make_eval_message env expr in
+      nrepl_send_np ~out:out ~value:value env msg
 
     let require ns =
       eval (sprintf "(require '%s)" ns) ()
