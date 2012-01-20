@@ -29,6 +29,7 @@ module Vm =
       let port = Gopt.getopt "--port" () in
       let jvm_opts = Gopt.getopt "--jvm-opts" () in
       let c = start_cmd jvm_opts port in
+      print_endline c;
       ignore (Sys.command c);
       Unix.sleep 3;
       Cp.add [C.java_tools_path ()];

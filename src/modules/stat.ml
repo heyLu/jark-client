@@ -17,7 +17,8 @@ module Stat =
     let show_usage args = Plugin.show_usage registry "stat"
 
     let get_pid () =
-      Gstr.strip (Jark.eval (sprintf "(jark.ns/dispatch \"jark.vm\" \"get-pid\")") ())
+      let msg = (sprintf "(jark.ns/dispatch \"jark.vm\" \"get-pid\")") in
+      Gstr.strip (Jark.eval ~out:true ~value:false msg ())
 
     let instrument name =
       Jark.nfa "recon.core" ~f:"instrument-value" ~a:["localhost"; get_pid() ; name] ()
