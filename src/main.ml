@@ -54,7 +54,7 @@ let rl () =
   Gstr.pe (Jark.eval line ()) 
 
 let run_repl ns () = 
-  if Gsys.is_windows() then
+  if Gsys.is_windows then
     Gstr.pe "Repl not implemented yet"
   else begin
     Repl.run "user" ()

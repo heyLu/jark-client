@@ -14,6 +14,5 @@ module Gsys =
       let _ = Unix.close_process (ic, oc) in
       (Buffer.contents buf)
 
-    let is_windows () = (Sys.os_type = "Win32")
-
+    let is_windows = (Sys.os_type = "Win32")
 end 
