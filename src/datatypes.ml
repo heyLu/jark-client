@@ -28,3 +28,10 @@ type platform_config = {
 }
 
 type response_format = ResText | ResHash | ResList
+
+type cmd_opts = {
+  env : env;
+  show_version: bool;
+  eval : bool ;
+  args : string list
+}

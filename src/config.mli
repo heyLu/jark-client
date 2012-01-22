@@ -1,7 +1,7 @@
 module Config :
   sig
     
-    val set_env : unit -> Datatypes.env
+    val set_env : Datatypes.env -> unit
     
     val get_env : unit -> Datatypes.env
 

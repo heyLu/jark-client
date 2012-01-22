@@ -36,7 +36,6 @@ module Vm =
       printf "Started JVM on port %s\n" port
 
     let connect args =
-      let _ = C.set_env () in
       Jark.nfa "jark.vm" ~f:"stats" ()
 
     let stop args =

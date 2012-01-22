@@ -20,6 +20,9 @@ open Stat
 open Self
 open Doc
 open Gopt
+open Printf
+open Datatypes
+open Options
 
 let usage =
   Gstr.unlines ["usage: jark [-v|--version] [-h|--help]" ;
@@ -42,8 +45,9 @@ let usage =
                  "";
                  "See 'jark <module>' for more information on a specific module."]
 
-let connection_usage = 
-  Gstr.unlines ["Cannot connect to the JVM on localhost:9000" ;
+let connection_usage () =
+  let env = Config.get_env () in
+  Gstr.unlines [sprintf "Cannot connect to the JVM on %s:%d" env.host env.port;
                  "Try vm connect --host <HOST> --port <PORT>";
                  "or specify --host / --port flags in the command"]
         
@@ -99,24 +103,59 @@ let show_usage () =
   Gstr.pe "Available modules:";
   list_plugins ()
 
+let run_eval args =
+  Gstr.pe (Jark.eval args ())
+
+let show_version () = Gstr.pe Config.jark_version
 (* handle actions that don't dispatch to a plugin *)
 let main_handler m args =
   match m :: args with
   | "repl"      :: []      -> run_repl "user" ()
   | "status"    :: []      -> Self.status ()
-  | "version"   :: []
-  | "--version" :: []
-  | "-v"        :: []      -> Gstr.pe Config.jark_version
+  | "version"   :: []      -> show_version ()
   | "install"   :: []      -> Self.install ()
-  | "-e"        :: xs      -> Gstr.pe (Jark.eval (Glist.first xs) ())
   | xs                     -> Ns.run xs
+
+(* option parsing *)
+
+let parse_argv () =
+  let e = Config.get_env () in
+  let (host, port, version, eval) =
+    (ref (e.host), ref (e.port), ref false, ref false)
+  in
+  let rest = try
+    Options.parse_argv [
+      "-h", Options.Set_string host, ("Set server hostname (default: " ^ !host ^ ")");
+      "-p", Options.Set_int port,    (sprintf "Set server port (default: %d)" !port);
+      "-v", Options.Set_on version,  "Show jark version";
+      "--version", Options.Set_on version,  "Show jark version";
+      "-e", Options.Set_on eval,     "Evaluate expression";
+  ]
+  with Options.BadOptions x -> print_endline ("bad options: " ^ x); raise Exit
+  in
+  {
+    env = {
+      host = !host;
+      port = !port;
+      ns = "user";
+      debug = false
+    };
+    show_version = !version;
+    eval = !eval;
+    args = rest
+  }
 
 let _ =
   try
     Gconf.load ();
-    Gopt.default_opts := Glist.assoc_to_hashtbl(Config.default_opts);
-    let al = (List.tl (Array.to_list Sys.argv)) in
-    match al with
+    Gopt.default_opts := Glist.assoc_to_hashtbl (Config.default_opts);
+    let opts = parse_argv () in
+    Config.set_env opts.env;
+    if opts.show_version then
+      show_version ()
+    else if opts.eval then
+      run_eval (List.hd opts.args)
+    else match opts.args with
       [] -> show_usage ()
     | m :: args ->
         if Hashtbl.mem registry m then
@@ -124,4 +163,4 @@ let _ =
         else
           main_handler m args
   with Unix.Unix_error(_, "connect", "") ->
-    Gstr.pe connection_usage
+    Gstr.pe (connection_usage ())

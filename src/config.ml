@@ -13,6 +13,21 @@ module Config =
     open Gconf
     open Gopt
 
+    (* environment *)
+    let global_env = ref {
+      ns = "user";
+      debug = false;
+      host = "localhost";
+      port = 9000
+    }
+
+    let set_env env =
+      global_env := env
+
+    let get_env () = !global_env
+
+    (* platform config *)
+
     let (~/) x = (Sys.getenv "HOME") ^ "/" ^ x
 
     let windows = {
@@ -163,27 +178,5 @@ module Config =
        "--repo-name"   , ["-n" ; "none"];
        "--repo-url"    , ["-u" ; "none"];
        "--remote-host" , ["-r" ; "localhost"]]
-
-    let set_env () =
-      let host = (Gopt.getopt "--host" ()) in
-      let port = (Gopt.getopt "--port" ()) in
-      set "host" host ();
-      set "port" port ();
-      {
-        ns          = "user";
-        debug       = false;
-        host        = host;
-        port        = (Gstr.to_int port)
-      }
-
-    let get_env () =
-      let host = (Gopt.getopt "--host" ()) in
-      let port = (Gopt.getopt "--port" ()) in
-      {
-        ns          = "user";
-        debug       = false;
-        host        = host;
-        port        = (Gstr.to_int port)
-      }
 
 end
