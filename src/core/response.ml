@@ -16,10 +16,10 @@ module Response =
     let kv_split x = Str.bounded_split (rx ":") x 2
 
     (* nrepl response idiosyncrasies *)
-    let strip_fake_newline str = remove_rx "\\\\n$" str
+    let regenerate_newline str = Str.global_replace (rx "\\\\n") "\n" str
 
     let nilp str = 
-      (Gstr.strip (strip_fake_newline str)) = "nil"
+      (Gstr.strip (regenerate_newline str)) = "nil"
 
     (* format strings from response fields *)
     let unescape x =
@@ -30,7 +30,7 @@ module Response =
       x
 
     let fmt_txt x =
-      let x = strip_fake_newline (Gstr.us x) in
+      let x = regenerate_newline (Gstr.us x) in
       unescape x
 
     (* handle stringified file lists and hashes in response *)
@@ -85,7 +85,7 @@ module Response =
         print_endline (fmt_txt res.err)
       else
         begin
-          Gstr.println_unless_empty (fmt_txt res.out);
+          Gstr.println_unless_empty (Gstr.strip ~chars:"\n" (fmt_txt res.out));
           Gstr.println_unless_empty (fmt_val res.value ~fmt:fmt "")
         end;
       flush stdout

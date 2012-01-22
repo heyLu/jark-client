@@ -6,6 +6,7 @@ module Gfile =
 
     (* mkdir, ignore if dir exists *)
     let mkdir dir =
+      print_endline ("making " ^ dir);
       try Unix.mkdir dir 0o740
       with Unix.Unix_error (Unix.EEXIST,_,_) -> ()
 
