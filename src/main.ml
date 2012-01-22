@@ -128,7 +128,7 @@ let parse_argv () =
       "--version", Options.Set_on version,  "Show jark version";
       "-e", Options.Set_on eval,     "Evaluate expression";
   ]
-  with Options.BadOptions x -> print_endline ("bad options: " ^ x); raise Exit
+  with Options.BadOptions x -> print_endline ("bad options: " ^ x); exit 1
   in
   {
     env = {
