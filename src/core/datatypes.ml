@@ -35,3 +35,11 @@ type cmd_opts = {
   eval : bool ;
   args : string list
 }
+
+type config_opts = {
+  jvm_opts    : string;
+  log_path    : string;
+  swank_port  : int;
+  json        : bool;
+  remote_host : string
+}

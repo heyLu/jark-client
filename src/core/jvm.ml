@@ -10,13 +10,11 @@ module Jvm =
     open Jark
     module C = Config
 
-    let default_opts = "-Xms256m -Xmx512m -DNOSECURITY=true"
-
     let start_cmd jvm_opts port =
       String.concat " " ["java"; jvm_opts ; "-cp"; C.cp_boot (); "jark.vm"; port; "&"]
 
     let start args =
-      let jvm_opts = ref default_opts in
+      let jvm_opts = ref C.default_opts.jvm_opts in
       let _ = Options.parse args [
         "--jvm-opts", Options.Set_string jvm_opts, "set jvm options"
       ]

@@ -27,6 +27,6 @@ module Config :
 
     val jark_version : string
 
-    val default_opts :  (string * string list) list
+    val default_opts : Datatypes.config_opts
 
   end
