@@ -8,7 +8,6 @@ module Ns =
     open Gfile
     open Jark
     open Config
-    open Gopt
     open Plugin
 
     let registry = Plugin.create ()
@@ -30,7 +29,7 @@ module Ns =
       let arg = ref [] in
       let last_arg = Glist.last al in
       if (Gstr.starts_with last_arg  "--") then begin
-        Gopt.opts := Glist.list_to_hashtbl [last_arg; "yes"];
+      (*  Gopt.opts := Glist.list_to_hashtbl [last_arg; "yes"];*)
         arg := (Glist.remove_last al)
       end
       else
@@ -70,7 +69,6 @@ module Ns =
       alias_fn "list" ["ls"]
 
     let dispatch cmd arg =
-      Gopt.opts := (Glist.list_to_hashtbl arg);
       Plugin.dispatch registry cmd arg
 
   end

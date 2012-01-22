@@ -8,8 +8,8 @@ module Self =
     open Config
     module C = Config
     open Stat
-    open Gopt
     open Plugin
+    open Datatypes
 
     let registry = Plugin.create ()
     let register_fn = Plugin.register_fn registry
@@ -35,11 +35,10 @@ module Self =
       Gstr.pe "Installed components successfully"
 
     let status args =
-      let host = Gopt.getopt "--host" () in
-      let port = Gopt.getopt "--port" () in
+      let env = C.get_env () in
       Gstr.pe (Gstr.unlines ["PID      " ^ Stat.get_pid ();
-                             "Host     " ^ host;
-                             "Port     " ^ port])
+                             "Host     " ^ env.host;
+                             "Port     " ^ string_of_int env.port])
 
     let uninstall args =
       Gstr.pe "Removed jark configs successfully"
@@ -54,7 +53,6 @@ module Self =
       register_fn "uninstall" uninstall ["Uninstall jark"]
 
     let dispatch cmd arg =
-      Gopt.opts := (Glist.list_to_hashtbl arg);
       Plugin.dispatch registry cmd arg
 
 end

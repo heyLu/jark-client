@@ -11,6 +11,8 @@ module Options = struct
   | Set_int of int ref 
   | Unknown
 
+  type opt_spec = (string * opt * string) list
+
   let set_string x y = x := y
 
   let set_int x y =

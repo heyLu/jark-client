@@ -8,11 +8,11 @@ module Vm =
     open Jark
     open Config
     module C = Config
+    open Options
 
     open Cp
     open Gconf
     open Stat
-    open Gopt
     open Plugin
 
     let registry = Plugin.create ()
@@ -25,10 +25,15 @@ module Vm =
       String.concat " " ["java"; jvm_opts ; "-cp"; C.cp_boot (); "jark.vm"; port; "&"]
 
     let start args =
+      let jvm_opts = ref "" in
+      let opts = Options.parse args [
+        "--jvm-opts", Options.Set_string jvm_opts, "set jvm options"
+      ]
+      in
       C.remove_config();
-      let port = Gopt.getopt "--port" () in
-      let jvm_opts = Gopt.getopt "--jvm-opts" () in
-      let c = start_cmd jvm_opts port in
+      let env = C.get_env () in
+      let port = string_of_int env.port in
+      let c = start_cmd !jvm_opts port in
       print_endline c;
       ignore (Sys.command c);
       Unix.sleep 3;
@@ -74,7 +79,6 @@ module Vm =
       register_fn "gc" gc ["Run garbage collection on the current instance of the JVM"]
 
     let dispatch cmd arg =
-      Gopt.opts := (Glist.list_to_hashtbl arg);
       Plugin.dispatch registry cmd arg
 
 end

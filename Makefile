@@ -18,10 +18,10 @@ WIN_LIBS = $(WLIB)/unix,$(WLIB)/bigarray,$(WLIB)/str,$(WLIB)/nums,$(WLIB)/camlp5
 
 LIBS = unix,bigarray,str,nums,$(CAMLP5)/camlp5,$(CAMLP5)/gramlib,$(LEDIT)/ledit
 
-OCAMLBUILD = ocamlbuild -j 2 -quiet -I src/utils -I src -I src/modules  -lflags -I,/usr/lib/ocaml/pcre  \
+OCAMLBUILD = ocamlbuild -j 2 -quiet -I src/utils -I src/core -I src -I src/modules  -lflags -I,/usr/lib/ocaml/pcre  \
            -lflags -I,$(CAMLP5) -cflags  -I,$(LEDIT)
 
-WOCAMLBUILD = ocamlbuild -j 2 -quiet -I src/utils -I src -I src/modules -lflags -I,$(WLIB)/pcre  \
+WOCAMLBUILD = ocamlbuild -j 2 -quiet -I src/utils -I src -I src/core -I src/modules -lflags -I,$(WLIB)/pcre  \
            -lflags -I,$(WLIB)/camlp5 -cflags  -I,$(WLIB)/ledit
 
 

@@ -6,7 +6,6 @@ module Package =
     open Gstr
     open Jark
     open Config
-    open Gopt
     open Plugin
 
     let registry = Plugin.create ()
@@ -16,20 +15,16 @@ module Package =
     let show_usage args = Plugin.show_usage registry "package"
 
     let install args =
-      let package = Gopt.getopt "--package" () in 
-      Jark.nfa "jark.package" ~f:"install" ~a:[package] ()
+      Jark.nfa "jark.package" ~f:"install" ~a:args ()
 
     let versions args =
-      let package = Gopt.getopt "--package" () in 
-      Jark.nfa "jark.package" ~f:"versions" ~a:[package] ()
+      Jark.nfa "jark.package" ~f:"versions" ~a:args ()
 
     let latest args =
-      let package = Gopt.getopt "--package" () in 
-      Jark.nfa "jark.package" ~f:"latest-version" ~a:[package] ()
+      Jark.nfa "jark.package" ~f:"latest-version" ~a:args ()
 
     let search args =
-      let package = Gopt.getopt "--package" () in
-      Jark.nfa "jark.package" ~f:"search" ~a:[package] ~fmt:ResHash ()
+      Jark.nfa "jark.package" ~f:"search" ~a:args ~fmt:ResHash ()
 
     let deps args =
       Gstr.pe "deps not implemented yet"
@@ -70,7 +65,6 @@ module Package =
       alias_fn "list" ["ls"; "installed"]
 
     let dispatch cmd arg =
-      Gopt.opts := (Glist.list_to_hashtbl arg);
       Plugin.dispatch registry cmd arg
 
 end

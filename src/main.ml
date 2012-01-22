@@ -19,7 +19,6 @@ open Swank
 open Stat
 open Self
 open Doc
-open Gopt
 open Printf
 open Datatypes
 open Options
@@ -148,7 +147,6 @@ let parse_argv () =
 let _ =
   try
     Gconf.load ();
-    Gopt.default_opts := Glist.assoc_to_hashtbl (Config.default_opts);
     let opts = parse_argv () in
     Config.set_env opts.env;
     if opts.show_version then

@@ -6,7 +6,6 @@ module Jark =
     open Gconf
     open Gfile
     open Glist
-    open Gopt
     open Gstr
     open Nrepl
     open Printf
@@ -44,11 +43,13 @@ module Jark =
     let require ns =
       eval (sprintf "(require '%s)" ns) ()
 
-    let dispatch_fn () =
+    let dispatch_fn () = "(jark.ns/dispatch "
+    (*
       match (Gopt.getopt "--json" ()) with 
       | "no"  -> "(jark.ns/dispatch "
       | "yes" -> "(jark.ns/cli-json "
       |  _    -> "(jark.ns/dispatch "
+      *)
 
     let nfa n ?(f="nil") ?(a=[]) ?(fmt=ResText) () =
       let d = dispatch_fn () in

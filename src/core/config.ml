@@ -11,7 +11,6 @@ module Config =
     open Gstr
     open Gfile
     open Gconf
-    open Gopt
 
     (* environment *)
     let global_env = ref {

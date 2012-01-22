@@ -5,7 +5,8 @@ module Swank =
     open Gstr
     open Jark
     open Config
-    open Gopt
+    module C = Config
+    open Datatypes
     open Plugin
 
     let registry = Plugin.create ()
@@ -15,8 +16,8 @@ module Swank =
     let show_usage args = Plugin.show_usage registry "swank"
 
     let start args =
-      let port = Gopt.getopt "--swank-port" () in
-      Jark.nfa "jark.swank" ~f:"start" ~a:["0.0.0.0"; port] ()
+      let env = C.get_env () in
+      Jark.nfa "jark.swank" ~f:"start" ~a:["0.0.0.0"; string_of_int env.port] ()
 
     let _ =
       register_fn "start" start [
@@ -24,7 +25,6 @@ module Swank =
         "Start a swank server on given port\n"]
 
     let dispatch cmd arg =
-      Gopt.opts := (Glist.list_to_hashtbl arg);
       Plugin.dispatch registry cmd arg
 
 end
