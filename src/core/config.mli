@@ -1,8 +1,8 @@
 module Config :
   sig
-    
+
     val set_env : Datatypes.env -> unit
-    
+
     val get_env : unit -> Datatypes.env
 
     val cp_boot : unit -> string
@@ -16,7 +16,7 @@ module Config :
     val standalone : bool
 
     val install_components : unit -> unit
-        
+
     val install_standalone : unit -> unit
 
     val jar : string -> string
