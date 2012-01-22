@@ -3,9 +3,6 @@ module Jark =
 
     open Config
     open Datatypes
-    open Gconf
-    open Gfile
-    open Glist
     open Gstr
     open Nrepl
     open Printf

@@ -3,7 +3,6 @@ module Vm =
 
     open Datatypes
     open Printf
-    open Glist
     open Gstr
     open Jark
     open Config
@@ -11,7 +10,6 @@ module Vm =
     open Options
 
     open Cp
-    open Gconf
     open Stat
     open Plugin
 
@@ -26,7 +24,7 @@ module Vm =
 
     let start args =
       let jvm_opts = ref "" in
-      let opts = Options.parse args [
+      let _ = Options.parse args [
         "--jvm-opts", Options.Set_string jvm_opts, "set jvm options"
       ]
       in
