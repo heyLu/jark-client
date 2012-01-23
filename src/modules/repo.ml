@@ -6,7 +6,6 @@ module Repo =
     open Gstr
     open Jark
     open Config
-    open Gopt
     open Plugin
 
     let registry = Plugin.create ()
@@ -16,12 +15,7 @@ module Repo =
     let show_usage args = Plugin.show_usage registry "repo"
 
     let add args =
-      let repo_name = Gopt.getopt "--repo-name" () in 
-      let repo_url  = Gopt.getopt "--repo-url" () in 
-      if repo_name = "none" || repo_url = "none" then
-        Plugin.show_cmd_usage registry "add"
-      else
-        Jark.nfa "jark.package" ~f:"repo-add" ~a:[repo_name; repo_url] ()
+      Jark.nfa "jark.package" ~f:"repo-add" ~a:args ()
 
     let repo_list args =
       Jark.nfa "jark.package" ~f:"repo-list" ~fmt:ResHash ()
@@ -36,7 +30,6 @@ module Repo =
       alias_fn "list" ["ls"]
 
     let dispatch cmd arg =
-      Gopt.opts := (Glist.list_to_hashtbl arg);
       Plugin.dispatch registry cmd arg
 
 end

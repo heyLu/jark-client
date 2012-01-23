@@ -28,3 +28,18 @@ type platform_config = {
 }
 
 type response_format = ResText | ResHash | ResList
+
+type cmd_opts = {
+  env : env;
+  show_version: bool;
+  eval : bool ;
+  args : string list
+}
+
+type config_opts = {
+  jvm_opts    : string;
+  log_path    : string;
+  swank_port  : int;
+  json        : bool;
+  remote_host : string
+}

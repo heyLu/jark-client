@@ -11,6 +11,8 @@ module Nrepl =
     open Datatypes
     open Gstr  
 
+    let debug = false
+
     let empty_response = {
       id     = None;
       out    = None;
@@ -41,12 +43,13 @@ module Nrepl =
         match s with
         | NewPacket ->
             let line = getline () in
+            if debug then print_endline line;
             let i = int_of_string line in
             get (Receiving i) empty_response
         | Done ->
             let out = match !out with
             | [] -> None
-            | _  -> Some (Gstr.unlines (List.map Gstr.us (List.rev !out)))
+            | _  -> Some (String.concat "" (List.map Gstr.us (List.rev !out)))
             in
             {res with value = !value; out = out; err = !err}
         | Receiving 0 ->
@@ -57,6 +60,8 @@ module Nrepl =
         | Receiving n ->
             let k = getline () in
             let v = getline () in
+            if debug then print_endline k;
+            if debug then print_endline v;
             let res = update_response res (k, v) in
             match res.status with
             | Some "done"  -> get Done res

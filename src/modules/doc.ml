@@ -5,7 +5,6 @@ module Doc =
     open Gstr
     open Jark
     open Config
-    open Gopt
     open Plugin
 
     let registry = Plugin.create ()
@@ -24,6 +23,5 @@ module Doc =
       register_fn "examples" examples ["[--show-browser]"]
 
     let dispatch cmd arg =
-      Gopt.opts := (Glist.list_to_hashtbl arg);
       Plugin.dispatch registry cmd arg
 end

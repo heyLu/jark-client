@@ -3,17 +3,16 @@ module Vm =
 
     open Datatypes
     open Printf
-    open Glist
     open Gstr
     open Jark
     open Config
     module C = Config
+    open Options
 
     open Cp
-    open Gconf
     open Stat
-    open Gopt
     open Plugin
+    open Jvm
 
     let registry = Plugin.create ()
     let register_fn = Plugin.register_fn registry
@@ -21,29 +20,11 @@ module Vm =
 
     let show_usage args = Plugin.show_usage registry "vm"
 
-    let start_cmd jvm_opts port =
-      String.concat " " ["java"; jvm_opts ; "-cp"; C.cp_boot (); "jark.vm"; port; "&"]
+    let start args = Jvm.start args
 
-    let start args =
-      C.remove_config();
-      let port = Gopt.getopt "--port" () in
-      let jvm_opts = Gopt.getopt "--jvm-opts" () in
-      let c = start_cmd jvm_opts port in
-      print_endline c;
-      ignore (Sys.command c);
-      Unix.sleep 3;
-      Cp.add [C.java_tools_path ()];
-      printf "Started JVM on port %s\n" port
+    let stop args = Jvm.stop args
 
-    let connect args =
-      let _ = C.set_env () in
-      Jark.nfa "jark.vm" ~f:"stats" ()
-
-    let stop args =
-      let pid = Gstr.to_int (Stat.get_pid ()) in
-      printf "Stopping JVM with pid: %d\n" pid;
-      Unix.kill pid Sys.sigkill;
-      C.remove_config ()
+    let connect args = Jark.nfa "jark.vm" ~f:"stats" ()
 
     let gc args = Jark.nfa "jark.vm" ~f:"gc" ()
 
@@ -75,7 +56,6 @@ module Vm =
       register_fn "gc" gc ["Run garbage collection on the current instance of the JVM"]
 
     let dispatch cmd arg =
-      Gopt.opts := (Glist.list_to_hashtbl arg);
       Plugin.dispatch registry cmd arg
 
 end

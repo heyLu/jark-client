@@ -7,8 +7,8 @@ module Stat =
     open Gstr
     open Jark
     open Config
-    open Gopt
     open Plugin
+    open Jvm
 
     let registry = Plugin.create ()
     let register_fn = Plugin.register_fn registry
@@ -16,9 +16,7 @@ module Stat =
 
     let show_usage args = Plugin.show_usage registry "stat"
 
-    let get_pid () =
-      let msg = (sprintf "(jark.ns/dispatch \"jark.vm\" \"get-pid\")") in
-      Gstr.strip (Jark.eval ~out:true ~value:false msg ())
+    let get_pid () = Jvm.get_pid ()
 
     let instrument name =
       Jark.nfa "recon.core" ~f:"instrument-value" ~a:["localhost"; get_pid() ; name] ()
@@ -33,8 +31,7 @@ module Stat =
     | x :: xs -> stat_instrument [x]
 
     let vms args =
-      let remote_host = Gopt.getopt "--remote-host" () in
-      Jark.nfa "recon.core" ~f:"vms" ~a:[remote_host] ()
+      Jark.nfa "recon.core" ~f:"vms" ~a:args ()
 
     let mem args =
       Jark.nfa "jark.vm" ~f:"stats" ~fmt:ResHash ()
@@ -59,7 +56,6 @@ module Stat =
       register_fn "pid" pid ["Show pid of running JVM"]
 
     let dispatch cmd arg =
-      Gopt.opts := (Glist.list_to_hashtbl arg);
       Plugin.dispatch registry cmd arg
 
 end

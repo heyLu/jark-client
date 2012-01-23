@@ -8,7 +8,6 @@ module Cp =
     open Gfile
     open Jark
     open Config
-    open Gopt
     open Plugin
 
     let registry = Plugin.create ()
@@ -21,7 +20,8 @@ module Cp =
       printf "Adding classpath %s\n" path;
       Jark.nfa "jark.cp" ~f:"add" ~a:[path] ()
 
-    let add_file path =
+    let add_file path = do_cp path
+    (*
       let apath = (Gfile.abspath path) in
       if (Gfile.exists apath) then begin
         if (Gfile.isdir apath) then 
@@ -34,6 +34,7 @@ module Cp =
         if not (Gstr.starts_with path "--") then
           printf "File not found %s\n" apath
       end
+  *)
 
     let add path_list =
       List.iter (fun x -> add_file x) path_list;
@@ -45,7 +46,7 @@ module Cp =
     let add_cp args =
       let last_arg = Glist.last args in
       if (Gstr.starts_with last_arg  "--") then
-        Gopt.opts := Glist.list_to_hashtbl [last_arg; "yes"];
+        (*Gopt.opts := Glist.list_to_hashtbl [last_arg; "yes"];*)
         add args
 
     let _ =

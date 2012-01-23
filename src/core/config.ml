@@ -11,7 +11,21 @@ module Config =
     open Gstr
     open Gfile
     open Gconf
-    open Gopt
+
+    (* environment *)
+    let global_env = ref {
+      ns = "user";
+      debug = false;
+      host = "localhost";
+      port = 9000
+    }
+
+    let set_env env =
+      global_env := env
+
+    let get_env () = !global_env
+
+    (* platform config *)
 
     let (~/) x = (Sys.getenv "HOME") ^ "/" ^ x
 
@@ -151,39 +165,15 @@ module Config =
 
     let port_default = get "port" ~default:"9000" ()
 
-    let default_opts =
-      ["--port"        , ["-p" ; port_default];
-       "--host"        , ["-h" ; host_default];
-       "--jvm-opts"    , ["-o" ; "-Xms256m -Xmx512m -DNOSECURITY=true"];
-       "--log-path"    , ["-l" ; "/dev/null"];
-       "--package"     , ["-p" ; "none"];
-       "--swank-port"  , ["-s" ; "4005"];
-       "--ignore-jars" , ["-i" ; "no"];
-       "--json"        , ["-j" ; "no"];
-       "--repo-name"   , ["-n" ; "none"];
-       "--repo-url"    , ["-u" ; "none"];
-       "--remote-host" , ["-r" ; "localhost"]]
-
-    let set_env () =
-      let host = (Gopt.getopt "--host" ()) in
-      let port = (Gopt.getopt "--port" ()) in
-      set "host" host ();
-      set "port" port ();
-      {
-        ns          = "user";
-        debug       = false;
-        host        = host;
-        port        = (Gstr.to_int port)
-      }
-
-    let get_env () =
-      let host = (Gopt.getopt "--host" ()) in
-      let port = (Gopt.getopt "--port" ()) in
-      {
-        ns          = "user";
-        debug       = false;
-        host        = host;
-        port        = (Gstr.to_int port)
-      }
+    (* needs to be kept in sync with Datatypes.config_opts
+     * it's a bit of a nuisance compared to a hashtbl, but this way the compiler
+     * will check that we haven't used a wrong key or type *)
+    let default_opts = {
+       jvm_opts    = "-Xms256m -Xmx512m -DNOSECURITY=true";
+       log_path    = "/dev/null";
+       swank_port  = 4005;
+       json        = false;
+       remote_host = "localhost"
+    }
 
 end
