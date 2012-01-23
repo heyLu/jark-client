@@ -27,10 +27,10 @@ module Package =
       Jark.nfa "jark.package" ~f:"search" ~a:args ~fmt:ResHash ()
 
     let deps args =
-      Gstr.pe "deps not implemented yet"
+      Jark.nfa "jark.package" ~f:"dependencies" ~a:args ()
 
     let uninstall args =
-      Gstr.pe "uninstall not implemented yet"
+      Jark.nfa "jark.package" ~f:"uninstall" ~a:args ()
 
     let pkg_list args =
       Jark.nfa "jark.package" ~f:"list" ~fmt:ResHash ()
@@ -41,7 +41,7 @@ module Package =
         "Install the relevant version of package from clojars"] ;
 
       register_fn "uninstall" uninstall [
-        "-p|--package <package>";
+        "<package>";
         "Uninstall the package"];
 
       register_fn "versions" versions [
@@ -49,7 +49,7 @@ module Package =
         "List the versions of package installed"];
 
       register_fn "deps" deps [
-        "-p|--package <package> [-v|--version <version>]";
+        "<package> <version>]";
         "Print the library dependencies of package\n"];
 
       register_fn "search" search [
