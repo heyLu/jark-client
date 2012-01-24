@@ -13,9 +13,9 @@ module Doc =
 
     let show_usage args = Plugin.show_usage registry "doc"
 
-    let search args = Gstr.pe "Not implemented yet"
+    let search args = Jark.nfa "jark.doc" ~f:"search" ~a:args ()
 
-    let examples args = Gstr.pe "Not implemented yet"
+    let examples args = Jark.nfa "jark.doc" ~f:"examples" ~a:args ()
 
     let _ =
       register_fn "search" search ["<term>"];
