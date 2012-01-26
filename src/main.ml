@@ -71,7 +71,7 @@ let show_usage () =
   Gstr.pe "";
   Gstr.pe "Commands: [server, repl]";
   try
-    Gstr.pe "Available server plugins:";
+    Gstr.pe "Available plugins:";
     list_server_plugins ()
   with Unix.Unix_error(_, "connect", "") ->
     Gstr.pe "No server plugins"
