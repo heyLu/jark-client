@@ -4,7 +4,6 @@ module Self =
     open Glist
     open Gstr
     open Gfile
-    open Jark
     open Config
     module C = Config
     open Jvm
@@ -20,13 +19,12 @@ module Self =
     let install_standalone_jar () =
       let st_jar = (C.jar "standalone") in
       if Gfile.exists st_jar then
-        Gstr.pe (st_jar ^ " already exists")
-        (* TODO: why do we care? *)
+        Gstr.pe ("Latest version already installed: " ^ st_jar)
       else
         C.install_standalone ()
 
     let install args =
-      Gfile.mkdir Config.cljr;
+      Gfile.mkdir C.cljr;
       Gfile.mkdir C.cljr_lib;
       C.setup_cljr ();
       match C.standalone with
@@ -35,10 +33,15 @@ module Self =
       Gstr.pe "Installed components successfully"
 
     let status args =
-      let env = C.get_env () in
-      Gstr.pe (Gstr.unlines ["PID      " ^ Jvm.get_pid ();
-                             "Host     " ^ env.host;
-                             "Port     " ^ string_of_int env.port])
+      try
+        let env = C.get_env () in
+        Gstr.pe (Gstr.unlines [
+          "Connected to JVM";
+          "  PID      " ^ Jvm.get_pid ();
+          "  Host     " ^ env.host;
+          "  Port     " ^ string_of_int env.port])
+      with Unix.Unix_error(_, "connect", "") ->
+        Gstr.pe "Not connected to JVM"
 
     let uninstall args =
       Gstr.pe "Removed jark configs successfully"
