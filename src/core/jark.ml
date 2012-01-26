@@ -60,4 +60,10 @@ module Jark =
       in
       nrepl_send env fmt { mid = node_id env; code = dm }
 
+    let dispatch args =
+      match args with
+        [] -> ()
+      | [ns] -> nfa ns ()
+      | ns :: f :: rest -> nfa ns ~f:f ~a:rest ()
+
 end

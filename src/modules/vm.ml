@@ -9,6 +9,7 @@ module Vm =
     module C = Config
     open Options
     open Jvm
+    open Plugin
 
     let registry = Plugin.create ()
     let register_fn = Plugin.register_fn registry

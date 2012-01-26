@@ -92,9 +92,9 @@ let run_eval args =
 let server_dispatch args =
   match args with
   [] -> show_usage ()
-  | ns :: _ when String.contains ns '.' -> Ns.run args
-  | ns :: [] -> Jark.nfa ("jark." ^ ns) ()
-  | ns :: f :: xs -> Jark.nfa ("jark." ^ ns) ~f:f ~a:xs  ()
+  | ns :: _ when String.contains ns '.' -> Jark.dispatch args
+  | ns :: []      -> Jark.nfa ("jark." ^ ns) ()
+  | ns :: f :: xs -> Jark.nfa ("jark." ^ ns) ~f:f ~a:xs ()
 
 let show_version () = Gstr.pe Config.jark_version
 (* handle actions that don't dispatch to a plugin *)
