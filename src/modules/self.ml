@@ -7,7 +7,7 @@ module Self =
     open Jark
     open Config
     module C = Config
-    open Stat
+    open Jvm
     open Plugin
     open Datatypes
 
@@ -36,7 +36,7 @@ module Self =
 
     let status args =
       let env = C.get_env () in
-      Gstr.pe (Gstr.unlines ["PID      " ^ Stat.get_pid ();
+      Gstr.pe (Gstr.unlines ["PID      " ^ Jvm.get_pid ();
                              "Host     " ^ env.host;
                              "Port     " ^ string_of_int env.port])
 

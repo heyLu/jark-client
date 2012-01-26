@@ -7,16 +7,9 @@ open Gconf
 open Config
 
 open Vm
-open Cp
 open Ns
-open Package
-open Repo
 open Repl
-open Lein
-open Swank
-open Stat
 open Self
-open Doc
 open Printf
 open Datatypes
 open Options
@@ -72,15 +65,8 @@ let registry : (string, (module PLUGIN)) Hashtbl.t = Hashtbl.create 16
 
 let register x = Hashtbl.add registry x
 
-let _ = register "cp"     (module Cp: PLUGIN)
-let _ = register "doc"    (module Doc: PLUGIN)
-let _ = register "lein"   (module Lein: PLUGIN)
 let _ = register "ns"     (module Ns: PLUGIN)
-let _ = register "package"(module Package: PLUGIN)
-let _ = register "repo"   (module Repo: PLUGIN)
 let _ = register "self"   (module Self: PLUGIN)
-let _ = register "stat"   (module Stat: PLUGIN)
-let _ = register "swank"  (module Swank: PLUGIN)
 let _ = register "vm"     (module Vm: PLUGIN)
 
 let plugin_dispatch m args =

@@ -5,7 +5,6 @@ module Jvm =
     open Datatypes
     open Gstr
     open Options
-    open Cp
     open Printf
     open Jark
     module C = Config
@@ -26,7 +25,8 @@ module Jvm =
       print_endline c;
       ignore (Sys.command c);
       Unix.sleep 3;
-      Cp.add [C.java_tools_path ()];
+      let paths = C.java_tools_path () in
+      List.iter (fun x -> Jark.nfa "jark.cp" ~f:"add" ~a:[x] ()) [paths];
       printf "Started JVM on port %s\n" port
     
     let get_pid () =

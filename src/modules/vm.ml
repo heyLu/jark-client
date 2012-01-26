@@ -8,10 +8,6 @@ module Vm =
     open Config
     module C = Config
     open Options
-
-    open Cp
-    open Stat
-    open Plugin
     open Jvm
 
     let registry = Plugin.create ()
