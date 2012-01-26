@@ -8,4 +8,6 @@ module Jark :
 
     val require : string -> string
 
+    val dispatch : string list -> unit
+
    end
