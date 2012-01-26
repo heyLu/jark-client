@@ -103,6 +103,13 @@ let show_usage () =
 let run_eval args =
   Gstr.pe (Jark.eval args ())
 
+let server_dispatch args =
+  match args with
+  [] -> show_usage ()
+  | ns :: _ when String.contains ns '.' -> Ns.run args
+  | ns :: [] -> Jark.nfa ("jark." ^ ns) ()
+  | ns :: f :: xs -> Jark.nfa ("jark." ^ ns) ~f:f ~a:xs  ()
+
 let show_version () = Gstr.pe Config.jark_version
 (* handle actions that don't dispatch to a plugin *)
 let main_handler m args =
@@ -111,7 +118,7 @@ let main_handler m args =
   | "status"    :: []      -> Self.status ()
   | "version"   :: []      -> show_version ()
   | "install"   :: []      -> Self.install ()
-  | xs                     -> Ns.run xs
+  | xs                     -> server_dispatch xs
 
 (* option parsing *)
 
