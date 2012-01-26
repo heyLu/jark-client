@@ -20,19 +20,6 @@ let usage =
                  "            [-c|--config=<path>]" ;
                  "            [-h|--host=<hostname>] [-p|--port=<port>] <module> <command> <args>" ;
                  "";
-                 "The most commonly used jark modules are:" ;
-                 "    cp       list add" ;
-                 "    doc      search examples comments" ;
-                 "    lein     <task(s)>";
-                 "    ns       list load run" ;
-                 "    package  install uninstall versions deps search installed latest" ;
-                 "    repl     <namespace>" ;
-                 "    repo     list add remove" ;
-                 "    self     install uninstall status";
-                 "    stat     instruments instrument vms mem";
-                 "    swank    start stop" ;
-                 "    vm       start connect stop uptime threads gc status";
-                 "";
                  "See 'jark <module>' for more information on a specific module."]
 
 let connection_usage () =
@@ -75,6 +62,9 @@ let plugin_dispatch m args =
   [] | "usage" :: _ | "help" :: _ -> Handler.show_usage ()
   | x :: xs -> Handler.dispatch x xs
 
+let list_server_plugins () =
+  Jark.nfa "jark.ns" ~f:"server-plugins" ()
+
 let list_plugins () =
   let builtins = ["repl"] in
   let ps = Hashtbl.fold (fun s m e -> s :: e) registry builtins in
@@ -83,8 +73,13 @@ let list_plugins () =
 let show_usage () =
   Gstr.pe usage;
   Gstr.pe "";
-  Gstr.pe "Available modules:";
-  list_plugins ()
+  Gstr.pe "Available client commands:";
+  list_plugins ();
+  try
+    Gstr.pe "Available server plugins:";
+    list_server_plugins ()
+  with Unix.Unix_error(_, "connect", "") ->
+    Gstr.pe "No server plugins"
 
 let run_eval args =
   Gstr.pe (Jark.eval args ())
