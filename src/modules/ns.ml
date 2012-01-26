@@ -25,26 +25,18 @@ module Ns =
         ()
       end
 
-    let ns_list args =
-      Jark.nfa "jark.ns" ~f:"list" ~fmt:ResList ()
-
     let ns_load args = match args with
     [] -> (); Plugin.show_cmd_usage registry "load"
     | x :: xs -> load x
 
     let _ =
-      register_fn "list" ns_list [
-                     " [prefix]" ;
-                     "List all namespaces in the classpath. Optionally takes a";
-                     "namespace prefix"];
-
       register_fn "load" ns_load [
                      "[--env=<string>] file" ;
-                     "Loads the given clj file, and adds relative classpath"];
+                     "Loads the given clj file, and adds relative classpath"]
 
-      alias_fn "list" ["ls"]
-
-    let dispatch cmd arg =
-      Plugin.dispatch registry cmd arg
+    let dispatch cmd args =
+      match cmd with
+      | "load" -> ns_load args
+      | _      -> Jark.nfa "jark.ns" ~f:cmd ~a:args ()
 
   end
