@@ -1,4 +1,4 @@
-module Local :
+module Server :
   sig
     val dispatch : string -> string list -> unit
 

@@ -7,7 +7,7 @@ open Gconf
 open Config
 
 open Repl
-open Local
+open Server
 open Printf
 open Datatypes
 open Options
@@ -50,7 +50,7 @@ let registry : (string, (module PLUGIN)) Hashtbl.t = Hashtbl.create 16
 
 let register x = Hashtbl.add registry x
 
-let _ = register "local"     (module Local: PLUGIN)
+let _ = register "server"     (module Server: PLUGIN)
 
 let plugin_dispatch m args =
   let module Handler = (val (Hashtbl.find registry m) : PLUGIN) in
@@ -69,7 +69,7 @@ let list_plugins () =
 let show_usage () =
   Gstr.pe usage;
   Gstr.pe "";
-  Gstr.pe "Commands: [local, repl]";
+  Gstr.pe "Commands: [server, repl]";
   try
     Gstr.pe "Available server plugins:";
     list_server_plugins ()
