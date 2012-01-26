@@ -30,7 +30,8 @@ module Jvm =
       printf "Started JVM on port %s\n" port
     
     let get_pid () =
-      let msg = "(jark.ns/dispatch \"jark.vm\" \"get-pid\")" in
+      Jark.require "jark.utils.ns";
+      let msg = "(jark.utils.ns/dispatch \"jark.vm\" \"pid\")" in
       Gstr.strip (Jark.eval ~out:true ~value:false msg ())
 
     let stop args =
