@@ -1,4 +1,4 @@
-module Local =
+module Server =
   struct
 
     open Datatypes
@@ -18,7 +18,7 @@ module Local =
     let register_fn = Plugin.register_fn registry
     let alias_fn = Plugin.alias_fn registry
 
-    let show_usage args = Plugin.show_usage registry "local"
+    let show_usage args = Plugin.show_usage registry "server"
 
     let load path =
       let apath = (Gfile.abspath path) in
@@ -65,31 +65,30 @@ module Local =
       Gstr.pe "Removed jark configs successfully"
 
     let _ =
-      register_fn "vm-start" Jvm.start [
+      register_fn "start" Jvm.start [
         "[-p|--port=<9000>] [-j|--jvm-opts=<opts>] [--log=<path>]" ;
         "Start a local Jark server. Takes optional JVM options as a \" delimited string"];
 
-      register_fn "vm-stop" Jvm.stop [
+      register_fn "stop" Jvm.stop [
         "[-n|--name=<vm-name>]";
         "Shuts down the current instance of the JVM"];
 
       register_fn "load" ns_load [
-        "[--env=<string>] file" ;
+      "[--env=<string>] file" ;
         "Loads the given clj file, and adds relative classpath"];
 
-      register_fn "status" status ["VM connection status"];
+      register_fn "status" status ["Display connection status"];
 
-      register_fn "uninstall" uninstall ["Uninstall jark"]
+      register_fn "install" uninstall ["Install server components"]
 
 
     let dispatch cmd args =
       match cmd with
-      | "server-start"   -> Jvm.start args
-      | "server-stop"    -> Jvm.stop args
-      | "load"           -> ns_load args
-      | "install"        -> install args
-      | "uninstall"      -> uninstall args
-      | "status"         -> status args
-      | _                -> Jark.nfa "jark.vm" ~f:cmd ~a:args ()
+      | "start"      -> Jvm.start args
+      | "stop"       -> Jvm.stop args
+      | "load"       -> ns_load args
+      | "install"    -> install args
+      | "status"     -> status args
+      | _            -> Jark.nfa "jark.vm" ~f:cmd ~a:args ()
 
 end

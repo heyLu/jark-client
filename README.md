@@ -10,12 +10,12 @@ jark command line client
 
 On the server:
 
-     jark local install
-     jark local server-start [OPTIONS]
-     jark local server-stop  [OPTIONS]
-     jark local load FILE
-     jark local status
-     jark local uninstall
+     jark server install
+     jark server start [OPTIONS]
+     jark server stop  [OPTIONS]
+     jark server load FILE
+     jark server status
+     jark server uninstall
      jark repl
 
 On the client:
