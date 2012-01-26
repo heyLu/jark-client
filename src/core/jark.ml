@@ -40,7 +40,7 @@ module Jark =
     let require ns =
       eval (sprintf "(require '%s)" ns) ()
 
-    let dispatch_fn () = "(jark.utils/dispatch "
+    let dispatch_fn () = "(jark.utils.ns/dispatch "
     (*
       match (Gopt.getopt "--json" ()) with 
       | "no"  -> "(jark.ns/dispatch "
