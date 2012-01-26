@@ -6,10 +6,8 @@ open Gstr
 open Gconf
 open Config
 
-open Vm
-open Ns
 open Repl
-open Self
+open Local
 open Printf
 open Datatypes
 open Options
@@ -18,9 +16,9 @@ let usage =
   Gstr.unlines ["usage: jark [-v|--version] [-h|--help]" ;
                  "            [-r|repl] [-e|--eval]" ; 
                  "            [-c|--config=<path>]" ;
-                 "            [-h|--host=<hostname>] [-p|--port=<port>] <module> <command> <args>" ;
-                 "";
-                 "See 'jark <module>' for more information on a specific module."]
+                 "            [-h|--host=<hostname>] [-p|--port=<port>] <module> <command> <args>" ]
+                 
+
 
 let connection_usage () =
   let env = Config.get_env () in
@@ -52,9 +50,7 @@ let registry : (string, (module PLUGIN)) Hashtbl.t = Hashtbl.create 16
 
 let register x = Hashtbl.add registry x
 
-let _ = register "ns"     (module Ns: PLUGIN)
-let _ = register "self"   (module Self: PLUGIN)
-let _ = register "vm"     (module Vm: PLUGIN)
+let _ = register "local"     (module Local: PLUGIN)
 
 let plugin_dispatch m args =
   let module Handler = (val (Hashtbl.find registry m) : PLUGIN) in
@@ -73,8 +69,7 @@ let list_plugins () =
 let show_usage () =
   Gstr.pe usage;
   Gstr.pe "";
-  Gstr.pe "Available client commands:";
-  list_plugins ();
+  Gstr.pe "Commands: [local, repl]";
   try
     Gstr.pe "Available server plugins:";
     list_server_plugins ()
@@ -96,9 +91,7 @@ let show_version () = Gstr.pe Config.jark_version
 let main_handler m args =
   match m :: args with
   | "repl"      :: []      -> run_repl "user" ()
-  | "status"    :: []      -> Self.status ()
   | "version"   :: []      -> show_version ()
-  | "install"   :: []      -> Self.install ()
   | xs                     -> server_dispatch xs
 
 (* option parsing *)

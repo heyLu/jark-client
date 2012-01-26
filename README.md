@@ -7,21 +7,20 @@ jark command line client
                  [-c|--config=<path>]
                  [-h|--host=<hostname>] [-p|--port=<port>] <module> <command> <args>
 
-            The most commonly used jark modules are:
-              cp       list add
-              doc      search examples comments
-              lein     <task(s)>
-              ns       list load run
-              package  install uninstall versions deps search installed latest
-              repl     <namespace>
-              repo     list add remove
-              self     install uninstall status
-              stat     instruments instrument vms mem
-              swank    start stop
-              vm       start connect stop uptime threads gc status
 
-       See 'jark <module>' for more information on a specific module.
+On the server:
 
-project page: http://icylisper.in/jark
+     jark local install
+     jark local server-start [OPTIONS]
+     jark local server-stop  [OPTIONS]
+     jark local load FILE
+     jark local status
+     jark local uninstall
+     jark repl
 
-Under development
+On the client:
+     
+     jark PLUGIN COMMAND [ARGS*]
+     jark NAMESPACE FUNCTION [ARGS*]
+     
+
