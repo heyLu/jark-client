@@ -32,11 +32,16 @@ module Jvm =
     let get_pid () =
       Jark.require "jark.utils.ns";
       let msg = "(jark.utils.ns/dispatch \"jark.vm\" \"pid\")" in
-      Gstr.strip (Jark.eval ~out:true ~value:false msg ())
+      let pid = Gstr.strip (Jark.eval ~out:true ~value:false msg ()) in
+      Gstr.maybe_int pid
 
     let stop args =
-      let pid = Gstr.to_int (get_pid ()) in
-      printf "Stopping JVM with pid: %d\n" pid;
-      Unix.kill pid Sys.sigkill;
-      C.remove_config ()
+      match get_pid () with
+      | None -> print_endline "Could not get pid of JVM"
+      | Some pid ->
+          begin
+            printf "Stopping JVM with pid: %d\n" pid;
+            Unix.kill pid Sys.sigkill;
+            C.remove_config ()
+          end
   end

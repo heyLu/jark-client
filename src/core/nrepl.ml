@@ -13,13 +13,23 @@ module Nrepl =
 
     let debug = false
 
-    let empty_response = {
+    let debugging x =
+      if debug then print_endline x;
+      x
+
+    let new_response = {
       id     = None;
       out    = None;
       err    = None;
       value  = None;
       status = None;
     }
+
+    let bad_response =
+      {new_response with err = Some("Bad response from server")}
+
+    let empty_response = 
+      {new_response with err = Some("Empty response from server")}
 
     let update_response res (x, y) =
       let y = Some (Gstr.uq y) in
@@ -35,39 +45,40 @@ module Nrepl =
 
     let readlines socket =
       let input = Unix.in_channel_of_descr socket in
-      let getline () = try input_line input with End_of_file -> "" in
+      let getline () = debugging (try input_line input with End_of_file -> "") in
+      let concat xs = match xs with
+      | [] -> None
+      | _  -> Some (String.concat "" (List.map Gstr.us (List.rev xs)))
+      in
       let value = ref None in
       let out = ref [] in
-      let err = ref None in
+      let err = ref [] in
       let rec get s res =
         match s with
         | NewPacket ->
             let line = getline () in
-            if debug then print_endline line;
-            let i = int_of_string line in
-            get (Receiving i) empty_response
+            begin
+              match (line, Gstr.maybe_int line) with
+              | "", _     -> empty_response
+              | _, None   -> bad_response
+              | _, Some i ->  get (Receiving i) new_response
+            end
         | Done ->
-            let out = match !out with
-            | [] -> None
-            | _  -> Some (String.concat "" (List.map Gstr.us (List.rev !out)))
-            in
-            {res with value = !value; out = out; err = !err}
+            {res with value = !value; out = concat !out; err = concat !err}
         | Receiving 0 ->
-            if Gstr.notnone res.err then err := res.err;
+            if Gstr.notnone res.err then err := res.err :: !err;
             if Gstr.notnone res.out then out := res.out :: !out;
             if Gstr.notnone res.value then value := res.value;
             get NewPacket res
         | Receiving n ->
             let k = getline () in
             let v = getline () in
-            if debug then print_endline k;
-            if debug then print_endline v;
             let res = update_response res (k, v) in
             match res.status with
             | Some "done"  -> get Done res
             | _            -> get (Receiving (n - 1)) res
             in
-            get NewPacket empty_response
+            get NewPacket new_response
 
     let write_all socket s =
       Unix.send socket s 0 (String.length s) []

@@ -23,7 +23,7 @@ module Gstr :
 
     val notnone : 'a option -> bool
 
-    val to_int : string -> int
+    val maybe_int : string -> int option
         
     val strip : ?chars:string -> string -> string
 

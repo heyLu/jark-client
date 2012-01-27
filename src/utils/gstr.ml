@@ -71,10 +71,8 @@ module Gstr =
     let join_nonempty str xs =
       String.concat str (List.filter (fun x -> x <> "") xs)
 
-    let to_int s =
-      try
-	int_of_string s
-      with
-	_ -> raise Invalid_string
+    let maybe_int s =
+      try Some (int_of_string s)
+      with Failure("int_of_string") -> None
 
 end 

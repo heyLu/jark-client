@@ -53,9 +53,13 @@ module Server =
     let status args =
       try
         let env = C.get_env () in
+        let pid = match Jvm.get_pid () with
+        | None -> ""
+        | Some pid -> string_of_int pid
+        in
         Gstr.pe (Gstr.unlines [
           "Connected to JVM";
-          "  PID      " ^ Jvm.get_pid ();
+          "  PID      " ^ pid;
           "  Host     " ^ env.host;
           "  Port     " ^ string_of_int env.port])
       with Unix.Unix_error(_, "connect", "") ->
