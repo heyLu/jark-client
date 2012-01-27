@@ -11,7 +11,7 @@ module Nrepl =
     open Datatypes
     open Gstr  
 
-    let debug = true
+    let debug = false
 
     let debugging x =
       if debug then print_endline x;
@@ -46,9 +46,13 @@ module Nrepl =
     let readlines socket =
       let input = Unix.in_channel_of_descr socket in
       let getline () = debugging (try input_line input with End_of_file -> "") in
+      let concat xs = match xs with
+      | [] -> None
+      | _  -> Some (String.concat "" (List.map Gstr.us (List.rev xs)))
+      in
       let value = ref None in
       let out = ref [] in
-      let err = ref None in
+      let err = ref [] in
       let rec get s res =
         match s with
         | NewPacket ->
@@ -60,13 +64,9 @@ module Nrepl =
               | _, Some i ->  get (Receiving i) new_response
             end
         | Done ->
-            let out = match !out with
-            | [] -> None
-            | _  -> Some (String.concat "" (List.map Gstr.us (List.rev !out)))
-            in
-            {res with value = !value; out = out; err = !err}
+            {res with value = !value; out = concat !out; err = concat !err}
         | Receiving 0 ->
-            if Gstr.notnone res.err then err := res.err;
+            if Gstr.notnone res.err then err := res.err :: !err;
             if Gstr.notnone res.out then out := res.out :: !out;
             if Gstr.notnone res.value then value := res.value;
             get NewPacket res
