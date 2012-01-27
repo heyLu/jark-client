@@ -11,7 +11,11 @@ module Nrepl =
     open Datatypes
     open Gstr  
 
-    let debug = false
+    let debug = true
+
+    let debugging x =
+      if debug then print_endline x;
+      x
 
     let new_response = {
       id     = None;
@@ -41,7 +45,7 @@ module Nrepl =
 
     let readlines socket =
       let input = Unix.in_channel_of_descr socket in
-      let getline () = try input_line input with End_of_file -> "" in
+      let getline () = debugging (try input_line input with End_of_file -> "") in
       let value = ref None in
       let out = ref [] in
       let err = ref None in
@@ -49,7 +53,6 @@ module Nrepl =
         match s with
         | NewPacket ->
             let line = getline () in
-            if debug then print_endline line;
             begin
               match (line, Gstr.maybe_int line) with
               | "", _     -> empty_response
@@ -70,8 +73,6 @@ module Nrepl =
         | Receiving n ->
             let k = getline () in
             let v = getline () in
-            if debug then print_endline k;
-            if debug then print_endline v;
             let res = update_response res (k, v) in
             match res.status with
             | Some "done"  -> get Done res
