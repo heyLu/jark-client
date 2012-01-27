@@ -13,13 +13,19 @@ module Nrepl =
 
     let debug = false
 
-    let empty_response = {
+    let new_response = {
       id     = None;
       out    = None;
       err    = None;
       value  = None;
       status = None;
     }
+
+    let bad_response =
+      {new_response with err = Some("Bad response from server")}
+
+    let empty_response = 
+      {new_response with err = Some("Empty response from server")}
 
     let update_response res (x, y) =
       let y = Some (Gstr.uq y) in
@@ -44,8 +50,12 @@ module Nrepl =
         | NewPacket ->
             let line = getline () in
             if debug then print_endline line;
-            let i = int_of_string line in
-            get (Receiving i) empty_response
+            begin
+              match (line, Gstr.maybe_int line) with
+              | "", _     -> empty_response
+              | _, None   -> bad_response
+              | _, Some i ->  get (Receiving i) new_response
+            end
         | Done ->
             let out = match !out with
             | [] -> None
@@ -67,7 +77,7 @@ module Nrepl =
             | Some "done"  -> get Done res
             | _            -> get (Receiving (n - 1)) res
             in
-            get NewPacket empty_response
+            get NewPacket new_response
 
     let write_all socket s =
       Unix.send socket s 0 (String.length s) []

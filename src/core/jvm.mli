@@ -4,5 +4,5 @@ module Jvm :
 
     val stop : string list -> unit
 
-    val get_pid : unit -> string
+    val get_pid : unit -> int option
   end
