@@ -59,7 +59,7 @@ let plugin_dispatch m args =
   | x :: xs -> Handler.dispatch x xs
 
 let list_server_plugins () =
-  Jark.nfa "jark.utils.ns" ~f:"server-plugins" ()
+  Jark.nfa "jark.server" ~f:"plugins" ()
 
 let list_plugins () =
   let builtins = ["repl"] in
