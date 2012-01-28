@@ -2,12 +2,8 @@
 
 CURDIR=`pwd`
 
-rm -f ${CURDIR}/build/*
-rm -f ${CURDIR}/upload/*.gz
-rm -f ${CURDIR}/upload/*.zip
 
-
-VM_ROOT="$HOME/.vagrant.d/vms"
+VM_ROOT="$HOME/box"
 
 X86_VM=${VM_ROOT}/arch
 WIN32_VM=${VM_ROOT}/arch

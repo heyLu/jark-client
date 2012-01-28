@@ -12,6 +12,8 @@ module Config =
     open Gfile
     open Gconf
 
+    let release_version = "0.4-pre"
+
     (* environment *)
     let global_env = ref {
       ns = "user";
@@ -47,7 +49,7 @@ module Config =
 
     let platform = if Gsys.is_windows then windows else posix
 
-    let jark_version = "jark client version 0.4"
+    let jark_version = "jark client version " ^ release_version
 
     let path xs =
       if Gsys.is_windows then

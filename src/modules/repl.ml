@@ -54,7 +54,8 @@ module Repl =
                                  "/readline [true false]";
                                  "/server [version info]";
                                  "/vm [info stat]";
-                                 "/who"] in
+                                 "/who";
+                                 "/quit"] in
       print_string [green] lines;
       Printf.printf "\n";
       flush stdout
@@ -90,6 +91,7 @@ module Repl =
       | ["/vm"; "stat"]         -> repl_cmd env "vm" "stat" ()
       | ["/readline"; o]        -> set_debug env o
       | ["/ns"; o]              -> set_debug env o
+      | ["/quit"]               -> env
       | _                       -> env
 
     let handle env str () =
@@ -99,7 +101,6 @@ module Repl =
         handle_cmd env str ()
       else
         send_cmd env str ()
-          
 
     let run ns () =
       try

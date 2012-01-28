@@ -77,10 +77,10 @@ up:
 	cd upload && upload.rb jark-$(VERSION)-x86_64.tar.gz icylisper/jark-client
 
 up-macosx:
-	rm -rf upload/jark-$(VERSION)-x86_64*
+	rm -rf upload/jark-$(VERSION)-x86_64_macosx
 	cd upload && mkdir jark-$(VERSION)-x86_64_macosx
 	cp upload/README upload/jark-$(VERSION)-x86_64_macosx/
-	cp build/jark-$(VERSION)-x86_64 upload/jark-$(VERSION)-x86_64_macosx/
+	cp build/jark-$(VERSION)-x86_64 upload/jark-$(VERSION)-x86_64_macosx/jark
 	cd upload && tar zcf jark-$(VERSION)-x86_64_macosx.tar.gz jark-$(VERSION)-x86_64_macosx/*
 	cd upload && upload.rb jark-$(VERSION)-x86_64_macosx.tar.gz icylisper/jark-client
 
