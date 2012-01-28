@@ -1,5 +1,5 @@
 
-VERSION = 0.4
+VERSION = 0.4-pre
 
 BIN_NAME = jark-$(VERSION)-`uname -m`
 
@@ -75,6 +75,14 @@ up:
 	cp build/jark-$(VERSION)-x86_64 upload/jark-$(VERSION)-x86_64/
 	cd upload && tar zcf jark-$(VERSION)-x86_64.tar.gz jark-$(VERSION)-x86_64/*
 	cd upload && upload.rb jark-$(VERSION)-x86_64.tar.gz icylisper/jark-client
+
+up-macosx:
+	rm -rf upload/jark-$(VERSION)-x86_64*
+	cd upload && mkdir jark-$(VERSION)-x86_64_macosx
+	cp upload/README upload/jark-$(VERSION)-x86_64_macosx/
+	cp build/jark-$(VERSION)-x86_64 upload/jark-$(VERSION)-x86_64_macosx/
+	cd upload && tar zcf jark-$(VERSION)-x86_64_macosx.tar.gz jark-$(VERSION)-x86_64_macosx/*
+	cd upload && upload.rb jark-$(VERSION)-x86_64_macosx.tar.gz icylisper/jark-client
 
 deps:
 	mkdir -p $(DEPLIBS)

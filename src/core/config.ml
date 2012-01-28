@@ -61,8 +61,6 @@ module Config =
 
     let standalone = true
 
-    let java_tools_path () = path [(Sys.getenv "JAVA_HOME"); "lib"; "tools.jar"]
-
     let component c =
       let jar prj ver = prj ^ "-" ^ ver ^ ".jar" in
       let libjar prj ver = path [cljr_lib; jar prj ver] in
@@ -82,7 +80,7 @@ module Config =
       | "nrepl"      -> comp maven "tools.nrepl" "0.0.5"
       | "jark"       -> comp clojars "jark" "0.4"
       | "swank"      -> comp clojars "swank-clojure" "1.3.2"
-      | "standalone" -> comp github "jark" "0.4-standalone"
+      | "standalone" -> comp github "jark" "0.4-SNAPSHOT-standalone"
       |  _           -> ["none" ; "none" ; "none"]
 
     let all_jars = ["clojure"; "contrib"; "nrepl"; "jark"; "swank"]

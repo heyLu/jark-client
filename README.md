@@ -1,4 +1,6 @@
-A tool to interact with a persistent JVM [http://icylisper.in/jark/downloads.html](http://icylisper.in/jark/downloads.html)
+A tool to interact with a persistent JVM 
+
+Download the binary here: [http://icylisper.in/jark/downloads.html](http://icylisper.in/jark/downloads.html)
 
 # USAGE
 

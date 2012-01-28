@@ -23,8 +23,6 @@ module Config :
 
     val remove_config : unit -> unit
 
-    val java_tools_path : unit -> string
-
     val jark_version : string
 
     val default_opts : Datatypes.config_opts
