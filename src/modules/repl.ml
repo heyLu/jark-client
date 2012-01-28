@@ -34,7 +34,10 @@ module Repl =
       env
 
     let display_help () =
-      printf "Type something!\n";
+      (* FIXME: Construct the help string dynamically *)
+      printf "REPL Commands: \n";
+      printf "/cp [list add] \n";
+      printf "/debug [true false] \n";
       flush stdout
 
     let set_debug env o =
@@ -58,8 +61,11 @@ module Repl =
 
     let handle_cmd env cmd () =
       match Str.bounded_split (Str.regexp " +") cmd 2 with
-      | ["/help"]     -> display_help (); env
-      | ["/debug"; o] -> set_debug env o
+      | ["/help"]        -> display_help (); env
+      | ["/debug"; o]    -> set_debug env o
+      | ["/cp"; "list"]  -> send_cmd env "(jark.cp/list)" ()
+      | ["/server"; "version"]  -> send_cmd env "(jark.server/version)" ()
+      | ["/vm"; "version"]  -> send_cmd env "(jark.vm/version)" ()
       | _             -> env
 
     let handle env str () =

@@ -13,17 +13,15 @@ open Datatypes
 open Options
 
 let usage =
-  Gstr.unlines ["usage: jark [-v|--version] [-h|--help]" ;
-                 "            [-r|repl] [-e|--eval]" ; 
-                 "            [-c|--config=<path>]" ;
-                 "            [-h|--host=<hostname>] [-p|--port=<port>] <module> <command> <args>" ]
+  Gstr.unlines ["usage: jark OPTIONS server|repl|<plugin>|<namespace> [<command>|<function>] [<args>]";
+                "";
+                "            OPTIONS:   [-e|--eval] [-c|--config=<path>]" ;
+                "                       [-h|--host=<hostname>] [-p|--port=<port>]"]
                  
-
-
 let connection_usage () =
   let env = Config.get_env () in
   Gstr.unlines [sprintf "Cannot connect to the JVM on %s:%d" env.host env.port;
-                 "Try vm connect --host <HOST> --port <PORT>";
+                 "Try server connect --host <HOST> --port <PORT>";
                  "or specify --host / --port flags in the command"]
         
 let rl () =
@@ -34,7 +32,7 @@ let rl () =
 
 let run_repl ns () = 
   if Gsys.is_windows then
-    Gstr.pe "Repl not implemented yet"
+    Gstr.pe "REPL not implemented yet"
   else begin
     Repl.run "user" ()
    end
@@ -59,19 +57,13 @@ let plugin_dispatch m args =
   | x :: xs -> Handler.dispatch x xs
 
 let list_server_plugins () =
-  Jark.nfa "jark.server" ~f:"plugins" ()
-
-let list_plugins () =
-  let builtins = ["repl"] in
-  let ps = Hashtbl.fold (fun s m e -> s :: e) registry builtins in
-  Gstr.pe (Gstr.unlines (List.sort compare ps))
+  Jark.nfa "jark.plugin" ~f:"list" ()
 
 let show_usage () =
   Gstr.pe usage;
   Gstr.pe "";
-  Gstr.pe "Commands: [server, repl]";
   try
-    Gstr.pe "Available plugins:";
+    Gstr.pe "Available plugins: (see 'jark plugin list')";
     list_server_plugins ()
   with Unix.Unix_error(_, "connect", "") ->
     Gstr.pe "No server plugins"

@@ -35,6 +35,7 @@ module Jvm =
       Gstr.maybe_int pid
 
     let stop args =
+      (* FIXME: Ensure that stop is issued only on the server *)
       match get_pid () with
       | None -> print_endline "Could not get pid of JVM"
       | Some pid ->

@@ -6,8 +6,6 @@ module Server :
 
     val install : unit -> unit
 
-    val status : unit -> unit
-
     val show_usage : unit -> unit
 
   end
