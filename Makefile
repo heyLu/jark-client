@@ -12,19 +12,18 @@ TOP = $(shell pwd)
 DEP = $(TOP)/deps
 DEPLIBS = $(DEP)/lib
 LEDIT = $(DEPLIBS)/ocaml/ledit
+ANSITERM = $(DEPLIBS)/ANSITerminal-0.6/_build
 CAMLP5 = $(DEPLIBS)/ocaml/camlp5
 
 WIN_LIBS = $(WLIB)/unix,$(WLIB)/bigarray,$(WLIB)/str,$(WLIB)/nums,$(WLIB)/camlp5/camlp5,$(WLIB)/camlp5/gramlib,$(WLIB)/ledit/ledit
 
-LIBS = unix,bigarray,str,nums,$(CAMLP5)/camlp5,$(CAMLP5)/gramlib,$(LEDIT)/ledit
+LIBS = unix,bigarray,str,nums,$(CAMLP5)/camlp5,$(CAMLP5)/gramlib,$(LEDIT)/ledit,$(ANSITERM)/ANSITerminal
 
 OCAMLBUILD = ocamlbuild -j 2 -quiet -I src/utils -I src/core -I src -I src/modules  -lflags -I,/usr/lib/ocaml/pcre  \
-           -lflags -I,$(CAMLP5) -cflags  -I,$(LEDIT)
+           -lflags -I,$(CAMLP5) -cflags  -I,$(LEDIT) -lflags -I,$(ANSITERM) -cflags -I,$(ANSITERM)
 
 WOCAMLBUILD = ocamlbuild -j 2 -quiet -I src/utils -I src -I src/core -I src/modules -lflags -I,$(WLIB)/pcre  \
            -lflags -I,$(WLIB)/camlp5 -cflags  -I,$(WLIB)/ledit
-
-
 
 all:: native
 
@@ -78,8 +77,11 @@ up:
 	cd upload && upload.rb jark-$(VERSION)-x86_64.tar.gz icylisper/jark-client
 
 deps:
+	mkdir -p $(DEPLIBS)
+	cd $(DEPLIBS) && wget -O - https://forge.ocamlcore.org/frs/download.php/610/ANSITerminal-0.6.tar.gz 2> /dev/null | tar xzvf - 
+	cd $(DEPLIBS)/ANSITerminal-0.6 && ocaml setup.ml -configure && ocaml setup.ml -build
+
 	wget -O - http://pauillac.inria.fr/~ddr/camlp5/distrib/src/camlp5-6.02.3.tgz 2> /dev/null | tar xzvf - 
-	rm -rf $(DEP)
 	mkdir -p $(DEPLIBS)
 	cd camlp5-6.02.3 && ./configure --prefix $(DEP) && make world.opt && make install
 	rm -rf camlp5-6.02.3

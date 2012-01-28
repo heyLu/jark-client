@@ -23,7 +23,7 @@ module Server =
     let load path =
       let apath = (Gfile.abspath path) in
       if (Gfile.exists apath) then
-        Jark.nfa "jark.ns" ~f:"load-clj" ~a:[apath] ()
+        Jark.nfa "jark.ns" ~f:"load" ~a:[apath] ()
       else begin
         Printf.printf "File not found %s\n" apath;
         ()
