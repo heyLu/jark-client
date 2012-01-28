@@ -10,7 +10,7 @@ module Jvm =
     module C = Config
 
     let start_cmd jvm_opts port =
-      String.concat " " ["java"; jvm_opts ; "-cp"; C.cp_boot (); "jark.vm"; port; "&"]
+      String.concat " " ["java"; jvm_opts ; "-cp"; C.cp_boot (); "jark.server"; port; "&"]
 
     let start args =
       let jvm_opts = ref C.default_opts.jvm_opts in
@@ -30,8 +30,7 @@ module Jvm =
       printf "Started JVM on port %s\n" port
     
     let get_pid () =
-      Jark.require "jark.utils.ns";
-      let msg = "(jark.utils.ns/dispatch \"jark.vm\" \"pid\")" in
+      let msg = "(jark.server/dispatch \"jark.vm\" \"pid\")" in
       let pid = Gstr.strip (Jark.eval ~out:true ~value:false msg ()) in
       Gstr.maybe_int pid
 
