@@ -7,6 +7,7 @@ module Repl =
     open Jark
     open Gstr
     open Gsys
+    open ANSITerminal
 
     let prompt_of env = env.ns ^ ">> "
 
@@ -25,7 +26,7 @@ module Repl =
     let show_exc x = Printf.printf "Exception: %s\n%!" (Printexc.to_string x)
 
     let bad_command () =
-      printf "Bad command\n";
+      Printf.printf "Bad command\n";
       flush stdout
 
     let send_cmd env str () =
@@ -33,11 +34,29 @@ module Repl =
       flush stdout;
       env
 
+    let repl_cmd env plugin cmd () =
+      let str = "(jark." ^ plugin ^ "/" ^ cmd ^ ")" in 
+      send_cmd env str ()
+
     let display_help () =
       (* FIXME: Construct the help string dynamically *)
-      printf "REPL Commands: \n";
-      printf "/cp [list add] \n";
-      printf "/debug [true false] \n";
+      print_string [cyan] "REPL Commands:\n";
+      let lines = Gstr.unlines ["/clear";
+                                 "/color [true false]";
+                                 "/completion [true false]";
+                                 "/completion-mode [server histfile]";
+                                 "/cp [list add]";
+                                 "/debug [true false]";
+                                 "/inspect var";
+                                 "/multiline [true false]";
+                                 "/methods object";
+                                 "/ns namespace";
+                                 "/readline [true false]";
+                                 "/server [version info]";
+                                 "/vm [info stat]";
+                                 "/who"] in
+      print_string [green] lines;
+      Printf.printf "\n";
       flush stdout
 
     let set_debug env o =
@@ -48,7 +67,7 @@ module Repl =
       | "off"   -> false
       | _       -> env.debug
       in
-      printf "debug = %s\n" (if d then "true" else "false");
+      Printf.printf "debug = %s\n" (if d then "true" else "false");
       flush stdout;
       {env with debug = d}
 
@@ -61,12 +80,17 @@ module Repl =
 
     let handle_cmd env cmd () =
       match Str.bounded_split (Str.regexp " +") cmd 2 with
-      | ["/help"]        -> display_help (); env
-      | ["/debug"; o]    -> set_debug env o
-      | ["/cp"; "list"]  -> send_cmd env "(jark.cp/list)" ()
-      | ["/server"; "version"]  -> send_cmd env "(jark.server/version)" ()
-      | ["/vm"; "version"]  -> send_cmd env "(jark.vm/version)" ()
-      | _             -> env
+      | ["/help"]               -> display_help (); env
+      | ["/debug"; o]           -> set_debug env o
+      | ["/cp"; "list"]         -> repl_cmd env "cp" "list" ()
+      | ["/clear"]              -> ignore (Sys.command "clear"); env
+      | ["/server"; "version"]  -> repl_cmd env "server" "version" ()
+      | ["/server"; "info"]     -> repl_cmd env "server" "info" ()
+      | ["/vm"; "version"]      -> repl_cmd env "vm" "version" ()
+      | ["/vm"; "stat"]         -> repl_cmd env "vm" "stat" ()
+      | ["/readline"; o]        -> set_debug env o
+      | ["/ns"; o]              -> set_debug env o
+      | _                       -> env
 
     let handle env str () =
       if String.length str == 0 then
@@ -75,6 +99,7 @@ module Repl =
         handle_cmd env str ()
       else
         send_cmd env str ()
+          
 
     let run ns () =
       try
