@@ -25,8 +25,6 @@ module Jvm =
       print_endline c;
       ignore (Sys.command c);
       Unix.sleep 3;
-      let paths = C.java_tools_path () in
-      List.iter (fun x -> Jark.nfa "jark.cp" ~f:"add" ~a:[x] ()) [paths];
       printf "Started JVM on port %s\n" port
     
     let get_pid () =
