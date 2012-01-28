@@ -50,23 +50,20 @@ module Server =
       | false -> C.install_components ();
       Gstr.pe "Installed components successfully"
 
-    let status args =
-      try
-        let env = C.get_env () in
-        let pid = match Jvm.get_pid () with
-        | None -> ""
-        | Some pid -> string_of_int pid
-        in
-        Gstr.pe (Gstr.unlines [
-          "Connected to JVM";
-          "  PID      " ^ pid;
-          "  Host     " ^ env.host;
-          "  Port     " ^ string_of_int env.port])
-      with Unix.Unix_error(_, "connect", "") ->
-        Gstr.pe "Not connected to JVM"
-
     let uninstall args =
       Gstr.pe "Removed jark configs successfully"
+
+    let info args =
+      Jark.nfa "jark.server" ~f:"info" ~a:args ()
+
+    let clients args = 
+      Jark.nfa "jark.server" ~f:"clients" ~a:args ()
+
+    let version args = 
+      Jark.nfa "jark.server" ~f:"version" ~a:args ()
+
+    let stop args = 
+      Jark.nfa "jark.server" ~f:"stop" ~a:args ()
 
     let _ =
       register_fn "start" Jvm.start [
@@ -75,24 +72,27 @@ module Server =
 
       register_fn "stop" Jvm.stop [
         "[-n|--name=<vm-name>]";
-        "Shuts down the current instance of the JVM"];
+        "Shuts down the current instance of the JVM (Run only on the server)"];
 
       register_fn "load" ns_load [
       "[--env=<string>] file" ;
         "Loads the given clj file, and adds relative classpath"];
 
-      register_fn "status" status ["Display connection status"];
+      register_fn "install" uninstall ["Install server components"];
+      
+      register_fn "info" info ["Display Jark server information"];
 
-      register_fn "install" uninstall ["Install server components"]
-
+      register_fn "clients" clients ["Display all clients connected to this server"]
 
     let dispatch cmd args =
       match cmd with
+      | "info"       -> info args
+      | "clients"    -> clients args
+      | "install"    -> install args
+      | "load"       -> ns_load args
       | "start"      -> Jvm.start args
       | "stop"       -> Jvm.stop args
-      | "load"       -> ns_load args
-      | "install"    -> install args
-      | "status"     -> status args
-      | _            -> Jark.nfa "jark.vm" ~f:cmd ~a:args ()
+      | "version"    -> version args
+      | _            -> Jark.nfa "jark.server" ~f:cmd ~a:args ()
 
 end
