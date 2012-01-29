@@ -14,6 +14,8 @@ module Config =
 
     let release_version = "0.4-pre"
 
+    let jark_version = "jark client version " ^ release_version
+
     (* environment *)
     let global_env = ref {
       ns = "user";
@@ -48,8 +50,6 @@ module Config =
     }
 
     let platform = if Gsys.is_windows then windows else posix
-
-    let jark_version = "jark client version " ^ release_version
 
     let path xs =
       if Gsys.is_windows then
@@ -107,12 +107,16 @@ module Config =
       let f = open_out(file) in
       let project_clj_string = String.concat
           " " ["(leiningen.core/defproject cljr.core/cljr-repo";
-                "\"1.0.0-SNAPSHOT\"";
+                "\"1.0.0\"";
                 ":description \"cljr is a Clojure REPL and package management system.\"";
-                ":dependencies [[org.clojure/clojure \"1.2.0\"]";
-                "[org.clojure/clojure-contrib \"1.2.0\"]";
-                "[leiningen \"1.1.0\"]";
-                "[swank-clojure \"1.3.2\"]]";
+                ":dependencies [[org.clojure/clojure \"1.3.0\"]";
+                "[swank-clojure \"1.4.0\"]]";
+                "[org.clojure/java.classpath \"0.1.0\"]]";
+                "[org.clojure/data.json \"0.1.1\"]]";
+                "[org.clojure/tools.namespace \"0.1.0\"]]";
+                "[org.clojure/tools.nrepl \"0.0.5\"]]";
+                "[clj-http \"0.2.7\"]]";
+                "[server-socket \"1.0.0\"]]";
                 ":classpath [\"./src/\" \"./\"]";
                 ":repositories nil)";] in
       fprintf f "%s\n" project_clj_string;
@@ -169,7 +173,7 @@ module Config =
      * it's a bit of a nuisance compared to a hashtbl, but this way the compiler
      * will check that we haven't used a wrong key or type *)
     let default_opts = {
-       jvm_opts    = "-Xms256m -Xmx512m -DNOSECURITY=true";
+       jvm_opts    = "-Xms256m -Xmx512m";
        log_path    = "/dev/null";
        swank_port  = 4005;
        json        = false;
