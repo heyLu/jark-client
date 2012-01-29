@@ -86,15 +86,15 @@ up-macosx:
 
 deps:
 	mkdir -p $(DEPLIBS)
-	cd $(DEPLIBS) && wget -O - https://forge.ocamlcore.org/frs/download.php/610/ANSITerminal-0.6.tar.gz 2> /dev/null | tar xzvf - 
+	cd $(DEPLIBS) && wget --no-check-certificate -O - https://forge.ocamlcore.org/frs/download.php/610/ANSITerminal-0.6.tar.gz 2> /dev/null | tar xzvf - 
 	cd $(DEPLIBS)/ANSITerminal-0.6 && ocaml setup.ml -configure && ocaml setup.ml -build
 
-	wget -O - http://pauillac.inria.fr/~ddr/camlp5/distrib/src/camlp5-6.02.3.tgz 2> /dev/null | tar xzvf - 
+	wget --no-check-certificate -O - http://pauillac.inria.fr/~ddr/camlp5/distrib/src/camlp5-6.02.3.tgz 2> /dev/null | tar xzvf - 
 	mkdir -p $(DEPLIBS)
 	cd camlp5-6.02.3 && ./configure --prefix $(DEP) && make world.opt && make install
 	rm -rf camlp5-6.02.3
 
-	wget -O - http://cristal.inria.fr/~ddr/ledit/distrib/src/ledit-2.02.1.tgz 2> /dev/null | tar xzvf - 
+	wget --no-check-certificate -O - http://cristal.inria.fr/~ddr/ledit/distrib/src/ledit-2.02.1.tgz 2> /dev/null | tar xzvf - 
 	cd ledit-2.02.1 && make && make ledit.cmxa
 	cp -r ledit-2.02.1/ $(DEPLIBS)/ocaml/ledit
 	rm -rf ledit-2.02.1

@@ -4,7 +4,7 @@ module Server :
 
     val load : string -> unit
 
-    val install : unit -> unit
+    val install : string list -> unit
 
     val show_usage : unit -> unit
 

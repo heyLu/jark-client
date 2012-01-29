@@ -42,6 +42,7 @@ module Server =
         C.install_standalone ()
 
     let install args =
+      Glist.print_list args;
       Gfile.mkdir C.cljr;
       Gfile.mkdir C.cljr_lib;
       C.setup_cljr ();
@@ -78,7 +79,9 @@ module Server =
       "[--env=<string>] file" ;
         "Loads the given clj file, and adds relative classpath"];
 
-      register_fn "install" uninstall ["Install server components"];
+      register_fn "install" install [
+      "[--prefix=<path> (default:~/.cljr)] [--standalone=<true|false> (default:true)] [--force=<true|false> (default:false)]";
+      "Install server components"];
       
       register_fn "info" info ["Display Jark server information"];
 
