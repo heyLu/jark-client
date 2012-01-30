@@ -23,7 +23,7 @@ module Server =
     let load path =
       let apath = (Gfile.abspath path) in
       if (Gfile.exists apath) then
-        Jark.nfa "jark.ns" ~f:"load" ~a:[apath] ()
+        Jark.nfa "clojure.tools.jark.plugin.ns" ~f:"load" ~a:[apath] ()
       else begin
         Printf.printf "File not found %s\n" apath;
         ()
@@ -55,16 +55,16 @@ module Server =
       Gstr.pe "Removed jark configs successfully"
 
     let info args =
-      Jark.nfa "jark.server" ~f:"info" ~a:args ()
+      Jark.nfa "clojure.tools.jark.server" ~f:"info" ~a:args ()
 
     let clients args = 
-      Jark.nfa "jark.server" ~f:"clients" ~a:args ()
+      Jark.nfa "clojure.tools.jark.server" ~f:"clients" ~a:args ()
 
     let version args = 
-      Jark.nfa "jark.server" ~f:"version" ~a:args ()
+      Jark.nfa "clojure.tools.jark.server" ~f:"version" ~a:args ()
 
     let stop args = 
-      Jark.nfa "jark.server" ~f:"stop" ~a:args ()
+      Jark.nfa "clojure.tools.jark.server" ~f:"stop" ~a:args ()
 
     let _ =
       register_fn "start" Jvm.start [
@@ -96,6 +96,6 @@ module Server =
       | "start"      -> Jvm.start args
       | "stop"       -> Jvm.stop args
       | "version"    -> version args
-      | _            -> Jark.nfa "jark.server" ~f:cmd ~a:args ()
+      | _            -> Jark.nfa "clojure.tools.jark.server" ~f:cmd ~a:args ()
 
 end
