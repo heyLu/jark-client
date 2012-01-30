@@ -63,7 +63,7 @@ let show_usage () =
   Gstr.pe usage;
   Gstr.pe "";
   try
-    Gstr.pe "Available plugins: (see 'jark plugin list')";
+    Gstr.pe "Available plugins: ";
     list_server_plugins ()
   with Unix.Unix_error(_, "connect", "") ->
     Gstr.pe "No server plugins"
