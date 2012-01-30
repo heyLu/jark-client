@@ -35,7 +35,7 @@ module Repl =
       env
 
     let repl_cmd env plugin cmd () =
-      let str = "(jark." ^ plugin ^ "/" ^ cmd ^ ")" in 
+      let str = "(clojure.tools.jark.plugin." ^ plugin ^ "/" ^ cmd ^ ")" in 
       send_cmd env str ()
 
     let display_help () =

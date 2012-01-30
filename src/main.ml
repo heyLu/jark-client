@@ -57,7 +57,7 @@ let plugin_dispatch m args =
   | x :: xs -> Handler.dispatch x xs
 
 let list_server_plugins () =
-  Jark.nfa "jark.plugin" ~f:"list" ()
+  Jark.nfa "clojure.tools.jark.plugin" ~f:"list" ()
 
 let show_usage () =
   Gstr.pe usage;
@@ -75,8 +75,8 @@ let server_dispatch args =
   match args with
   [] -> show_usage ()
   | ns :: _ when String.contains ns '.' -> Jark.dispatch args
-  | ns :: []      -> Jark.nfa ("jark." ^ ns) ()
-  | ns :: f :: xs -> Jark.nfa ("jark." ^ ns) ~f:f ~a:xs ()
+  | ns :: []      -> Jark.nfa ("clojure.tools.jark.plugin." ^ ns) ()
+  | ns :: f :: xs -> Jark.nfa ("clojure.tools.jark.plugin." ^ ns) ~f:f ~a:xs ()
 
 let show_version () = Gstr.pe Config.jark_version
 (* handle actions that don't dispatch to a plugin *)
