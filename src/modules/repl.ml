@@ -1,4 +1,3 @@
-
 module Repl =
   struct
 
@@ -8,6 +7,71 @@ module Repl =
     open Gstr
     open Gsys
     open ANSITerminal
+
+    type completion_mode = Server | Histfile
+
+    let string_of_completion_mode c = match c with
+    | Server -> "server"
+    | Histfile -> "histfile"
+
+    type repl_config = {
+      mutable color           : bool;
+      mutable multiline       : bool;
+      mutable readline        : bool;
+      mutable completion      : bool;
+      mutable completion_mode : completion_mode;
+    }
+
+    (* have a global repl config, since there is only ever one repl *)
+    let config = {
+      color           = true;
+      multiline       = false;
+      readline        = true;
+      completion      = false;
+      completion_mode = Histfile;
+    }
+
+    let bool_of_string s =
+      match s with
+      | "true"  -> Some true
+      | "on"    -> Some true
+      | "false" -> Some false
+      | "off"   -> Some false
+      | _       -> None
+
+    let default_bool s def =
+      match bool_of_string s with
+      | Some b -> b
+      | None   -> def
+
+    (* color printing *)
+    let print_string styles str =
+      if config.color then
+        ANSITerminal.print_string styles str
+      else
+        Pervasives.print_string str
+
+    let print_line styles str =
+      print_string styles (str ^ "\n");
+      flush stdout
+
+    let show_config () =
+      let fields = [
+        "color          ", string_of_bool config.color;
+        "readline       ", string_of_bool config.readline;
+        "multiline      ", string_of_bool config.multiline;
+        "completion     ", string_of_bool config.completion;
+        "completion-mode", string_of_completion_mode config.completion_mode
+      ]
+      in
+      let print_field (x,y) =
+        print_string [white] x;
+        print_string [default] ": ";
+        print_line   [green] y
+      in
+      List.iter print_field fields;
+      flush stdout
+
 
     let prompt_of env = env.ns ^ ">> "
 
@@ -43,6 +107,7 @@ module Repl =
       print_string [cyan] "REPL Commands:\n";
       let lines = Gstr.unlines ["/clear";
                                  "/color [true false]";
+                                 "/config";
                                  "/completion [true false]";
                                  "/completion-mode [server histfile]";
                                  "/cp [list add]";
@@ -60,17 +125,47 @@ module Repl =
       Printf.printf "\n";
       flush stdout
 
+    (* update env from string options *)
     let set_debug env o =
-      let d = match o with
-      | "true"  -> true
-      | "on"    -> true
-      | "false" -> false
-      | "off"   -> false
-      | _       -> env.debug
+      let d = match bool_of_string o with
+      | Some b  -> b
+      | None    -> env.debug
       in
-      Printf.printf "debug = %s\n" (if d then "true" else "false");
+      Printf.printf "debug: %s\n" (if d then "true" else "false");
       flush stdout;
       {env with debug = d}
+
+    let set_ns env o =
+      Printf.printf "ns: %s\n" o;
+      {env with ns = o}
+
+    (* update config fields from string options *)
+    let set_color o =
+      config.color <- default_bool o config.color;
+      print_line [default] ("color: " ^ (string_of_bool config.color))
+
+    let set_completion o =
+      config.completion <- default_bool o config.completion;
+      print_line [default] ("completion: " ^ (string_of_bool config.completion))
+
+    let set_multiline o =
+      config.multiline <- default_bool o config.multiline;
+      print_line [default] ("multiline: " ^ (string_of_bool config.multiline))
+
+    let set_readline o =
+      config.readline <- default_bool o config.readline;
+      print_line [default] ("readline: " ^ (string_of_bool config.readline))
+
+    let set_completion_mode o =
+      begin
+        config.completion_mode <- match o with
+        | "server"   -> Server
+        | "histfile" -> Histfile
+        | _          -> config.completion_mode
+      end;
+      print_line [default] (
+        "completion-mode: " ^
+        (string_of_completion_mode config.completion_mode))
 
     let initial_env = {
       ns          = "user";
@@ -89,8 +184,13 @@ module Repl =
       | ["/server"; "info"]     -> repl_cmd env "server" "info" ()
       | ["/vm"; "version"]      -> repl_cmd env "vm" "version" ()
       | ["/vm"; "stat"]         -> repl_cmd env "vm" "stat" ()
-      | ["/readline"; o]        -> set_debug env o
-      | ["/ns"; o]              -> set_debug env o
+      | ["/ns"; o]              -> set_ns env o
+      | ["/color"; o]           -> set_color o; env
+      | ["/completion"; o]      -> set_completion o; env
+      | ["/completion-mode"; o] -> set_completion_mode o; env
+      | ["/multiline"; o]       -> set_multiline o; env
+      | ["/readline"; o]        -> set_readline o; env
+      | ["/config"]             -> show_config (); env
       | ["/quit"]               -> env
       | _                       -> env
 
