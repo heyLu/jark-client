@@ -35,17 +35,13 @@ module Config =
 
     let windows = {
       cljr            = "c:\\cljr";
-      config_dir      = "c:\\jark\\";
-      jark_config_dir = "c:\\jark\\";
       config_file     = "c:\\jark\\jarkrc";
       wget_bin        = "c:\\wget.exe --user-agent jark ";
     }
 
     let posix = {
       cljr            = ~/ ".cljr";
-      config_dir      = ~/ ".config/";
-      jark_config_dir = ~/ ".config/jark/";
-      config_file     = ~/ ".jarkrc";
+      config_file     = ~/ ".cljr/jark.conf";
       wget_bin        = "wget --user-agent jark ";
     }
 
@@ -131,43 +127,10 @@ module Config =
     let install_components () =
       List.iter install_component all_jars
 
-    (* config routines *)
-
-    let remove_config () =
-      Gfile.remove (path [platform.jark_config_dir; "host"]);
-      Gfile.remove (path [platform.jark_config_dir; "port"])
-
-    let set k v () =
-      let config_dir = platform.config_dir in
-      let jark_config_dir = platform.jark_config_dir in
-      Gfile.mkdir config_dir;
-      Gfile.mkdir jark_config_dir;
-      let file = path [jark_config_dir; k] in
-      let f = open_out file in
-      fprintf f "%s\n" v;
-      close_out f
-
-    let get_from_file file k =
-      let f = open_in file in
-      try
-        let line = input_line f in
-        close_in f;
-        line
-      with e ->
-        close_in_noerr f;
-        raise e
-
-    let get k ?(default="") () =
-      let file = path [platform.jark_config_dir; k] in
-      if (not (Gfile.exists file)) && (default <> "") then
-        default
-      else
-        get_from_file file k
-
     (* options *)
-    let host_default = get "host" ~default:"localhost" ()
+    let host_default = "localhost"
 
-    let port_default = get "port" ~default:"9000" ()
+    let port_default = "9000"
 
     (* needs to be kept in sync with Datatypes.config_opts
      * it's a bit of a nuisance compared to a hashtbl, but this way the compiler

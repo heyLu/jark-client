@@ -18,7 +18,6 @@ module Jvm =
         "--jvm-opts", Options.Set_string jvm_opts, "set jvm options"
       ]
       in
-      C.remove_config();
       let env = C.get_env () in
       let port = string_of_int env.port in
       let c = start_cmd !jvm_opts port in
@@ -40,6 +39,5 @@ module Jvm =
           begin
             printf "Stopping JVM with pid: %d\n" pid;
             Unix.kill pid Sys.sigkill;
-            C.remove_config ()
           end
   end
