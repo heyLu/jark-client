@@ -7,6 +7,8 @@ module Repl =
     open Gstr
     open Gsys
     open ANSITerminal
+    open Config
+    module C = Config
 
     type completion_mode = Server | Histfile
 
@@ -94,6 +96,7 @@ module Repl =
       flush stdout
 
     let send_cmd env str () =
+      C.set_env env;
       Gstr.pe (Jark.eval str ());
       flush stdout;
       env
