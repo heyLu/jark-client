@@ -21,8 +21,6 @@ type response = {
 (* platform-specific string constants *)
 type platform_config = {
   cljr: string;
-  config_dir: string;
-  jark_config_dir: string;
   config_file: string;
   wget_bin: string;
 }

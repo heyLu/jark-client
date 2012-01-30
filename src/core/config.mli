@@ -21,8 +21,6 @@ module Config :
 
     val jar : string -> string
 
-    val remove_config : unit -> unit
-
     val jark_version : string
 
     val default_opts : Datatypes.config_opts
