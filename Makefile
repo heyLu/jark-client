@@ -5,6 +5,7 @@ BIN_NAME = jark-$(VERSION)-`uname -m`
 
 OLIB = /usr/lib/ocaml
 WLIB = /usr/lib/i486-mingw32-ocaml
+WGET = wget --no-check-certificate -O -
 
 
 # download and make dependencies within the project directory
@@ -84,17 +85,27 @@ up-macosx:
 	cd upload && tar zcf jark-$(VERSION)-x86_64_macosx.tar.gz jark-$(VERSION)-x86_64_macosx/*
 	cd upload && upload.rb jark-$(VERSION)-x86_64_macosx.tar.gz icylisper/jark-client
 
-deps:
-	mkdir -p $(DEPLIBS)
-	cd $(DEPLIBS) && wget --no-check-certificate -O - https://forge.ocamlcore.org/frs/download.php/610/ANSITerminal-0.6.tar.gz 2> /dev/null | tar xzvf - 
-	cd $(DEPLIBS)/ANSITerminal-0.6 && ocaml setup.ml -configure && ocaml setup.ml -build
+deps: ansiterminal camlp5 ledit
 
-	wget --no-check-certificate -O - http://pauillac.inria.fr/~ddr/camlp5/distrib/src/camlp5-6.02.3.tgz 2> /dev/null | tar xzvf - 
-	mkdir -p $(DEPLIBS)
-	cd camlp5-6.02.3 && ./configure --prefix $(DEP) && make world.opt && make install
-	rm -rf camlp5-6.02.3
+ansiterminal:
+	if [ ! -e $(ANSITERM)/ANSITerminal.cmxa ]; then \
+		mkdir -p $(DEPLIBS) ;\
+		cd $(DEPLIBS) && $(WGET) https://forge.ocamlcore.org/frs/download.php/610/ANSITerminal-0.6.tar.gz 2> /dev/null | tar xzvf - ;\
+		cd $(DEPLIBS)/ANSITerminal-0.6 && ocaml setup.ml -configure && ocaml setup.ml -build ;\
+	fi
 
-	wget --no-check-certificate -O - http://cristal.inria.fr/~ddr/ledit/distrib/src/ledit-2.02.1.tgz 2> /dev/null | tar xzvf - 
-	cd ledit-2.02.1 && make && make ledit.cmxa
-	cp -r ledit-2.02.1/ $(DEPLIBS)/ocaml/ledit
-	rm -rf ledit-2.02.1
+camlp5:
+	if [ ! -e $(CAMLP5)/camlp5.cmxa ]; then \
+		mkdir -p $(DEPLIBS) ; \
+		cd $(DEPLIBS) && $(WGET) http://pauillac.inria.fr/~ddr/camlp5/distrib/src/camlp5-6.02.3.tgz 2> /dev/null | tar xzvf - ; \
+		cd camlp5-6.02.3 && ./configure --prefix $(DEP) && make world.opt && make install ;\
+		rm -rf $(DEPLIBS)/camlp5-6.02.3 ;\
+	fi
+
+ledit:
+	if [ ! -e $(LEDIT)/ledit.cmxa ]; then \
+		mkdir -p $(DEPLIBS) ; \
+		cd $(DEPLIBS) && $(WGET) http://cristal.inria.fr/~ddr/ledit/distrib/src/ledit-2.02.1.tgz 2> /dev/null | tar xzvf - ; \
+		cd ledit-2.02.1 && make && make ledit.cmxa ; \
+		mv $(DEPLIBS)/ledit-2.02.1 $(DEPLIBS)/ocaml/ledit ; \
+	fi

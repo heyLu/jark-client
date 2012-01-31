@@ -11,10 +11,10 @@ module Nrepl =
     open Datatypes
     open Gstr  
 
-    let debug = false
+    let debug = ref false
 
     let debugging x =
-      if debug then print_endline x;
+      if !debug then print_endline x;
       x
 
     let new_response = {
@@ -92,6 +92,7 @@ module Nrepl =
       let server_address = hostinfo.Unix.h_addr_list.(0) in
       let _ = Unix.connect socket (Unix.ADDR_INET (server_address, env.port)) in
       let msg = Gstr.unlines (nrepl_message_packet msg) in
+      let _ = debug := env.debug in
       let _ = write_all socket msg in
       let res = readlines socket in
       Unix.close socket;
