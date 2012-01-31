@@ -57,7 +57,7 @@ let plugin_dispatch m args =
   | x :: xs -> Handler.dispatch x xs
 
 let list_server_plugins () =
-  Jark.nfa "clojure.tools.jark.plugin" ~f:"list" ()
+  Jark.nfa "clojure.tools.jark.plugin.plugin" ~f:"list" ()
 
 let show_usage () =
   Gstr.pe usage;
