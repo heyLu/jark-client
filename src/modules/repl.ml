@@ -74,7 +74,6 @@ module Repl =
       List.iter print_field fields;
       flush stdout
 
-
     let prompt_of env = env.ns ^ ">> "
 
     let readline prompt () =
@@ -134,7 +133,8 @@ module Repl =
       | Some b  -> b
       | None    -> env.debug
       in
-      Printf.printf "debug: %s\n" (if d then "true" else "false");
+
+      Printf.printf "debug = %s\n" (if d then "true" else "false");
       flush stdout;
       {env with debug = d}
 
@@ -189,11 +189,11 @@ module Repl =
       | ["/vm"; "stat"]         -> repl_cmd env "vm" "stat" ()
       | ["/ns"; o]              -> set_ns env o
       | ["/color"; o]           -> set_color o; env
+      | ["/config"]             -> show_config (); env
       | ["/completion"; o]      -> set_completion o; env
       | ["/completion-mode"; o] -> set_completion_mode o; env
       | ["/multiline"; o]       -> set_multiline o; env
       | ["/readline"; o]        -> set_readline o; env
-      | ["/config"]             -> show_config (); env
       | ["/quit"]               -> env
       | _                       -> env
 
