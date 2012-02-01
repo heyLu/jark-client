@@ -15,8 +15,11 @@ open Options
 let usage =
   Gstr.unlines ["usage: jark OPTIONS server|repl|<plugin>|<namespace> [<command>|<function>] [<args>]";
                 "";
-                "            OPTIONS:   [-e|--eval] [-c|--config=<path>]" ;
-                "                       [-h|--host=<hostname>] [-p|--port=<port>]"]
+                "OPTIONS:   [-e|--eval]  [-j|--json]" ;
+                "           [-c|--config=<path>]";
+                "           [-h|--host=<hostname>] [-p|--port=<port>]";
+                ""]
+
                  
 let connection_usage () =
   let env = Config.get_env () in
@@ -60,13 +63,7 @@ let list_server_plugins () =
   Jark.nfa "clojure.tools.jark.plugin.plugin" ~f:"list" ()
 
 let show_usage () =
-  Gstr.pe usage;
-  Gstr.pe "";
-  try
-    Gstr.pe "Available plugins: ";
-    list_server_plugins ()
-  with Unix.Unix_error(_, "connect", "") ->
-    Gstr.pe "No server plugins"
+  Gstr.pe usage
 
 let run_eval args =
   Gstr.pe (Jark.eval args ())
