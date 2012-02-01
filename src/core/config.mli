@@ -25,4 +25,8 @@ module Config :
 
     val global_opts : Datatypes.config_opts
 
+    val read_config_file : unit -> unit
+
+    val print_config : unit -> unit
+
   end

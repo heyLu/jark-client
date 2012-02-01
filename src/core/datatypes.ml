@@ -30,6 +30,7 @@ type response_format = ResText | ResHash | ResList
 type cmd_opts = {
   env : env;
   show_version: bool;
+  show_config: bool;
   eval : bool ;
   args : string list
 }

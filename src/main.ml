@@ -90,8 +90,8 @@ let main_handler m args =
 
 let parse_argv () =
   let e = Config.get_env () in
-  let (host, port, version, eval) =
-    (ref (e.host), ref (e.port), ref false, ref false)
+  let (host, port, version, eval, show_config) =
+    (ref (e.host), ref (e.port), ref false, ref false, ref false)
   in
   let rest = try
     Options.parse_argv [
@@ -99,6 +99,8 @@ let parse_argv () =
       "-p", Options.Set_int port,    (sprintf "Set server port (default: %d)" !port);
       "-v", Options.Set_on version,  "Show jark version";
       "--version", Options.Set_on version,  "Show jark version";
+      "-c", Options.Set_on show_config,  "Show config";
+      "--show-config", Options.Set_on show_config,  "Show ";
       "-e", Options.Set_on eval,     "Evaluate expression";
   ]
   with Options.BadOptions x -> print_endline ("bad options: " ^ x); exit 1
@@ -111,17 +113,21 @@ let parse_argv () =
       debug = false
     };
     show_version = !version;
+    show_config = !show_config;
     eval = !eval;
     args = rest
   }
 
 let _ =
   try
+    Config.read_config_file ();
     Gconf.load ();
     let opts = parse_argv () in
     Config.set_env opts.env;
     if opts.show_version then
       show_version ()
+    else if opts.show_config then
+      Config.print_config ()
     else if opts.eval then
       run_eval (List.hd opts.args)
     else match opts.args with
@@ -131,5 +137,8 @@ let _ =
           plugin_dispatch m args
         else
           main_handler m args
-  with Unix.Unix_error(_, "connect", "") ->
-    Gstr.pe (connection_usage ())
+  with
+  | Unix.Unix_error(_, "connect", "") ->
+      Gstr.pe (connection_usage ())
+  | Failure e ->
+      Gstr.pe ("Fatal error: " ^ e)

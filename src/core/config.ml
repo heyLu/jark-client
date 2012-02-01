@@ -149,12 +149,23 @@ module Config =
     | _             -> ()
 
     let read_config_file () =
+      let skip_line s =
+        let s = Gstr.strip s in
+        (Gstr.starts_with s "#") ||
+        (s = "")
+      in
       let process_line s =
         try
-          match Str.bounded_split (Str.regexp ":") s 2 with
-          | [k; v] -> set_option (Gstr.strip k) (Gstr.strip v)
-          | _ -> raise (Failure "Bad config file line")
-        with _ -> print_endline ("Could not parse config file line " ^ s)
+          if not (skip_line s) then begin
+            match Str.bounded_split (Str.regexp ":") s 2 with
+            | [k; v] -> set_option (Gstr.strip k) (Gstr.strip v)
+            | _ -> raise (Failure "Bad config file line")
+          end
+        with _ -> begin
+          print_endline ("Bad config file: " ^ platform.config_file);
+          print_endline ("Could not parse line: " ^ s);
+          raise (Failure "Could not load config file")
+        end
       in
       if (Gfile.exists platform.config_file) then begin
         let config = Gfile.getlines platform.config_file in
@@ -165,13 +176,12 @@ module Config =
 
     let print_config () =
       Gstr.pe (Gstr.unlines [
+        "# copy into config file " ^ platform.config_file;
+        "";
         "jvm_opts: " ^ global_opts.jvm_opts ;
         "log_path: " ^ global_opts.log_path ;
         "swank_port: " ^ (string_of_int global_opts.swank_port) ;
         "json: " ^ (string_of_bool global_opts.json) ;
         "remote_host: " ^ global_opts.remote_host ;
         ])
-
-    let _ =
-      read_config_file ();
 end
