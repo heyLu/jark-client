@@ -1,65 +1,138 @@
-A tool to interact with a persistent JVM 
 
-Download the binary here: [http://icylisper.in/jark/downloads.html](http://icylisper.in/jark/downloads.html)
+# jark-client
 
-# USAGE
-
-     usage: jark OPTIONS server|repl|<plugin>|<namespace> [<command>|<function>] [<args>]
-
-                 OPTIONS:   [-e|--eval] [-c|--config=<path>]
-                            [-h|--host=<hostname>] [-p|--port=<port>]
-## On the server:
-
-     jark server install
-     jark server start [OPTIONS]
-     jark server stop  [OPTIONS]
-     jark server load FILE
-     jark server info
-     jark server uninstall
-     jark repl
-
-## On the client:
-     
-     jark PLUGIN COMMAND [ARGS*]
-     jark NAMESPACE FUNCTION [ARGS*]
+Jark is a tool to run clojure code on the JVM, interactively and remotely.
+It has 2 components - a client written in OCaml and a server written in Clojure/Java. The client is compiled to native code and is extremely tiny (~300KB). 
+The client uses the nREPL protocol to transfer clojure data structures over the wire. 
 
 
-# BUILD
+## Installation
 
-## GNU/Linux / MacOSX
+### Client
 
-    brew install https://github.com/toots/homebrew/raw/master/Library/Formula/ocaml-findlib.rb  (on macOSX)
-    apt-get install ocaml-findlib (Debian/Ubuntu)
-    make deps
-    make
-    cp build/jark-<ARCH> PATH
+Download the appropriate client binary for your platform:
 
+64-bit:  
+[MacOSX](https://github.com/downloads/icylisper/jark-client/jark-0.4-pre-x86_64_macosx.tar.gz)  
+[GNU/Linux](https://github.com/downloads/icylisper/jark-client/jark-0.4-pre-x86_64_linux.tar.gz)  
 
-## Cross-compilation for Windows
+### Server
 
-### On Arch:
-    packer -S ocaml-mingw32
-       
-* Point ocamlc and ocamlopt to their mingw32 counterparts
-    rm  /usr/bin/ocamlopt 
-    rm  /usr/bin/ocamlc
-    ln -sf /usr/bin/i486-mingw32-ocamlopt /usr/bin/ocamlopt 
-    ln -sf /usr/bin/i486-mingw32-ocamlc /usr/bin/ocamlc
+    jark [--standalone=<true|false> (default:true)] server install 
+
+Currently, the standalone version is packaged with clojure-1.3. To install with clojure-1.2.x do:
+           
+    jark --standalone=false --clojure-version=1.2.x server install
+
+## Basic usage
+
+    jark [-p PORT] [-j JVM-OPTS] server start
+    jark [-h HOST -p PORT] cp add <CLASSPATH>
+    jark [-h HOST -p PORT] cp list
+    jark [-h HOST -p PORT] vm stat
+    jark [-h HOST -p PORT] vm threads [--tree]
+    jark [-h HOST -p PORT] ns find <PATTERN>
+    jark [-h HOST -p PORT] ns load <FILE>
+    jark [-h HOST -p PORT] repl
+    and more ...
+    jark <NAMESPACE> <FUNCTION> <ARGS>
+    and more ...
+    jark server stop
+
+Default HOST is localhost and default port is 9000
+
+## Features
+
+#### Remote Clojure REPL
+
+* Jark provides the following REPL commands, besides evaluating Clojure expressions.
+
+         /clear
+         /color [true false]
+         /config
+         /completion [true false]
+         /completion-mode [server histfile]
+         /cp [list add]
+         /debug [true false]
+         /inspect var
+         /multiline [true false]
+         /methods object
+         /ns namespace
+         /readline [true false]
+         /server [version info]
+         /vm [info stat]
+         /who
+         /quit
+
+#### Scripting 
+* Standalone Clojure scripts can be written using the #! operator. 
+
+         #!/usr/bin/env jark -h HOST -p PORT
+         (clojure code ...)
+        
+* All Jark commands output JSON for parsing when passed a `--json` option
+
+        jark --json ns find swank 
+         => ["swank.commands", "swank.commands.basic", "swank.core" ..]
+
+#### Remote JVM Management
+* JVM Performance monitoring `jark vm stat`
+* Dynamically add classpath(s) `jark cp add`
+* Run on-demand Garbage collection `jark vm gc`
+
+#### Plugins 
+* Server-side plugin system. 
+* All plugins are written in Clojure
   
-* Install dependencies as above (ledit and camlp5) along with the following changes:
-  
-  * Pass a --no-opt flag to ./configure when building camlp5
+        jark plugin list
+        jark plugin load <path-to-plugin.clj>
 
-  * Edit Makefile in ledit and set the following variables
+#### Integration with clojure tools
+* Provides a default lein plugin that performs lein tasks, interactively and much faster.
+* Provides a global package management system using cljr
 
-     OCAMLC=i486-mingw32-ocamlc
-     OCAMLOPT=i486-mingw32-ocamlopt
-     OTHER_OBJS=/usr/lib/i486-mingw32-ocaml/unix.cma -I `camlp5 -where` gramlib.cma
-     OTHER_XOBJS=/usr/lib/i486-mingw32-ocaml/unix.cmxa -I `camlp5 -where` gramlib.cmxa
+#### Embeddable Server
+ 
+* Can be embedded in your app/library.
 
-* run `make exe`
+        Add [jark/jark-server "0.4-SNAPSHOT"] to project.clj 
+        (require 'clojure.tools.jark.server)
+        (clojure.tools.jark.server/start PORT) in your code. 
 
+jark-client can connect to it `jark -h HOST -p PORT N F A`
 
-## ON DEBIAN:
-There is a debian repository for mingw32-ocaml: http://debian.glondu.net/mingw32/
+#### Configurable and easy-to-install
+* 32-bit and 64-bit client binaries are available for GNU/Linux, MacOSX and Windows
+* Configurable (Edit $PREFIX/jark.conf)
 
+* Code Evaluation
+ 
+        echo CLOJURE-EXPRESSION | jark -s 
+        jark -e CLOJURE-EXPRESSION        
+
+* and more ..
+
+## Documentation
+
+https://github.com/icylisper/jark-server/wiki
+
+## Community
+
+User mailing list: https://groups.google.com/group/clojure-jark  
+Dev mailing list : https://groups.google.com/group/clojure-jark-dev
+    
+Catch us on #jark on irc.freenode.net
+
+## Thanks
+
+* Abhijith Gopal
+* Ambrose Bonnaire Sergeant
+* Chas Emerick (for nREPL)
+* Phil Hagelberg (for Leiningen)
+* Rich Hickey and team (for Clojure)
+    
+## License
+
+Copyright © 2012 Martin Demello and Isaac Praveen
+
+Licensed under the EPL. (See the file epl.html.)
