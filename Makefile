@@ -1,7 +1,9 @@
 
 VERSION = 0.4-pre
 
-BIN_NAME = jark-$(VERSION)-`uname -m`
+ARCH = `uname`-`uname -m`
+
+BIN_NAME = jark
 
 OLIB = /usr/lib/ocaml
 WLIB = /usr/lib/i486-mingw32-ocaml
@@ -31,16 +33,18 @@ all:: native
 
 native :
 	$(OCAMLBUILD) -libs $(LIBS) main.native
-	if [ ! -d build ]; then mkdir build; fi
-	cp _build/src/main.native build/$(BIN_NAME)
+	if [ ! -d build ]; then mkdir -p build/$(ARCH); fi
+	cp _build/src/main.native build/$(ARCH)/$(BIN_NAME)
+	rm -rf _build
 
 upx :
 	$(OCAMLBUILD) -libs $(LIBS) main.native
-	if [ ! -d build ]; then mkdir build; fi
-	cp _build/src/main.native build/$(BIN_NAME)-un
-	rm build/$(BIN_NAME)
-	upx --brute --best -f -o build/$(BIN_NAME) build/$(BIN_NAME)-un
+	if [ ! -d build ]; then mkdir -p build/$(ARCH); fi
+	cp _build/src/main.native build/$(ARCH)/$(BIN_NAME)-un
+	rm build/$(ARCH)/$(BIN_NAME)
+	upx --brute --best -f -o build/$(ARCH)/$(BIN_NAME) build/$(ARCH)/$(BIN_NAME)-un
 	rm -f build/$(BIN_NAME)-un
+	rm -rf _build
 
 byte :
 	$(OCAMLBUILD) -libs $(LIBS) main.byte
@@ -50,6 +54,7 @@ byte :
 native32 :
 	$(OCAMLBUILD) -libs $(LIBS) -ocamlopt "ocamlopt.32" main.native
 	cp _build/src/main.native jark.native
+	rm -rf _build
 
 gprof :
 	$(OCAMLBUILD) -libs $(LIBS) -ocamlopt "ocamlopt -p" main.native
@@ -57,8 +62,9 @@ gprof :
 
 exe :
 	$(WOCAMLBUILD) -libs $(WIN_LIBS) -ocamlc i486-mingw32-ocamlc -ocamlopt i486-mingw32-ocamlopt  main.native
-	mkdir build
-	cp _build/src/main.native build/jark.exe
+	mkdir -p build/Win-i386
+	cp _build/src/main.native build/Win-i386/jark.exe
+	rm -rf _build
 
 clean::
 	rm -f *.cm[iox] *~ .*~ src/*~ #*#
@@ -70,20 +76,14 @@ clean::
 	ocamlbuild -clean
 
 up:
-	rm -rf upload/jark-$(VERSION)-x86_64*
-	cd upload && mkdir jark-$(VERSION)-x86_64
-	cp upload/README upload/jark-$(VERSION)-x86_64/
-	cp build/jark-$(VERSION)-x86_64 upload/jark-$(VERSION)-x86_64/
-	cd upload && tar zcf jark-$(VERSION)-x86_64.tar.gz jark-$(VERSION)-x86_64/*
 	cd upload && upload.rb jark-$(VERSION)-x86_64.tar.gz icylisper/jark-client
 
-up-macosx:
-	rm -rf upload/jark-$(VERSION)-x86_64_macosx
+tar:
+	rm -rf upload/jark-$(VERSION)-x86_64_macosx*
 	cd upload && mkdir jark-$(VERSION)-x86_64_macosx
-	cp upload/README upload/jark-$(VERSION)-x86_64_macosx/
-	cp build/jark-$(VERSION)-x86_64 upload/jark-$(VERSION)-x86_64_macosx/jark
+	cp README.md upload/jark-$(VERSION)-x86_64_macosx/README
+	cp build/$(ARCH)/jark upload/jark-$(VERSION)-x86_64_macosx/jark
 	cd upload && tar zcf jark-$(VERSION)-x86_64_macosx.tar.gz jark-$(VERSION)-x86_64_macosx/*
-	cd upload && upload.rb jark-$(VERSION)-x86_64_macosx.tar.gz icylisper/jark-client
 
 deps: ansiterminal camlp5 ledit
 
