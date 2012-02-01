@@ -23,6 +23,10 @@ module Config :
 
     val jark_version : string
 
-    val default_opts : Datatypes.config_opts
+    val global_opts : Datatypes.config_opts
+
+    val read_config_file : unit -> unit
+
+    val print_config : unit -> unit
 
   end

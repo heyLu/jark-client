@@ -127,15 +127,12 @@ module Config =
     let install_components () =
       List.iter install_component all_jars
 
-    (* options *)
-    let host_default = "localhost"
-
-    let port_default = "9000"
+    (* options and config file *)
 
     (* needs to be kept in sync with Datatypes.config_opts
      * it's a bit of a nuisance compared to a hashtbl, but this way the compiler
      * will check that we haven't used a wrong key or type *)
-    let default_opts = {
+    let global_opts = {
        jvm_opts    = "-Xms256m -Xmx512m";
        log_path    = "/dev/null";
        swank_port  = 4005;
@@ -143,4 +140,48 @@ module Config =
        remote_host = "localhost"
     }
 
+    let set_option k v = match k with
+    | "jvm_opts"    -> global_opts.jvm_opts <- v
+    | "log_path"    -> global_opts.log_path <- v
+    | "swank_port"  -> global_opts.swank_port <- int_of_string v;
+    | "json"        -> global_opts.json <- bool_of_string v;
+    | "remote_host" -> global_opts.remote_host <- v;
+    | _             -> ()
+
+    let read_config_file () =
+      let skip_line s =
+        let s = Gstr.strip s in
+        (Gstr.starts_with s "#") ||
+        (s = "")
+      in
+      let process_line s =
+        try
+          if not (skip_line s) then begin
+            match Str.bounded_split (Str.regexp ":") s 2 with
+            | [k; v] -> set_option (Gstr.strip k) (Gstr.strip v)
+            | _ -> raise (Failure "Bad config file line")
+          end
+        with _ -> begin
+          print_endline ("Bad config file: " ^ platform.config_file);
+          print_endline ("Could not parse line: " ^ s);
+          raise (Failure "Could not load config file")
+        end
+      in
+      if (Gfile.exists platform.config_file) then begin
+        let config = Gfile.getlines platform.config_file in
+        List.iter process_line config
+      end
+      else
+        ()
+
+    let print_config () =
+      Gstr.pe (Gstr.unlines [
+        "# copy into config file " ^ platform.config_file;
+        "";
+        "jvm_opts: " ^ global_opts.jvm_opts ;
+        "log_path: " ^ global_opts.log_path ;
+        "swank_port: " ^ (string_of_int global_opts.swank_port) ;
+        "json: " ^ (string_of_bool global_opts.json) ;
+        "remote_host: " ^ global_opts.remote_host ;
+        ])
 end

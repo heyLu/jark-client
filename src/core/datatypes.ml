@@ -30,14 +30,15 @@ type response_format = ResText | ResHash | ResList
 type cmd_opts = {
   env : env;
   show_version: bool;
+  show_config: bool;
   eval : bool ;
   args : string list
 }
 
 type config_opts = {
-  jvm_opts    : string;
-  log_path    : string;
-  swank_port  : int;
-  json        : bool;
-  remote_host : string
+  mutable jvm_opts    : string;
+  mutable log_path    : string;
+  mutable swank_port  : int;
+  mutable json        : bool;
+  mutable remote_host : string
 }
