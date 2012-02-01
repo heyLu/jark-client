@@ -13,7 +13,7 @@ module Jvm =
       String.concat " " ["java"; jvm_opts ; "-cp"; C.cp_boot (); "clojure.tools.jark.server"; port; "&"]
 
     let start args =
-      let jvm_opts = ref C.default_opts.jvm_opts in
+      let jvm_opts = ref C.global_opts.jvm_opts in
       let _ = Options.parse args [
         "--jvm-opts", Options.Set_string jvm_opts, "set jvm options"
       ]
