@@ -12,25 +12,28 @@ module Installer =
     open Config
     module C = Config
 
-    let platform = C.platform
-
-    type install_config = {
-      mutable install_root: string;
-      mutable http_client: string;
-      mutable clojure_version: string;
-      mutable standalone: bool
-    }
-
     let conf = {
-      install_root = platform.cljr;
-      http_client = platform.wget_bin;
+      install_root = C.platform.cljr;
+      http_client = C.platform.wget_bin;
       clojure_version = "1.3.0";
       standalone = C.standalone
     }
 
+    let cljr_lib () =
+      Gfile.path [ conf.install_root ; "lib" ]
+
+    let set_install_opt k v = match k with
+    | "install_root"    -> conf.install_root <- v
+    | "http_client"     -> conf.http_client <- v
+    | "clojure_version" -> conf.clojure_version <- v
+    | "standalone"      -> conf.standalone <- bool_of_string v
+    | _                  -> ()
+
+    let read_config () = C.read_config_file set_install_opt
+
     let component c =
       let jar prj ver = prj ^ "-" ^ ver ^ ".jar" in
-      let libjar prj ver = Gfile.path [C.cljr_lib; jar prj ver] in
+      let libjar prj ver = Gfile.path [cljr_lib (); jar prj ver] in
       let url xs = String.concat "/" xs in
       let clj_base = "http://build.clojure.org/releases/org/clojure" in
       let mvn_base = "http://repo1.maven.org/maven2/org/clojure" in
@@ -57,7 +60,7 @@ module Installer =
     let version c = (List.nth (component c) 2)
 
     let install_component c =
-      Gnet.http_get platform.wget_bin (url c) (jar c)
+      Gnet.http_get conf.http_client (url c) (jar c)
 
     let install_standalone () =
       install_component "standalone"
@@ -67,7 +70,7 @@ module Installer =
 
     (* write out project.clj *)
     let setup_cljr () =
-      let file = Gfile.path [platform.cljr ; "project.clj"] in
+      let file = Gfile.path [C.platform.cljr ; "project.clj"] in
       let f = open_out(file) in
       let project_clj_string = String.concat
           " " ["(leiningen.core/defproject cljr.core/cljr-repo";

@@ -11,6 +11,7 @@ module Jvm =
     module C = Config
 
     let cp_boot () =
+      Installer.read_config ();
       if C.standalone then
         Installer.jar "standalone"
       else

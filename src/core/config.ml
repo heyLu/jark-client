@@ -49,9 +49,9 @@ module Config =
 
     let platform = if Gsys.is_windows then windows else posix
 
-    let cljr = platform.cljr
+    let cljr () = platform.cljr
 
-    let cljr_lib = Gfile.path [ cljr; "lib" ]
+    let cljr_lib () = Gfile.path [ platform.cljr ; "lib" ]
 
     (* options and config file *)
 
@@ -66,15 +66,16 @@ module Config =
        remote_host = "localhost"
     }
 
-    let set_option k v = match k with
-    | "jvm_opts"    -> global_opts.jvm_opts <- v
-    | "log_path"    -> global_opts.log_path <- v
-    | "swank_port"  -> global_opts.swank_port <- int_of_string v;
-    | "json"        -> global_opts.json <- bool_of_string v;
-    | "remote_host" -> global_opts.remote_host <- v;
-    | _             -> ()
+    let set_global_opt k v = match k with
+    | "jvm_opts"     -> global_opts.jvm_opts <- v
+    | "log_path"     -> global_opts.log_path <- v
+    | "swank_port"   -> global_opts.swank_port <- int_of_string v
+    | "json"         -> global_opts.json <- bool_of_string v
+    | "remote_host"  -> global_opts.remote_host <- v
+    | "install_root" -> platform.cljr <- v
+    | _              -> ()
 
-    let read_config_file () =
+    let read_config_file set_opt =
       let skip_line s =
         let s = Gstr.strip s in
         (Gstr.starts_with s "#") ||
@@ -83,8 +84,8 @@ module Config =
       let process_line s =
         try
           if not (skip_line s) then begin
-            match Str.bounded_split (Str.regexp ":") s 2 with
-            | [k; v] -> set_option (Gstr.strip k) (Gstr.strip v)
+            match Str.bounded_split (Str.regexp "=") s 2 with
+            | [k; v] -> set_opt (Gstr.strip (String.lowercase k)) (Gstr.strip v)
             | _ -> raise (Failure "Bad config file line")
           end
         with _ -> begin
@@ -100,14 +101,17 @@ module Config =
       else
         ()
 
+    let read_config () =
+      read_config_file set_global_opt
+
     let print_config () =
       Gstr.pe (Gstr.unlines [
         "# copy into config file " ^ platform.config_file;
         "";
-        "jvm_opts: " ^ global_opts.jvm_opts ;
-        "log_path: " ^ global_opts.log_path ;
-        "swank_port: " ^ (string_of_int global_opts.swank_port) ;
-        "json: " ^ (string_of_bool global_opts.json) ;
-        "remote_host: " ^ global_opts.remote_host ;
+        "jvm_opts = " ^    global_opts.jvm_opts ;
+        "log_path = " ^    global_opts.log_path ;
+        "swank_port = " ^  (string_of_int global_opts.swank_port) ;
+        "json = " ^        (string_of_bool global_opts.json) ;
+        "remote_host = " ^ global_opts.remote_host ;
         ])
 end

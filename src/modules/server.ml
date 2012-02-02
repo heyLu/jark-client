@@ -42,9 +42,10 @@ module Server =
         Installer.install_standalone ()
 
     let install args =
+      Installer.read_config ();
       Glist.print_list args;
-      Gfile.mkdir C.cljr;
-      Gfile.mkdir C.cljr_lib;
+      Gfile.mkdir Installer.conf.install_root;
+      Gfile.mkdir (Installer.cljr_lib ());
       Installer.setup_cljr ();
       match C.standalone with
         true -> install_standalone_jar ()

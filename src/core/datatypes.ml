@@ -20,9 +20,9 @@ type response = {
 
 (* platform-specific string constants *)
 type platform_config = {
-  cljr: string;
-  config_file: string;
-  wget_bin: string;
+  mutable cljr: string;
+  mutable config_file: string;
+  mutable wget_bin: string;
 }
 
 type response_format = ResText | ResHash | ResList
@@ -41,4 +41,11 @@ type config_opts = {
   mutable swank_port  : int;
   mutable json        : bool;
   mutable remote_host : string
+}
+
+type install_opts = {
+  mutable install_root: string;
+  mutable http_client: string;
+  mutable clojure_version: string;
+  mutable standalone: bool
 }

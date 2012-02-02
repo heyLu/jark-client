@@ -6,9 +6,9 @@ module Config :
 
     val get_env : unit -> Datatypes.env
 
-    val cljr : string
+    val cljr : unit -> string
 
-    val cljr_lib : string
+    val cljr_lib : unit -> string
 
     val standalone : bool
 
@@ -16,7 +16,9 @@ module Config :
 
     val global_opts : Datatypes.config_opts
 
-    val read_config_file : unit -> unit
+    val read_config_file : (string -> string -> unit) -> unit
+
+    val read_config : unit -> unit
 
     val print_config : unit -> unit
 
