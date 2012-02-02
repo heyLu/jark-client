@@ -3,6 +3,14 @@ module Gfile =
 
     open Unix
     open Str
+    open Gsys
+    open Gstr
+
+    (* path manipulation *)
+    let separator = if Gsys.is_windows then "\\" else "/"
+
+    let path xs =
+      Gstr.join_nonempty separator xs
 
     (* mkdir, ignore if dir exists *)
     let mkdir dir =
