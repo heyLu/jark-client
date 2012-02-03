@@ -15,8 +15,7 @@ module Installer =
     let conf = {
       install_root = C.platform.cljr;
       http_client = C.platform.wget_bin;
-      clojure_version = "1.3.0";
-      standalone = C.standalone
+      clojure_version = "1.3.0"
     }
 
     let cljr_lib () =
@@ -26,47 +25,26 @@ module Installer =
     | "install_root"    -> conf.install_root <- v
     | "http_client"     -> conf.http_client <- v
     | "clojure_version" -> conf.clojure_version <- v
-    | "standalone"      -> conf.standalone <- bool_of_string v
     | _                  -> ()
 
     let read_config () = C.read_config_file set_install_opt
 
-    let component c =
-      let jar prj ver = prj ^ "-" ^ ver ^ ".jar" in
-      let libjar prj ver = Gfile.path [cljr_lib (); jar prj ver] in
-      let url xs = String.concat "/" xs in
-      let clj_base = "http://build.clojure.org/releases/org/clojure" in
-      let mvn_base = "http://repo1.maven.org/maven2/org/clojure" in
-      let clo_base = "http://clojars.org/repo" in
+    let standalone_jar = 
+      let clojure_version = "clojure-" ^ conf.clojure_version in
+      let ver = "0.4-SNAPSHOT-" ^ clojure_version ^ "-standalone" in
+      let jar = "jark" ^ "-" ^ ver ^ ".jar" in
+      jar
+
+    let standalone_url = 
       let git_base = "https://github.com/downloads/icylisper/jark-server" in
-      let clojure prj ver = url [clj_base; prj; ver; jar prj ver] in
-      let maven prj ver = url [mvn_base; prj; ver; jar prj ver] in
-      let clojars prj ver = url [clo_base; prj; prj; ver; jar prj ver] in
-      let github prj ver = url [git_base; jar prj ver] in
-      let comp urlfn prj ver = [libjar prj ver; urlfn prj ver; ver] in
-      match c with
-      | "clojure"    -> comp clojure "clojure" "1.2.1"
-      | "contrib"    -> comp clojure "clojure-contrib" "1.2.0"
-      | "nrepl"      -> comp maven   "tools.nrepl" "0.0.5"
-      | "jark"       -> comp clojars "jark" "0.4"
-      | "swank"      -> comp clojars "swank-clojure" "1.3.2"
-      | "standalone" -> comp github  "jark" "0.4-SNAPSHOT-standalone"
-      |  _           -> ["none" ; "none" ; "none"]
+      let url xs = String.concat "/" xs in
+      url [git_base; standalone_jar]
 
-    let deps = ["clojure"; "contrib"; "nrepl"; "jark"; "swank"]
-
-    let jar c     = (List.nth (component c) 0)
-    let url c     = (List.nth (component c) 1)
-    let version c = (List.nth (component c) 2)
-
-    let install_component c =
-      Gnet.http_get conf.http_client (url c) (jar c)
+    let standalone_path =
+      String.concat "/" [cljr_lib (); standalone_jar]
 
     let install_standalone () =
-      install_component "standalone"
-
-    let install_components () =
-      List.iter install_component deps
+      Gnet.http_get conf.http_client standalone_url standalone_path
 
     (* write out project.clj *)
     let setup_cljr () =

@@ -12,10 +12,7 @@ module Jvm =
 
     let cp_boot () =
       Installer.read_config ();
-      if C.standalone then
-        Installer.jar "standalone"
-      else
-        String.concat ":" (List.map Installer.jar Installer.deps)
+      Installer.standalone_path
 
     let start_cmd jvm_opts port =
       String.concat " " ["java"; jvm_opts ; "-cp"; cp_boot (); "clojure.tools.jark.server"; port; "&"]

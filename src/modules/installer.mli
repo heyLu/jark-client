@@ -1,16 +1,16 @@
 module Installer:
   sig
-    val install_components : unit -> unit
-
     val install_standalone : unit -> unit
 
     val conf : Datatypes.install_opts
 
-    val jar : string -> string
+    val standalone_jar : string
+
+    val standalone_path : string
 
     val setup_cljr : unit -> unit
 
-    val deps : string list
+    val set_install_opt : string -> string -> unit
 
     val read_config : unit -> unit
 

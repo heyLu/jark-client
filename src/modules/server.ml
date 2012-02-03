@@ -35,21 +35,24 @@ module Server =
     | x :: xs -> load x
 
     let install_standalone_jar () =
-      let st_jar = (Installer.jar "standalone") in
-      if Gfile.exists st_jar then
-        Gstr.pe ("Latest version already installed: " ^ st_jar)
+      if Gfile.exists Installer.standalone_path then
+        Gstr.pe ("Latest version already installed: " ^ Installer.standalone_path)
       else
         Installer.install_standalone ()
 
     let install args =
-      Installer.read_config ();
-      Glist.print_list args;
+      let clojure_version = ref Installer.conf.clojure_version in
+
+      let a = Options.parse_argv [
+        "--clojure-version", Options.Set_string clojure_version, "set clojure version"
+      ]
+      in
+
+      (* Installer.read_config (); *)
       Gfile.mkdir Installer.conf.install_root;
       Gfile.mkdir (Installer.cljr_lib ());
       Installer.setup_cljr ();
-      match C.standalone with
-        true -> install_standalone_jar ()
-      | false -> Installer.install_components ();
+      install_standalone_jar ();
       Gstr.pe "Installed components successfully"
 
     let uninstall args =
@@ -81,7 +84,7 @@ module Server =
         "Loads the given clj file, and adds relative classpath"];
 
       register_fn "install" install [
-      "[--prefix=<path> (default:~/.cljr)] [--standalone=<true|false> (default:true)] [--force=<true|false> (default:false)]";
+      "[--install_root=<path> (default:~/.cljr)] [--clojure_version=<1.3.0|1.2.1> (default:1.3.1)] [--force=<true|false> (default:false)]";
       "Install server components"];
       
       register_fn "info" info ["Display Jark server information"];

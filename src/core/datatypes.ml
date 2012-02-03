@@ -46,6 +46,5 @@ type config_opts = {
 type install_opts = {
   mutable install_root: string;
   mutable http_client: string;
-  mutable clojure_version: string;
-  mutable standalone: bool
+  mutable clojure_version: string
 }
