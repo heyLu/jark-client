@@ -12,6 +12,7 @@ module Server =
     open Jvm
     open Plugin
     open Gfile
+    open Installer
 
 
     let registry = Plugin.create ()
@@ -33,22 +34,22 @@ module Server =
     [] -> (); Plugin.show_cmd_usage registry "load"
     | x :: xs -> load x
 
-
     let install_standalone_jar () =
-      let st_jar = (C.jar "standalone") in
+      let st_jar = (Installer.jar "standalone") in
       if Gfile.exists st_jar then
         Gstr.pe ("Latest version already installed: " ^ st_jar)
       else
-        C.install_standalone ()
+        Installer.install_standalone ()
 
     let install args =
+      Installer.read_config ();
       Glist.print_list args;
-      Gfile.mkdir C.cljr;
-      Gfile.mkdir C.cljr_lib;
-      C.setup_cljr ();
+      Gfile.mkdir Installer.conf.install_root;
+      Gfile.mkdir (Installer.cljr_lib ());
+      Installer.setup_cljr ();
       match C.standalone with
         true -> install_standalone_jar ()
-      | false -> C.install_components ();
+      | false -> Installer.install_components ();
       Gstr.pe "Installed components successfully"
 
     let uninstall args =

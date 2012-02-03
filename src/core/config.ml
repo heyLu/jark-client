@@ -39,6 +39,8 @@ module Config =
       wget_bin        = "c:\\wget.exe --user-agent jark ";
     }
 
+    let standalone = true
+
     let posix = {
       cljr            = ~/ ".cljr";
       config_file     = ~/ ".cljr/jark.conf";
@@ -47,85 +49,9 @@ module Config =
 
     let platform = if Gsys.is_windows then windows else posix
 
-    let path xs =
-      if Gsys.is_windows then
-        Gstr.join_nonempty "\\" xs
-      else
-        Gstr.join_nonempty "/" xs
+    let cljr () = platform.cljr
 
-    let cljr = platform.cljr
-
-    let cljr_lib = path [ platform.cljr; "lib" ]
-
-    let standalone = true
-
-    let component c =
-      let jar prj ver = prj ^ "-" ^ ver ^ ".jar" in
-      let libjar prj ver = path [cljr_lib; jar prj ver] in
-      let url xs = String.concat "/" xs in
-      let clj_base = "http://build.clojure.org/releases/org/clojure" in
-      let mvn_base = "http://repo1.maven.org/maven2/org/clojure" in
-      let clo_base = "http://clojars.org/repo" in
-      let git_base = "https://github.com/downloads/icylisper/jark-server" in
-      let clojure prj ver = url [clj_base; prj; ver; jar prj ver] in
-      let maven prj ver = url [mvn_base; prj; ver; jar prj ver] in
-      let clojars prj ver = url [clo_base; prj; prj; ver; jar prj ver] in
-      let github prj ver = url [git_base; jar prj ver] in
-      let comp urlfn prj ver = [libjar prj ver; urlfn prj ver; ver] in
-      match c with
-      | "clojure"    -> comp clojure "clojure" "1.2.1"
-      | "contrib"    -> comp clojure "clojure-contrib" "1.2.0"
-      | "nrepl"      -> comp maven "tools.nrepl" "0.0.5"
-      | "jark"       -> comp clojars "jark" "0.4"
-      | "swank"      -> comp clojars "swank-clojure" "1.3.2"
-      | "standalone" -> comp github "jark" "0.4-SNAPSHOT-standalone"
-      |  _           -> ["none" ; "none" ; "none"]
-
-    let all_jars = ["clojure"; "contrib"; "nrepl"; "jark"; "swank"]
-
-    let jar c =
-      (List.nth (component c) 0)
-
-    let url c =
-      (List.nth (component c) 1)
-
-    let version c =
-      (List.nth (component c) 2)
-
-    let cp_boot ()  =
-      if standalone then
-        jar "standalone"
-      else
-        String.concat ":" (List.map jar all_jars)
-
-    let setup_cljr () =
-      let file = path [platform.cljr ; "project.clj"] in
-      let f = open_out(file) in
-      let project_clj_string = String.concat
-          " " ["(leiningen.core/defproject cljr.core/cljr-repo";
-                "\"1.0.0\"";
-                ":description \"cljr is a Clojure REPL and package management system.\"";
-                ":dependencies [[org.clojure/clojure \"1.3.0\"]";
-                "[swank-clojure \"1.4.0\"]]";
-                "[org.clojure/java.classpath \"0.1.0\"]]";
-                "[org.clojure/data.json \"0.1.1\"]]";
-                "[org.clojure/tools.namespace \"0.1.0\"]]";
-                "[org.clojure/tools.nrepl \"0.0.5\"]]";
-                "[clj-http \"0.2.7\"]]";
-                "[server-socket \"1.0.0\"]]";
-                ":classpath [\"./src/\" \"./\"]";
-                ":repositories nil)";] in
-      fprintf f "%s\n" project_clj_string;
-      close_out f
-
-    let install_component c =
-      Gnet.http_get platform.wget_bin (url c) (jar c)
-
-    let install_standalone () =
-      install_component "standalone"
-
-    let install_components () =
-      List.iter install_component all_jars
+    let cljr_lib () = Gfile.path [ platform.cljr ; "lib" ]
 
     (* options and config file *)
 
@@ -140,15 +66,16 @@ module Config =
        remote_host = "localhost"
     }
 
-    let set_option k v = match k with
-    | "jvm_opts"    -> global_opts.jvm_opts <- v
-    | "log_path"    -> global_opts.log_path <- v
-    | "swank_port"  -> global_opts.swank_port <- int_of_string v;
-    | "json"        -> global_opts.json <- bool_of_string v;
-    | "remote_host" -> global_opts.remote_host <- v;
-    | _             -> ()
+    let set_global_opt k v = match k with
+    | "jvm_opts"     -> global_opts.jvm_opts <- v
+    | "log_path"     -> global_opts.log_path <- v
+    | "swank_port"   -> global_opts.swank_port <- int_of_string v
+    | "json"         -> global_opts.json <- bool_of_string v
+    | "remote_host"  -> global_opts.remote_host <- v
+    | "install_root" -> platform.cljr <- v
+    | _              -> ()
 
-    let read_config_file () =
+    let read_config_file set_opt =
       let skip_line s =
         let s = Gstr.strip s in
         (Gstr.starts_with s "#") ||
@@ -157,8 +84,8 @@ module Config =
       let process_line s =
         try
           if not (skip_line s) then begin
-            match Str.bounded_split (Str.regexp ":") s 2 with
-            | [k; v] -> set_option (Gstr.strip k) (Gstr.strip v)
+            match Str.bounded_split (Str.regexp "=") s 2 with
+            | [k; v] -> set_opt (Gstr.strip (String.lowercase k)) (Gstr.strip v)
             | _ -> raise (Failure "Bad config file line")
           end
         with _ -> begin
@@ -174,14 +101,17 @@ module Config =
       else
         ()
 
+    let read_config () =
+      read_config_file set_global_opt
+
     let print_config () =
       Gstr.pe (Gstr.unlines [
         "# copy into config file " ^ platform.config_file;
         "";
-        "jvm_opts: " ^ global_opts.jvm_opts ;
-        "log_path: " ^ global_opts.log_path ;
-        "swank_port: " ^ (string_of_int global_opts.swank_port) ;
-        "json: " ^ (string_of_bool global_opts.json) ;
-        "remote_host: " ^ global_opts.remote_host ;
+        "jvm_opts = " ^    global_opts.jvm_opts ;
+        "log_path = " ^    global_opts.log_path ;
+        "swank_port = " ^  (string_of_int global_opts.swank_port) ;
+        "json = " ^        (string_of_bool global_opts.json) ;
+        "remote_host = " ^ global_opts.remote_host ;
         ])
 end

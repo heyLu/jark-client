@@ -1,7 +1,7 @@
 
 VERSION = 0.4-pre
 
-ARCH = `uname`-`uname -m`
+ARCH = $(shell uname)-$(shell uname -m)
 
 BIN_NAME = jark
 
@@ -33,13 +33,13 @@ all:: native
 
 native :
 	$(OCAMLBUILD) -libs $(LIBS) main.native
-	if [ ! -d build ]; then mkdir -p build/$(ARCH); fi
+	if [ ! -d build/$(ARCH) ]; then mkdir -p build/$(ARCH); fi
 	cp _build/src/main.native build/$(ARCH)/$(BIN_NAME)
 	rm -rf _build
 
 upx :
 	$(OCAMLBUILD) -libs $(LIBS) main.native
-	if [ ! -d build ]; then mkdir -p build/$(ARCH); fi
+	if [ ! -d build/$(ARCH) ]; then mkdir -p build/$(ARCH); fi
 	cp _build/src/main.native build/$(ARCH)/$(BIN_NAME)-un
 	rm build/$(ARCH)/$(BIN_NAME)
 	upx --brute --best -f -o build/$(ARCH)/$(BIN_NAME) build/$(ARCH)/$(BIN_NAME)-un

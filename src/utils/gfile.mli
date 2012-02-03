@@ -10,6 +10,8 @@ module Gfile :
     val fold_directory : ('a -> string -> 'a) -> 'a -> string -> 'a
         
     val abspath : string -> string
+
+    val path : string list -> string
         
     val getfirstline : string -> string
 
