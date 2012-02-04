@@ -18,6 +18,7 @@ let usage =
   Gstr.unlines ["usage: jark OPTIONS server|repl|<plugin>|<namespace> [<command>|<function>] [<args>]";
                 "OPTIONS:";
                 "    -c  --config-file";
+                "    -d  --debug";
                 "    -e  --eval" ;
                 "    -f  --force-install" ;
                 "    -h  --host <hostname>";
@@ -102,8 +103,8 @@ let main_handler m args =
 
 let parse_argv () =
   let e = Config.get_env () in
-  let (host, port, version, eval, show_config) =
-    (ref (e.host), ref (e.port), ref false, ref false, ref false)
+  let (host, port, version, debug, eval, show_config) =
+    (ref (e.host), ref (e.port), ref false, ref (e.debug), ref false, ref false)
   in
 
   let g = Config.get_server_opts () in
@@ -117,24 +118,26 @@ let parse_argv () =
   
   let rest = try
     Options.parse_argv [
-    "-h",                O.Set_string host,            ("Set server hostname (default: " ^ !host ^ ")");
-    "-p",                O.Set_int port,               (sprintf "Set server port (default: %d)" !port);
-    "-v",                O.Set_on version,             "Show jark version";
-    "--version",         O.Set_on version,             "Show jark version";
-    "-s",                O.Set_on show_config,         "Show config";
-    "--show-config",     O.Set_on show_config,         "Show config";
+    "--clojure-version", O.Set_string clojure_version, "Set clojure version";
     "--config-file",     O.Set_on show_config,         "Use the given config file (default platform.cljr)";
-    "-c",                O.Set_on show_config,         "Use the given config file (default platform.cljr)";
-    "-e",                O.Set_on eval,                "Evaluate expression";
+    "--debug",           O.Set_on debug,               "Enable debug";
+    "--http-client",     O.Set_string http_client,     "Set HTTP client";
+    "--install-root",    O.Set_string install_root,    "Set install root";
     "--jvm-opts",        O.Set_string jvm_opts,        "Set JVM version";
     "--log-file",        O.Set_string log_file,        "Set Log path";
-    "-l",                O.Set_string log_file,        "Set Log path";
-    "--install-root",    O.Set_string install_root,    "Set install root";
-    "-i",                O.Set_string install_root,    "Set install root";
     "--prefix",          O.Set_string install_root,    "Set install root (required for debian)";
-    "--http-client",     O.Set_string http_client,     "Set HTTP client";
-    "--clojure-version", O.Set_string clojure_version, "Set clojure version";
+    "--show-config",     O.Set_on show_config,         "Show config";
+    "--version",         O.Set_on version,             "Show jark version";
     "-V",                O.Set_string clojure_version, "Set clojure version";
+    "-c",                O.Set_on show_config,         "Use the given config file (default platform.cljr)";
+    "-d",                O.Set_on debug,               "Enable debug";
+    "-e",                O.Set_on eval,                "Evaluate expression";
+    "-h",                O.Set_string host,            ("Set server hostname (default: " ^ !host ^ ")");
+    "-i",                O.Set_string install_root,    "Set install root";
+    "-l",                O.Set_string log_file,        "Set Log path";
+    "-p",                O.Set_int port,               (sprintf "Set server port (default: %d)" !port);
+    "-s",                O.Set_on show_config,         "Show config";
+    "-v",                O.Set_on version,             "Show jark version";
   ]
   with Options.BadOptions x -> print_endline ("bad options: " ^ x); exit 1
   in
@@ -143,7 +146,7 @@ let parse_argv () =
       host = !host;
       port = !port;
       ns = "user";
-      debug = false
+      debug = !debug
     };
     show_version = !version;
     show_config = !show_config;
