@@ -43,7 +43,7 @@ module Server =
     let install args =
       let clojure_version = ref Installer.conf.clojure_version in
 
-      let a = Options.parse_argv [
+      let _ = Options.parse_argv [
         "--clojure-version", Options.Set_string clojure_version, "set clojure version"
       ]
       in
