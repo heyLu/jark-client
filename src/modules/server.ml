@@ -35,12 +35,7 @@ module Server =
     | x :: xs -> load x
 
     let install args =
-      let clojure_version = ref Installer.conf.clojure_version in
-      let _ = Options.parse_argv [
-        "--clojure-version", Options.Set_string clojure_version, "set clojure version"
-      ]
-      in
-      Installer.install_server !clojure_version
+      Installer.install_server ()
 
     let uninstall args =
       Gstr.pe "Removed jark configs successfully"

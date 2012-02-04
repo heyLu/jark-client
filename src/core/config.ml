@@ -68,25 +68,28 @@ module Config =
 
     (* options and config file *)
 
-    (* needs to be kept in sync with Datatypes.config_opts
-     * it's a bit of a nuisance compared to a hashtbl, but this way the compiler
-     * will check that we haven't used a wrong key or type *)
-    let global_opts = {
-       jvm_opts    = "-Xms256m -Xmx512m";
-       log_path    = "/dev/null";
-       swank_port  = 4005;
-       json        = false;
-       remote_host = "localhost";
+    let server_opts = ref {
+      jvm_opts        = "-Xms256m -Xmx512m";
+      log_file        = "/dev/null";
+      install_root    = platform.cljr;
+      http_client     = platform.wget_bin;
+      clojure_version = "1.3.0"
     }
 
-    let set_global_opt k v = match k with
-    | "jvm_opts"     -> global_opts.jvm_opts <- v
-    | "log_path"     -> global_opts.log_path <- v
-    | "swank_port"   -> global_opts.swank_port <- int_of_string v
-    | "json"         -> global_opts.json <- bool_of_string v
-    | "remote_host"  -> global_opts.remote_host <- v
-    | "install_root" -> platform.cljr <- v
-    | _              -> ()
+    let get_server_opts () = !server_opts
+
+    let set_server_opts opts = 
+      server_opts := opts
+        
+    let set_server_opt k v = 
+    let opts = get_server_opts () in
+    match k with
+    | "jvm_opts"        -> opts.jvm_opts <- v
+    | "log_file"        -> opts.log_file <- v
+    | "install_root"    -> opts.install_root <- v
+    | "http_client"     -> opts.http_client <- v
+    | "clojure_version" -> opts.clojure_version <- v
+    | _                 -> ()
 
     let read_config_file set_opt =
       let skip_line s =
@@ -114,17 +117,15 @@ module Config =
       else
         ()
 
-    let read_config () =
-      read_config_file set_global_opt
+    let read_config () = 
+      read_config_file set_server_opt
 
     let print_config () =
+      let opts = get_server_opts () in 
       Gstr.pe (Gstr.unlines [
         "# copy into config file " ^ platform.config_file;
         "";
-        "jvm_opts = " ^    global_opts.jvm_opts ;
-        "log_path = " ^    global_opts.log_path ;
-        "swank_port = " ^  (string_of_int global_opts.swank_port) ;
-        "json = " ^        (string_of_bool global_opts.json) ;
-        "remote_host = " ^ global_opts.remote_host ;
+        "jvm_opts = " ^    opts.jvm_opts ;
+        "log_file = " ^    opts.log_file ;
         ])
 end

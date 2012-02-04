@@ -1,6 +1,7 @@
 module Options = struct
   open Datatypes
   open Printf
+  open Glist
 
   exception BadOptions of string
 

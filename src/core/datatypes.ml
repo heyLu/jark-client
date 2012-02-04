@@ -27,23 +27,25 @@ type platform_config = {
 
 type response_format = ResText | ResHash | ResList
 
+type output_opts = {
+  mutable json            : bool;
+}
+
+(* server options *)
+
+type server_opts = {
+  mutable jvm_opts        : string;
+  mutable log_file        : string;
+  mutable install_root    : string;
+  mutable http_client     : string;
+  mutable clojure_version : string
+} 
+
 type cmd_opts = {
   env : env;
   show_version: bool;
   show_config: bool;
   eval : bool ;
+  server_opts : server_opts;
   args : string list
-}
-
-type config_opts = {
-  mutable jvm_opts    : string;
-  mutable log_path    : string;
-  mutable swank_port  : int;
-  mutable json        : bool;
-  mutable remote_host : string;
-}
-
-type install_opts = {
-  mutable http_client: string;
-  mutable clojure_version: string
 }

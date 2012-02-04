@@ -6,6 +6,10 @@ module Config :
 
     val get_env : unit -> Datatypes.env
 
+    val get_server_opts : unit -> Datatypes.server_opts
+
+    val set_server_opts : Datatypes.server_opts -> unit
+
     val cljr : unit -> string
 
     val cljr_lib : unit -> string
@@ -15,8 +19,6 @@ module Config :
     val server_jar : string -> string
 
     val jark_version : string
-
-    val global_opts : Datatypes.config_opts
 
     val read_config_file : (string -> string -> unit) -> unit
 

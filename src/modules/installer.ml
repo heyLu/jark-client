@@ -10,24 +10,12 @@ module Installer =
     open Config
     module C = Config
 
-    let conf = {
-      http_client = C.platform.wget_bin;
-      clojure_version = "1.3.0"
-    }
-
     let cljr_lib () =
       Gfile.path [ C.platform.cljr ; "lib" ]
 
-    let set_install_opt k v = match k with
-    | "http_client"     -> conf.http_client <- v
-    | "clojure_version" -> conf.clojure_version <- v
-    | _                  -> ()
-
-    let read_config () = C.read_config_file set_install_opt
-
-    let server_jar_url =
+    let server_jar_url ver ()  =
       let jar =
-        sprintf "jark-0.4-SNAPSHOT-clojure-%s-standalone.jar" conf.clojure_version
+        sprintf "jark-0.4-SNAPSHOT-clojure-%s-standalone.jar" ver
       in
       let git_base = "https://github.com/downloads/icylisper/jark-server" in
       let url xs = String.concat "/" xs in
@@ -56,9 +44,10 @@ module Installer =
       fprintf f "%s\n" project_clj_string;
       close_out f
 
-    let install_server clojure_version =
+    let install_server () =
       (* check if jar already exists *)
-      let install_location = C.server_jar clojure_version in
+      let opts = C.get_server_opts () in
+      let install_location = C.server_jar opts.clojure_version in
       if Gfile.exists install_location then
         Gstr.pe ("Latest version already installed: " ^ install_location)
       else begin
@@ -68,7 +57,8 @@ module Installer =
         (* write out project.clj for cljr *)
         setup_cljr ();
         (* download jar *)
-        Gnet.http_get conf.http_client server_jar_url install_location;
+        let url = (server_jar_url opts.clojure_version ()) in
+        Gnet.http_get opts.http_client url  install_location;
         Gstr.pe ("Installed server to " ^ install_location)
       end
   end

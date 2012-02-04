@@ -8,19 +8,31 @@ open Config
 
 open Repl
 open Server
+open Installer
 open Printf
 open Datatypes
 open Options
+module O = Options
 
 let usage =
   Gstr.unlines ["usage: jark OPTIONS server|repl|<plugin>|<namespace> [<command>|<function>] [<args>]";
-                "";
-                "OPTIONS:   [-e|--eval]  [-j|--json]" ;
-                "           [-c|--config=<path>]";
-                "           [-h|--host=<hostname>] [-p|--port=<port>]";
-                "";
+                "OPTIONS:";
+                "    -c  --config-file";
+                "    -e  --eval" ;
+                "    -f  --force-install" ;
+                "    -h  --host <hostname>";
+                "    -H  --http-client <wget|curl>";
+                "    -i  --install-root" ;
+                "    -j  --json" ;
+                "    -l  --log-file" ;
+                "    -o  --jvm-opts" ;
+                "    -p  --port <port>";
+                "    -s  --show-config";
+                "    -v  --version";
+                "    -V  --clojure-version <x.x.x>" ;
+
                 "To see available server plugins:";
-                "       jark plugins list";
+                "       jark plugin list";
                 ""]
 
                  
@@ -93,15 +105,36 @@ let parse_argv () =
   let (host, port, version, eval, show_config) =
     (ref (e.host), ref (e.port), ref false, ref false, ref false)
   in
+
+  let g = Config.get_server_opts () in
+  let (jvm_opts, log_file) = 
+    (ref (g.jvm_opts), ref (g.log_file))
+  in
+
+  let (install_root, http_client, clojure_version) = 
+    (ref (g.install_root), ref (g.http_client), ref (g.clojure_version))
+  in
+  
   let rest = try
     Options.parse_argv [
-      "-h", Options.Set_string host, ("Set server hostname (default: " ^ !host ^ ")");
-      "-p", Options.Set_int port,    (sprintf "Set server port (default: %d)" !port);
-      "-v", Options.Set_on version,  "Show jark version";
-      "--version", Options.Set_on version,  "Show jark version";
-      "-c", Options.Set_on show_config,  "Show config";
-      "--show-config", Options.Set_on show_config,  "Show ";
-      "-e", Options.Set_on eval,     "Evaluate expression";
+    "-h",                O.Set_string host,            ("Set server hostname (default: " ^ !host ^ ")");
+    "-p",                O.Set_int port,               (sprintf "Set server port (default: %d)" !port);
+    "-v",                O.Set_on version,             "Show jark version";
+    "--version",         O.Set_on version,             "Show jark version";
+    "-s",                O.Set_on show_config,         "Show config";
+    "--show-config",     O.Set_on show_config,         "Show config";
+    "--config-file",     O.Set_on show_config,         "Use the given config file (default platform.cljr)";
+    "-c",                O.Set_on show_config,         "Use the given config file (default platform.cljr)";
+    "-e",                O.Set_on eval,                "Evaluate expression";
+    "--jvm-opts",        O.Set_string jvm_opts,        "Set JVM version";
+    "--log-file",        O.Set_string log_file,        "Set Log path";
+    "-l",                O.Set_string log_file,        "Set Log path";
+    "--install-root",    O.Set_string install_root,    "Set install root";
+    "-i",                O.Set_string install_root,    "Set install root";
+    "--prefix",          O.Set_string install_root,    "Set install root (required for debian)";
+    "--http-client",     O.Set_string http_client,     "Set HTTP client";
+    "--clojure-version", O.Set_string clojure_version, "Set clojure version";
+    "-V",                O.Set_string clojure_version, "Set clojure version";
   ]
   with Options.BadOptions x -> print_endline ("bad options: " ^ x); exit 1
   in
@@ -115,6 +148,13 @@ let parse_argv () =
     show_version = !version;
     show_config = !show_config;
     eval = !eval;
+    server_opts = {
+      jvm_opts        = !jvm_opts;
+      log_file        = !log_file;
+      install_root    = !install_root;
+      http_client     = !http_client;
+      clojure_version = !clojure_version
+    }; 
     args = rest
   }
 
@@ -124,6 +164,8 @@ let _ =
     Gconf.load ();
     let opts = parse_argv () in
     Config.set_env opts.env;
+    Config.set_server_opts opts.server_opts;
+
     if opts.show_version then
       show_version ()
     else if opts.show_config then
