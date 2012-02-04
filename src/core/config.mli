@@ -10,13 +10,11 @@ module Config :
 
     val set_server_opts : Datatypes.server_opts -> unit
 
-    val cljr : unit -> string
+    val cljr_lib : string -> unit -> string
 
-    val cljr_lib : unit -> string
+    val server_cp : string -> string -> string -> unit -> bool
 
-    val server_cp : string -> string -> unit -> bool
-
-    val server_jar : string -> string -> unit -> string
+    val server_jar : string -> string -> string -> unit -> string
 
     val jark_version : string
 

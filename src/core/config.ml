@@ -47,17 +47,17 @@ module Config =
 
     let platform = if Gsys.is_windows then windows else posix
 
-    let cljr () = platform.cljr
-
-    let cljr_lib () = Gfile.path [ platform.cljr ; "lib" ]
+    let cljr_lib install_root () = Gfile.path [ install_root ; "lib" ]
 
     let clojure_version = "1.3.0"
     let server_version  = "0.4-SNAPSHOT"
 
     (* path to server jar *)
-    let server_jar server_version clojure_version () =
+    
+        
+    let server_jar install_root server_version clojure_version () =
       Gfile.path [
-        cljr_lib ();
+        install_root;
         (sprintf "jark-%s-clojure-%s-standalone.jar" server_version clojure_version)
       ]
 
@@ -128,10 +128,10 @@ module Config =
 
 
     (* look for server jar in lib directory *)
-    let server_cp server_version clojure_version () =
+    let server_cp install_root server_version clojure_version () =
       try
-        Gfile.exists (server_jar server_version clojure_version ());
+        Gfile.exists (server_jar install_root server_version clojure_version ());
       with Not_found ->
-        raise (Failure ("could not find server jar in " ^ (cljr_lib ())))
+        raise (Failure ("could not find server jar in " ^ (cljr_lib install_root ())))
 
 end

@@ -46,19 +46,23 @@ module Installer =
 
     let install_server () =
       (* check if jar already exists *)
-      let opts = C.get_server_opts () in
-      let install_location = C.server_jar opts.server_version opts.clojure_version () in
+      let o = C.get_server_opts () in
+      let install_location = C.server_jar o.install_root o.server_version o.clojure_version () in
       if Gfile.exists install_location then
         Gstr.pe ("Latest version already installed: " ^ install_location)
       else begin
         (* ensure install directories exist *)
-        Gfile.mkdir C.platform.cljr;
-        Gfile.mkdir (C.cljr_lib ());
+        try
+          Gfile.mkdir o.install_root;
+          Gfile.mkdir (C.cljr_lib o.install_root ());
+        with Unix.Unix_error (_, "mkdir" , dir) ->
+          raise (Failure ("Permission denied. Could not create directory " ^ dir))
+
         (* write out project.clj for cljr *)
         setup_cljr ();
         (* download jar *)
-        let url = (server_jar_url opts.clojure_version ()) in
-        Gnet.http_get opts.http_client url  install_location;
+        let url = (server_jar_url o.clojure_version ()) in
+        Gnet.http_get o.http_client url  install_location;
         Gstr.pe ("Installed server to " ^ install_location)
       end
   end

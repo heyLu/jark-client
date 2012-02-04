@@ -22,7 +22,8 @@ Download the appropriate client binary for your platform:
 
 For a system-wide install
 
-    jark --install-root /usr/lib/clojure server install 
+    jark -i|--install-root /usr/lib/cljr server install 
+    jark -i /usr/lib/cljr server start
 
 Currently, the standalone version is packaged with clojure-1.3. To install with clojure-1.2.x do:
            
