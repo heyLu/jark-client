@@ -47,7 +47,7 @@ module Installer =
     let install_server () =
       (* check if jar already exists *)
       let opts = C.get_server_opts () in
-      let install_location = C.server_jar opts.clojure_version in
+      let install_location = C.server_jar opts.server_version opts.clojure_version () in
       if Gfile.exists install_location then
         Gstr.pe ("Latest version already installed: " ^ install_location)
       else begin

@@ -17,7 +17,8 @@ module O = Options
 let usage =
   Gstr.unlines ["usage: jark OPTIONS server|repl|<plugin>|<namespace> [<command>|<function>] [<args>]";
                 "OPTIONS:";
-                "    -c  --config-file";
+                "    -C  --config-file";
+                "    -c  --clojure-version <x.x.x>" ;
                 "    -d  --debug";
                 "    -e  --eval" ;
                 "    -f  --force-install" ;
@@ -28,10 +29,10 @@ let usage =
                 "    -l  --log-file" ;
                 "    -o  --jvm-opts" ;
                 "    -p  --port <port>";
-                "    -s  --show-config";
+                "    -S  --show-config";
+                "    -s  --server-version <x.x.x>" ;
                 "    -v  --version";
-                "    -V  --clojure-version <x.x.x>" ;
-
+                "";
                 "To see available server plugins:";
                 "       jark plugin list";
                 ""]
@@ -108,12 +109,11 @@ let parse_argv () =
   in
 
   let g = Config.get_server_opts () in
-  let (jvm_opts, log_file) = 
-    (ref (g.jvm_opts), ref (g.log_file))
+  let (jvm_opts, log_file, http_client) = 
+    (ref (g.jvm_opts), ref (g.log_file), ref (g.http_client))
   in
-
-  let (install_root, http_client, clojure_version) = 
-    (ref (g.install_root), ref (g.http_client), ref (g.clojure_version))
+  let (install_root, clojure_version, server_version) = 
+    (ref (g.install_root), ref (g.clojure_version), ref (g.server_version))
   in
   
   let rest = try
@@ -128,15 +128,16 @@ let parse_argv () =
     "--prefix",          O.Set_string install_root,    "Set install root (required for debian)";
     "--show-config",     O.Set_on show_config,         "Show config";
     "--version",         O.Set_on version,             "Show jark version";
-    "-V",                O.Set_string clojure_version, "Set clojure version";
-    "-c",                O.Set_on show_config,         "Use the given config file (default platform.cljr)";
+    "-c",                O.Set_string clojure_version, "Set clojure version";
+    "-S",                O.Set_on show_config,         "Show config";
+    "-C",                O.Set_on show_config,         "Use the given config file (default platform.cljr)";
     "-d",                O.Set_on debug,               "Enable debug";
     "-e",                O.Set_on eval,                "Evaluate expression";
     "-h",                O.Set_string host,            ("Set server hostname (default: " ^ !host ^ ")");
     "-i",                O.Set_string install_root,    "Set install root";
     "-l",                O.Set_string log_file,        "Set Log path";
     "-p",                O.Set_int port,               (sprintf "Set server port (default: %d)" !port);
-    "-s",                O.Set_on show_config,         "Show config";
+    "-s",                O.Set_string server_version,  "Set jark server version";
     "-v",                O.Set_on version,             "Show jark version";
   ]
   with Options.BadOptions x -> print_endline ("bad options: " ^ x); exit 1
@@ -156,7 +157,8 @@ let parse_argv () =
       log_file        = !log_file;
       install_root    = !install_root;
       http_client     = !http_client;
-      clojure_version = !clojure_version
+      clojure_version = !clojure_version;
+      server_version  = !server_version
     }; 
     args = rest
   }

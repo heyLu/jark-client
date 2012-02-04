@@ -51,20 +51,15 @@ module Config =
 
     let cljr_lib () = Gfile.path [ platform.cljr ; "lib" ]
 
+    let clojure_version = "1.3.0"
+    let server_version  = "0.4-SNAPSHOT"
+
     (* path to server jar *)
-    let server_jar clojure_version =
+    let server_jar server_version clojure_version () =
       Gfile.path [
         cljr_lib ();
-        sprintf "jark-0.4-SNAPSHOT-clojure-%s-standalone.jar" clojure_version
+        (sprintf "jark-%s-clojure-%s-standalone.jar" server_version clojure_version)
       ]
-
-    (* look for server jar in lib directory *)
-    let server_cp () =
-      try
-        List.find Gfile.exists
-        (List.map server_jar ["1.3.0"; "1.2.1"])
-      with Not_found ->
-        raise (Failure ("could not find server jar in " ^ (cljr_lib ())))
 
     (* options and config file *)
 
@@ -73,7 +68,8 @@ module Config =
       log_file        = "/dev/null";
       install_root    = platform.cljr;
       http_client     = platform.wget_bin;
-      clojure_version = "1.3.0"
+      clojure_version = clojure_version;
+      server_version  = server_version;
     }
 
     let get_server_opts () = !server_opts
@@ -89,6 +85,7 @@ module Config =
     | "install_root"    -> opts.install_root <- v
     | "http_client"     -> opts.http_client <- v
     | "clojure_version" -> opts.clojure_version <- v
+    | "server_version"  -> opts.server_version <- v
     | _                 -> ()
 
     let read_config_file set_opt =
@@ -128,4 +125,13 @@ module Config =
         "jvm_opts = " ^    opts.jvm_opts ;
         "log_file = " ^    opts.log_file ;
         ])
+
+
+    (* look for server jar in lib directory *)
+    let server_cp server_version clojure_version () =
+      try
+        Gfile.exists (server_jar server_version clojure_version ());
+      with Not_found ->
+        raise (Failure ("could not find server jar in " ^ (cljr_lib ())))
+
 end

@@ -20,13 +20,20 @@ Download the appropriate client binary for your platform:
 
     jark server install 
 
-Currently, the standalone version is packaged with clojure-1.3. To install with clojure-1.2.x do:
-           
-    jark --clojure-version 1.2.1 server install
-
 For a system-wide install
 
     jark --install-root /usr/lib/clojure server install 
+
+Currently, the standalone version is packaged with clojure-1.3. To install with clojure-1.2.x do:
+           
+    jark --clojure-version 1.2.1 server install
+    (or jark -c 1.2.1 server install)
+    jark -c 1.3.0 server install
+
+Once the jars are downloaded, you can start multiple servers with different clojure versions
+
+    jark -c 1.2.1 -p 9001 server start 
+    jark -c 1.3.0 -p 9002 server start 
 
 ## Basic usage
 
@@ -44,77 +51,6 @@ For a system-wide install
     jark server stop
 
 Default HOST is localhost and default port is 9000
-
-## Features
-
-#### Remote Clojure REPL
-
-* Jark provides the following REPL commands, besides evaluating Clojure expressions.
-
-         /clear
-         /color [true false]
-         /config
-         /completion [true false]
-         /completion-mode [server histfile]
-         /cp [list add]
-         /debug [true false]
-         /inspect var
-         /multiline [true false]
-         /methods object
-         /ns namespace
-         /readline [true false]
-         /server [version info]
-         /vm [info stat]
-         /who
-         /quit
-
-#### Scripting 
-* Standalone Clojure scripts can be written using the #! operator. 
-
-         #!/usr/bin/env jark -h HOST -p PORT
-         (clojure code ...)
-        
-* All Jark commands output JSON for parsing when passed a `--json` option
-
-        jark --json ns find swank 
-         => ["swank.commands", "swank.commands.basic", "swank.core" ..]
-
-#### Remote JVM Management
-* JVM Performance monitoring `jark vm stat`
-* Dynamically add classpath(s) `jark cp add`
-* Run on-demand Garbage collection `jark vm gc`
-
-#### Plugins 
-* Server-side plugin system. 
-* All plugins are written in Clojure
-  
-        jark plugin list
-        jark plugin load <path-to-plugin.clj>
-
-#### Integration with clojure tools
-* Provides a default lein plugin that performs lein tasks, interactively and much faster.
-* Provides a global package management system using cljr
-
-#### Embeddable Server
- 
-* Can be embedded in your app/library.
-
-        Add [jark/jark-server "0.4-SNAPSHOT"] to project.clj 
-        (require 'clojure.tools.jark.server)
-        (clojure.tools.jark.server/start PORT) in your code. 
-
-jark-client can connect to it `jark -h HOST -p PORT N F A`
-
-#### Configurable and easy-to-install
-* 32-bit and 64-bit client binaries are available for GNU/Linux, MacOSX and Windows
-* Configurable (Edit $PREFIX/jark.conf)
-
-* Code Evaluation
- 
-        echo CLOJURE-EXPRESSION | jark -s 
-        jark -e CLOJURE-EXPRESSION        
-
-* and more ..
 
 ## Documentation
 

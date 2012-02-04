@@ -14,9 +14,9 @@ module Config :
 
     val cljr_lib : unit -> string
 
-    val server_cp : unit -> string
+    val server_cp : string -> string -> unit -> bool
 
-    val server_jar : string -> string
+    val server_jar : string -> string -> unit -> string
 
     val jark_version : string
 
