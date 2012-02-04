@@ -34,26 +34,13 @@ module Server =
     [] -> (); Plugin.show_cmd_usage registry "load"
     | x :: xs -> load x
 
-    let install_standalone_jar () =
-      if Gfile.exists Installer.standalone_path then
-        Gstr.pe ("Latest version already installed: " ^ Installer.standalone_path)
-      else
-        Installer.install_standalone ()
-
     let install args =
       let clojure_version = ref Installer.conf.clojure_version in
-
-      let _ = Options.parse_argv [
+      let _ = Options.parse args [
         "--clojure-version", Options.Set_string clojure_version, "set clojure version"
       ]
       in
-
-      (* Installer.read_config (); *)
-      Gfile.mkdir Installer.conf.install_root;
-      Gfile.mkdir (Installer.cljr_lib ());
-      Installer.setup_cljr ();
-      install_standalone_jar ();
-      Gstr.pe "Installed components successfully"
+      Installer.install_server !clojure_version
 
     let uninstall args =
       Gstr.pe "Removed jark configs successfully"

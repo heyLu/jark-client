@@ -40,11 +40,10 @@ type config_opts = {
   mutable log_path    : string;
   mutable swank_port  : int;
   mutable json        : bool;
-  mutable remote_host : string
+  mutable remote_host : string;
 }
 
 type install_opts = {
-  mutable install_root: string;
   mutable http_client: string;
   mutable clojure_version: string
 }

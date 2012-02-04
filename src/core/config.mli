@@ -10,7 +10,9 @@ module Config :
 
     val cljr_lib : unit -> string
 
-    val standalone : bool
+    val server_cp : unit -> string
+
+    val server_jar : string -> string
 
     val jark_version : string
 

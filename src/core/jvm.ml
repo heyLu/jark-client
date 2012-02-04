@@ -7,12 +7,11 @@ module Jvm =
     open Options
     open Printf
     open Jark
-    open Installer
     module C = Config
 
     let cp_boot () =
-      Installer.read_config ();
-      Installer.standalone_path
+      C.read_config ();
+      C.server_cp ()
 
     let start_cmd jvm_opts port =
       String.concat " " ["java"; jvm_opts ; "-cp"; cp_boot (); "clojure.tools.jark.server"; port; "&"]

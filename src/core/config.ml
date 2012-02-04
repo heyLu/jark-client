@@ -39,8 +39,6 @@ module Config =
       wget_bin        = "c:\\wget.exe --user-agent jark ";
     }
 
-    let standalone = true
-
     let posix = {
       cljr            = ~/ ".cljr";
       config_file     = ~/ ".cljr/jark.conf";
@@ -53,6 +51,21 @@ module Config =
 
     let cljr_lib () = Gfile.path [ platform.cljr ; "lib" ]
 
+    (* path to server jar *)
+    let server_jar clojure_version =
+      Gfile.path [
+        cljr_lib ();
+        sprintf "jark-0.4-SNAPSHOT-clojure-%s-standalone.jar" clojure_version
+      ]
+
+    (* look for server jar in lib directory *)
+    let server_cp () =
+      try
+        List.find Gfile.exists
+        (List.map server_jar ["1.3.0"; "1.2.1"])
+      with Not_found ->
+        raise (Failure ("could not find server jar in " ^ (cljr_lib ())))
+
     (* options and config file *)
 
     (* needs to be kept in sync with Datatypes.config_opts
@@ -63,7 +76,7 @@ module Config =
        log_path    = "/dev/null";
        swank_port  = 4005;
        json        = false;
-       remote_host = "localhost"
+       remote_host = "localhost";
     }
 
     let set_global_opt k v = match k with
