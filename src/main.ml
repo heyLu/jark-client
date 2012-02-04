@@ -18,6 +18,9 @@ let usage =
                 "OPTIONS:   [-e|--eval]  [-j|--json]" ;
                 "           [-c|--config=<path>]";
                 "           [-h|--host=<hostname>] [-p|--port=<port>]";
+                "";
+                "To see available server plugins:";
+                "       jark plugins list";
                 ""]
 
                  
