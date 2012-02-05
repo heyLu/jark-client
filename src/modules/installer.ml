@@ -52,11 +52,8 @@ module Installer =
         Gstr.pe ("Latest version already installed: " ^ install_location)
       else begin
         (* ensure install directories exist *)
-        try
-          Gfile.mkdir o.install_root;
-          Gfile.mkdir (C.cljr_lib o.install_root ());
-        with Unix.Unix_error (_, "mkdir" , dir) ->
-          raise (Failure ("Permission denied. Could not create directory " ^ dir))
+        Gfile.mkdir o.install_root;
+        Gfile.mkdir (C.cljr_lib o.install_root ());
 
         (* write out project.clj for cljr *)
         setup_cljr ();
