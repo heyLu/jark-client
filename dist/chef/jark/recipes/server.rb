@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: jark
-# Recipe:: default
+# Recipe:: server
 #
 # Copyright 2012, Isaac Praveen
 #
@@ -17,21 +17,7 @@
 # limitations under the License.
 #
 
-
-remote_file "/usr/local/src/jark-#{node[:jark][:client_version}" do
-  source "#{node[:jark][:src_url]}/jark-#{node[:jark][:client_version}.tar.gz"
-end
-
-execute "untar jark" do
-  command "tar xzf jark-#{node[:jark][:client_version}.tar.gz"
-  creates "/usr/local/src/jark-#{node[:jark][:client_version]}"
-  cwd "/usr/local/src"
-end
-
-execute "copy jark to path" do
-  command "cp -a jark /usr/bin/jark"
-  cwd "/usr/local/src/jark-#{node[:jark][:client_version]}"
-end
+include_recipe "jark"
 
 options =  "-i #{node[:jark][:install_root]} -c #{node[:jark][:clojure_version]} "
 options += "-s #{node[:jark][:server_version]} --jvm-opts #{node[:jark][:jvm_opts]} "

@@ -79,11 +79,12 @@ up:
 	cd upload && upload.rb jark-$(VERSION)-x86_64.tar.gz icylisper/jark-client
 
 tar:
-	rm -rf upload/jark-$(VERSION)-x86_64_macosx*
-	cd upload && mkdir jark-$(VERSION)-x86_64_macosx
-	cp README.md upload/jark-$(VERSION)-x86_64_macosx/README
-	cp build/$(ARCH)/jark upload/jark-$(VERSION)-x86_64_macosx/jark
-	cd upload && tar zcf jark-$(VERSION)-x86_64_macosx.tar.gz jark-$(VERSION)-x86_64_macosx/*
+	rm -rf upload/jark-$(VERSION)-$(ARCH)
+	mkdir -p upload
+	cd upload && mkdir jark-$(VERSION)-$(ARCH)
+	cp README.md upload/jark-$(VERSION)-$(ARCH)/README
+	cp build/$(ARCH)/jark upload/jark-$(VERSION)-$(ARCH)/jark
+	cd upload && tar zcf jark-$(VERSION)-$(ARCH).tar.gz jark-$(VERSION)-$(ARCH)/*
 
 deps: ansiterminal camlp5 ledit
 
@@ -109,3 +110,15 @@ ledit:
 		cd ledit-2.02.1 && make && make ledit.cmxa ; \
 		mv $(DEPLIBS)/ledit-2.02.1 $(DEPLIBS)/ocaml/ledit ; \
 	fi
+
+LINUX_64_HOST=vagrant@33.33.33.20
+LINUX_32_HOST=vagrant@33.33.33.21
+WIN_32_HOST=vagrant@33.33.33.22
+
+linux-64:
+	ssh ${LINUX_64_HOST} "cd ~/jark-client && git pull && make && make tar"
+	scp ${LINUX_64_HOST}:~/jark-client/upload/jark-${VERSION}-Linux-x86_64.tar.gz upload/
+
+linux-32:
+	ssh ${LINUX_32_HOST} "cd ~/jark-client && git pull && make && make tar"
+	scp ${LINUX_32_HOST}:~/jark-client/upload/jark-${VERSION}-Linux-i386.tar.gz upload/
