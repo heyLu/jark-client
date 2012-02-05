@@ -57,7 +57,7 @@ module Config =
         
     let server_jar install_root server_version clojure_version () =
       Gfile.path [
-        install_root;
+        cljr_lib install_root ();
         (sprintf "jark-%s-clojure-%s-standalone.jar" server_version clojure_version)
       ]
 
