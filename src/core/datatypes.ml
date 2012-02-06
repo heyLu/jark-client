@@ -21,7 +21,7 @@ type response = {
 (* platform-specific string constants *)
 type platform_config = {
     mutable cljr: string;
-    mutable config_file: string;
+    mutable config_path: string;
     mutable wget_bin: string;
   }
 
@@ -39,7 +39,9 @@ type server_opts = {
     mutable install_root    : string;
     mutable http_client     : string;
     mutable clojure_version : string;
-    mutable server_version  : string
+    mutable server_version  : string;
+    mutable classpath       : string;
+    mutable config_file     : string
 } 
 
 type cmd_opts = {

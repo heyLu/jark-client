@@ -35,13 +35,13 @@ module Config =
 
     let windows = {
       cljr            = "c:\\cljr";
-      config_file     = "c:\\jark\\jarkrc";
+      config_path     = "c:\\jark\\jarkrc";
       wget_bin        = "c:\\wget.exe --user-agent jark ";
     }
 
     let posix = {
       cljr            = ~/ ".cljr";
-      config_file     = ~/ ".cljr/jark.conf";
+      config_path     = ~/ ".cljr/jark.conf";
       wget_bin        = "wget --user-agent jark ";
     }
 
@@ -53,7 +53,6 @@ module Config =
     let server_version  = "0.4-SNAPSHOT"
 
     (* path to server jar *)
-    
         
     let server_jar install_root server_version clojure_version () =
       Gfile.path [
@@ -70,6 +69,8 @@ module Config =
       http_client     = platform.wget_bin;
       clojure_version = clojure_version;
       server_version  = server_version;
+      classpath       = server_jar platform.cljr server_version clojure_version ();
+      config_file     = platform.config_path
     }
 
     let get_server_opts () = !server_opts
@@ -86,9 +87,12 @@ module Config =
     | "http_client"     -> opts.http_client <- v
     | "clojure_version" -> opts.clojure_version <- v
     | "server_version"  -> opts.server_version <- v
+    | "classpath"       -> opts.classpath <- v
+    | "config_file"     -> opts.config_file <- v
     | _                 -> ()
 
-    let read_config_file set_opt =
+    let read_config_file set_opt () =
+      let opts = get_server_opts () in 
       let skip_line s =
         let s = Gstr.strip s in
         (Gstr.starts_with s "#") ||
@@ -102,29 +106,39 @@ module Config =
             | _ -> raise (Failure "Bad config file line")
           end
         with _ -> begin
-          print_endline ("Bad config file: " ^ platform.config_file);
+          print_endline ("Bad config file: " ^ opts.config_file);
           print_endline ("Could not parse line: " ^ s);
           raise (Failure "Could not load config file")
         end
       in
-      if (Gfile.exists platform.config_file) then begin
-        let config = Gfile.getlines platform.config_file in
+      if (Gfile.exists opts.config_file) then begin
+        let config = Gfile.getlines opts.config_file in
         List.iter process_line config
       end
       else
         ()
 
     let read_config () = 
-      read_config_file set_server_opt
+      read_config_file set_server_opt ()
 
     let print_config () =
       let opts = get_server_opts () in 
+      let env  = get_env () in
       Gstr.pe (Gstr.unlines [
-        "# copy into config file " ^ platform.config_file;
+        "# copy into config file " ^ opts.config_file;
         "";
-        "jvm_opts = " ^    opts.jvm_opts ;
-        "log_file = " ^    opts.log_file ;
-        ])
+        "classpath       = " ^ opts.classpath;
+        "clojure_version = " ^ opts.clojure_version;
+        "http_client     = " ^ opts.http_client;
+        "install_root    = " ^ opts.install_root;
+        "jvm_opts        = " ^ opts.jvm_opts ;
+        "log_file        = " ^ opts.log_file ;
+        "server_version  = " ^ opts.server_version;
+        "port            = " ^ (sprintf "%d" env.port);
+        "host            = " ^ env.host;
+        "debug           = " ^ "false";
+
+       ])
 
 
     (* look for server jar in lib directory *)

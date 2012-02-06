@@ -17,21 +17,22 @@ module O = Options
 let usage =
   Gstr.unlines ["usage: jark OPTIONS server|repl|<plugin>|<namespace> [<command>|<function>] [<args>]";
                 "OPTIONS:";
-                "    -C  --config-file";
-                "    -c  --clojure-version (1.3.0)" ;
-                "    -d  --debug";
-                "    -e  --eval" ;
-                "    -f  --force-install" ;
-                "    -h  --host (localhost)";
-                "    -H  --http-client (wget)";
-                "    -i  --install-root ($HOME/.cljr)" ;
-                "    -j  --json" ;
-                "    -l  --log-file (none)" ;
-                "    -o  --jvm-opts (-Xms256m -Xmx512m)" ;
-                "    -p  --port (9000)";
-                "    -S  --show-config";
-                "    -s  --server-version (0.4-SNAPSHOT)" ;
-                "    -v  --version";
+                "       -F  --force-install" ;
+                "       -S  --show-config";
+                "       -c  --clojure-version (1.3.0)" ;
+                "      -cp  --classpath" ;
+                "       -d  --debug";
+                "       -e  --eval" ;
+                "       -f  --config-file";
+                "       -h  --host (localhost)";
+                "       -i  --install-root ($HOME/.cljr)" ;
+                "       -j  --json" ;
+                "       -l  --log-file (none)" ;
+                "       -o  --jvm-opts (-Xms256m -Xmx512m)" ;
+                "       -p  --port (9000)";
+                "       -s  --server-version (0.4-SNAPSHOT)" ;
+                "       -v  --version";
+                "       -w  --http-client (wget)";
                 "";
                 "To see available server plugins:";
                 "       jark plugin list";
@@ -115,11 +116,15 @@ let parse_argv () =
   let (install_root, clojure_version, server_version) = 
     (ref (g.install_root), ref (g.clojure_version), ref (g.server_version))
   in
+
+  let (classpath, config_file) = 
+    (ref (g.classpath), ref (g.config_file))
+  in
   
   let rest = try
     Options.parse_argv [
     "--clojure-version", O.Set_string clojure_version, "Set clojure version";
-    "--config-file",     O.Set_on show_config,         "Use the given config file (default platform.cljr)";
+    "--config-file",     O.Set_string config_file,         "Use the given config file (default platform.cljr)";
     "--debug",           O.Set_on debug,               "Enable debug";
     "--http-client",     O.Set_string http_client,     "Set HTTP client";
     "--install-root",    O.Set_string install_root,    "Set install root";
@@ -128,9 +133,11 @@ let parse_argv () =
     "--prefix",          O.Set_string install_root,    "Set install root (required for debian)";
     "--show-config",     O.Set_on show_config,         "Show config";
     "--version",         O.Set_on version,             "Show jark version";
-    "-c",                O.Set_string clojure_version, "Set clojure version";
     "-S",                O.Set_on show_config,         "Show config";
-    "-C",                O.Set_on show_config,         "Use the given config file (default platform.cljr)";
+    "-c",                O.Set_string clojure_version, "Set clojure version";
+    "-cp",               O.Set_string classpath,       "Set classpath";
+    "-w",                O.Set_string http_client,     "Set http client";
+    "-f",                O.Set_string config_file,        "Use the given config file (default platform.cljr)";
     "-d",                O.Set_on debug,               "Enable debug";
     "-e",                O.Set_on eval,                "Evaluate expression";
     "-h",                O.Set_string host,            ("Set server hostname (default: " ^ !host ^ ")");
@@ -158,7 +165,9 @@ let parse_argv () =
       install_root    = !install_root;
       http_client     = !http_client;
       clojure_version = !clojure_version;
-      server_version  = !server_version
+      server_version  = !server_version;
+      classpath       = !classpath;
+      config_file     = !config_file
     }; 
     args = rest
   }
