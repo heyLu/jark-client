@@ -18,12 +18,12 @@
 #
 
 
-remote_file "/usr/local/src/jark-#{node[:jark][:client_version}" do
-  source "#{node[:jark][:src_url]}/jark-#{node[:jark][:client_version}.tar.gz"
+remote_file "/usr/local/src/jark-#{node[:jark][:client_version]}" do
+  source "#{node[:jark][:src_url]}/jark-#{node[:jark][:client_version]}.tar.gz"
 end
 
 execute "untar jark" do
-  command "tar xzf jark-#{node[:jark][:client_version}.tar.gz"
+  command "tar xzf jark-#{node[:jark][:client_version]}.tar.gz"
   creates "/usr/local/src/jark-#{node[:jark][:client_version]}"
   cwd "/usr/local/src"
 end
