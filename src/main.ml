@@ -137,7 +137,7 @@ let parse_argv () =
     "-c",                O.Set_string clojure_version, "Set clojure version";
     "-cp",               O.Set_string classpath,       "Set classpath";
     "-w",                O.Set_string http_client,     "Set http client";
-    "-f",                O.Set_string config_file,        "Use the given config file (default platform.cljr)";
+    "-f",                O.Set_string config_file,     "Use the given config file (default platform.cljr)";
     "-d",                O.Set_on debug,               "Enable debug";
     "-e",                O.Set_on eval,                "Evaluate expression";
     "-h",                O.Set_string host,            ("Set server hostname (default: " ^ !host ^ ")");
