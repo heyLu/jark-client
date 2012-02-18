@@ -207,7 +207,7 @@ module Repl =
 
     let run ns () =
       try
-        let r = ref initial_env in
+        let r = ref (Config.get_env ()) in
         while true do
           let str = readline (prompt_of !r) () in
           r := handle !r str ();

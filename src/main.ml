@@ -53,6 +53,11 @@ let rl () =
   let line = input_line stdin in
   Gstr.pe (Jark.eval line ()) 
 
+let eval_stdin () =
+   let buf = Buffer.create 4096 in
+   try while true do Buffer.add_string buf (input_line stdin) done
+   with End_of_file -> Gstr.pe (Jark.eval (Buffer.contents buf) ());;
+
 let run_repl ns () = 
   if Gsys.is_windows then
     Gstr.pe "REPL not implemented yet"
@@ -187,7 +192,9 @@ let _ =
     else if opts.show_config then
       Config.print_config ()
     else if opts.eval then
-      run_eval (List.hd opts.args)
+      match opts.args with
+      [] -> eval_stdin ()
+    | _  -> run_eval (List.hd opts.args)
     else match opts.args with
       [] -> show_usage ()
     | m :: args ->

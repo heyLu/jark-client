@@ -106,9 +106,9 @@ camlp5:
 ledit:
 	if [ ! -e $(LEDIT)/ledit.cmxa ]; then \
 		mkdir -p $(DEPLIBS) ; \
-		cd $(DEPLIBS) && $(WGET) http://cristal.inria.fr/~ddr/ledit/distrib/src/ledit-2.02.1.tgz 2> /dev/null | tar xzvf - ; \
-		cd ledit-2.02.1 && make && make ledit.cmxa ; \
-		mv $(DEPLIBS)/ledit-2.02.1 $(DEPLIBS)/ocaml/ledit ; \
+		cd $(DEPLIBS) && $(WGET) http://pauillac.inria.fr/~ddr/ledit/distrib/src/ledit-2.03.tgz 2> /dev/null | tar xzvf - ; \
+		cd ledit-2.03 && make && make ledit.cmxa ; \
+		mv $(DEPLIBS)/ledit-2.03 $(DEPLIBS)/ocaml/ledit ; \
 	fi
 
 LINUX_64_HOST=vagrant@33.33.33.20
