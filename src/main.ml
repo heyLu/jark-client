@@ -36,6 +36,8 @@ let usage =
                 "";
                 "To see available server plugins:";
                 "       jark plugin list";
+                "To see commands for a plugin:";
+                "       jark <plugin>";
                 ""]
 
                  
@@ -90,8 +92,8 @@ let server_dispatch args =
   match args with
   [] -> show_usage ()
   | ns :: _ when String.contains ns '.' -> Jark.dispatch args
-  | ns :: []      -> Jark.nfa ("clojure.tools.jark.plugin." ^ ns) ()
-  | ns :: f :: xs -> Jark.nfa ("clojure.tools.jark.plugin." ^ ns) ~f:f ~a:xs ()
+  | ns :: []        -> Jark.nfa ns ()
+  | ns :: f :: xs   -> Jark.nfa ns ~f:f ~a:xs ()
 
 let show_version () = Gstr.pe Config.jark_version
 (* handle actions that don't dispatch to a plugin *)
