@@ -16,6 +16,12 @@ Dev mailing list : https://groups.google.com/group/clojure-jark-dev
     
 Catch us on #jark on irc.freenode.net
 
+## Authors
+
+* Martin DeMello
+* Isaac Praveen
+* Lucas Stadler
+
 ## Thanks
 
 * Abhijith Gopal
