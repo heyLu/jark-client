@@ -4,6 +4,7 @@ open Jark
 open Gsys
 open Gstr
 open Gconf
+open Gfile
 open Config
 
 open Repl
@@ -64,6 +65,10 @@ let run_repl ns () =
   else begin
     Repl.run "user" ()
    end
+
+let run_file file () =
+  Gstr.pe "Woah";  
+  ()
 
 (* plugin system *)
 module type PLUGIN =
@@ -193,13 +198,15 @@ let _ =
       Config.print_config ()
     else if opts.eval then
       match opts.args with
-      [] -> eval_stdin ()
-    | _  -> run_eval (List.hd opts.args)
+        [] -> eval_stdin ()
+      | _   -> run_eval (List.hd opts.args)
     else match opts.args with
       [] -> show_usage ()
     | m :: args ->
         if Hashtbl.mem registry m then
           plugin_dispatch m args
+        else if Gfile.exists m then    
+          run_file m ()        
         else
           main_handler m args
   with
