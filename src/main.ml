@@ -103,7 +103,7 @@ let run_repl ns () =
   if Gsys.is_windows then
     Gstr.pe "REPL not implemented yet"
   else begin
-    Repl.run "user" ()
+    Repl.run ns ()
    end
 
 (* alias for jark lein run args *)
@@ -114,6 +114,7 @@ let run_lein xs () =
 (* handle actions that don't dispatch to a plugin *)
 let main_handler m args =
   match m :: args with
+  | "repl"      :: [ns]     -> run_repl ns ()
   | "repl"      :: []       -> run_repl "user" ()
   | "plugin"    :: ["list"] -> show_plugins ()
   | "lein"      :: xs       -> run_lein xs ()
@@ -209,7 +210,7 @@ let _ =
       Config.print_config ()
     else if opts.eval then
       match opts.args with
-        [] -> eval_stdin ()
+        []  -> eval_stdin ()
       | _   -> run_eval (List.hd opts.args)
     else match opts.args with
       [] -> show_usage ()
