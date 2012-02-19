@@ -41,7 +41,9 @@ let usage =
                 "       jark <plugin>";
                 ""]
 
-                 
+let show_usage () =
+  Gstr.pe usage
+
 let connection_usage () =
   let env = Config.get_env () in
   Gstr.unlines [sprintf "Cannot connect to the JVM on %s:%d" env.host env.port;
@@ -59,15 +61,8 @@ let eval_stdin () =
    try while true do Buffer.add_string buf (input_line stdin) done
    with End_of_file -> Gstr.pe (Jark.eval (Buffer.contents buf) ());;
 
-let run_repl ns () = 
-  if Gsys.is_windows then
-    Gstr.pe "REPL not implemented yet"
-  else begin
-    Repl.run "user" ()
-   end
-
 let run_file file () =
-  Gstr.pe "Woah";  
+  (* FIXME: Load file *)
   ()
 
 (* plugin system *)
@@ -89,29 +84,43 @@ let plugin_dispatch m args =
   [] | "usage" :: _ | "help" :: _ -> Handler.show_usage ()
   | x :: xs -> Handler.dispatch x xs
 
-let list_server_plugins () =
-  Jark.nfa "clojure.tools.jark.plugin.plugin" ~f:"list" ()
-
-let show_usage () =
-  Gstr.pe usage
-
 let run_eval args =
   Gstr.pe (Jark.eval args ())
+
+(* main_handler functions *)
 
 let server_dispatch args =
   match args with
   [] -> show_usage ()
   | ns :: _ when String.contains ns '.' -> Jark.dispatch args
-  | ns :: []        -> Jark.nfa ns ()
-  | ns :: f :: xs   -> Jark.nfa ns ~f:f ~a:xs ()
+  | ns :: []                            -> Jark.nfa ns ()
+  | ns :: f :: xs                       -> Jark.nfa ns ~f:f ~a:xs ()
 
 let show_version () = Gstr.pe Config.jark_version
+
+let show_plugins () =
+  Jark.nfa "clojure.tools.jark.plugin" ~f:"list" ()
+
+let run_repl ns () = 
+  if Gsys.is_windows then
+    Gstr.pe "REPL not implemented yet"
+  else begin
+    Repl.run "user" ()
+   end
+
+(* alias for jark lein run args *)
+
+let run_lein xs () =
+  Jark.nfa "clojure.tools.jark.plugin.lein" ~f:"run-task" ~a:xs ()
+
 (* handle actions that don't dispatch to a plugin *)
 let main_handler m args =
   match m :: args with
-  | "repl"      :: []      -> run_repl "user" ()
-  | "version"   :: []      -> show_version ()
-  | xs                     -> server_dispatch xs
+  | "repl"      :: []       -> run_repl "user" ()
+  | "plugin"    :: ["list"] -> show_plugins ()
+  | "lein"      :: xs       -> run_lein xs ()
+  | "version"   :: []       -> show_version ()
+  | xs                      -> server_dispatch xs
 
 (* option parsing *)
 
