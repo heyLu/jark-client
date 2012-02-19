@@ -27,9 +27,9 @@ let usage =
                 "       -f  --config-file";
                 "       -h  --host (localhost)";
                 "       -i  --install-root ($HOME/.cljr)" ;
-                "       -j  --json" ;
+                "       -j  --jvm-opts (-Xms256m -Xmx512m)" ;
                 "       -l  --log-file (none)" ;
-                "       -o  --jvm-opts (-Xms256m -Xmx512m)" ;
+                "       -o  --output-format json|plain (plain)" ;
                 "       -p  --port (9000)";
                 "       -s  --server-version (0.4-SNAPSHOT)" ;
                 "       -v  --version";
@@ -46,9 +46,7 @@ let show_usage () =
 
 let connection_usage () =
   let env = Config.get_env () in
-  Gstr.unlines [sprintf "Cannot connect to the JVM on %s:%d" env.host env.port;
-                 "Try server connect --host <HOST> --port <PORT>";
-                 "or specify --host / --port flags in the command"]
+  Gstr.unlines [sprintf "Cannot connect to the JVM on %s:%d" env.host env.port]
         
 let rl () =
   let term = Unix.tcgetattr Unix.stdin in
@@ -138,10 +136,10 @@ let parse_argv () =
     (ref (g.install_root), ref (g.clojure_version), ref (g.server_version))
   in
 
-  let (classpath, config_file) = 
-    (ref (g.classpath), ref (g.config_file))
+  let (classpath, config_file, output_format) = 
+    (ref (g.classpath), ref (g.config_file), ref (g.output_format))
   in
-  
+
   let rest = try
     Options.parse_argv [
     "--clojure-version", O.Set_string clojure_version, "Set clojure version";
@@ -149,6 +147,7 @@ let parse_argv () =
     "--debug",           O.Set_on debug,               "Enable debug";
     "--http-client",     O.Set_string http_client,     "Set HTTP client";
     "--install-root",    O.Set_string install_root,    "Set install root";
+    "--output-format",   O.Set_string output_format,   "Set output format (json|plain)";
     "--jvm-opts",        O.Set_string jvm_opts,        "Set JVM version";
     "--log-file",        O.Set_string log_file,        "Set Log path";
     "--prefix",          O.Set_string install_root,    "Set install root (required for debian)";
@@ -163,7 +162,9 @@ let parse_argv () =
     "-e",                O.Set_on eval,                "Evaluate expression";
     "-h",                O.Set_string host,            ("Set server hostname (default: " ^ !host ^ ")");
     "-i",                O.Set_string install_root,    "Set install root";
+    "-j",                O.Set_string jvm_opts,        "Set JVM version";
     "-l",                O.Set_string log_file,        "Set Log path";
+    "-o",                O.Set_string output_format,   "Set output format (json|plain)";
     "-p",                O.Set_int port,               (sprintf "Set server port (default: %d)" !port);
     "-s",                O.Set_string server_version,  "Set jark server version";
     "-v",                O.Set_on version,             "Show jark version";
@@ -188,7 +189,8 @@ let parse_argv () =
       clojure_version = !clojure_version;
       server_version  = !server_version;
       classpath       = !classpath;
-      config_file     = !config_file
+      config_file     = !config_file;
+      output_format   = !output_format
     }; 
     args = rest
   }

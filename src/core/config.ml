@@ -70,7 +70,8 @@ module Config =
       clojure_version = clojure_version;
       server_version  = server_version;
       classpath       = server_jar platform.cljr server_version clojure_version ();
-      config_file     = platform.config_path
+      config_file     = platform.config_path;
+      output_format   = "plain"
     }
 
     let get_server_opts () = !server_opts
@@ -89,6 +90,7 @@ module Config =
     | "server_version"  -> opts.server_version <- v
     | "classpath"       -> opts.classpath <- v
     | "config_file"     -> opts.config_file <- v
+    | "output_format"   -> opts.output_format <- v
     | _                 -> ()
 
     let read_config_file set_opt () =
@@ -134,6 +136,7 @@ module Config =
         "jvm_opts        = " ^ opts.jvm_opts ;
         "log_file        = " ^ opts.log_file ;
         "server_version  = " ^ opts.server_version;
+        "output_format   = " ^ opts.output_format;
         "port            = " ^ (sprintf "%d" env.port);
         "host            = " ^ env.host;
         "debug           = " ^ "false";

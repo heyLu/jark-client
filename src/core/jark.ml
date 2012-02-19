@@ -40,11 +40,12 @@ module Jark =
     let require ns =
       eval (sprintf "(require '%s)" ns) ()
 
-    let dispatch_fn () = "(clojure.tools.jark.server/dispatch "
-      (* match (Gopt.getopt "--json" ()) with *)
-      (* | "no"  -> "(clojure.tools.jark.server/dispatch " *)
-      (* | "yes" -> "(clojure.tools.jark.server/cli-json " *)
-      (* |  _    -> "(clojure.tools.jark.server/dispatch " *)
+    let dispatch_fn () = 
+      let opts = C.get_server_opts () in
+      match opts.output_format with 
+        "plain" -> "(clojure.tools.jark.server/dispatch "
+      | "json"  -> "(clojure.tools.jark.server/dispatch-json "
+      |  _      -> "(clojure.tools.jark.server/dispatch "
 
     let nfa n ?(f="nil") ?(a=[]) ?(fmt=ResText) () =
       let d = dispatch_fn () in

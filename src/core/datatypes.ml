@@ -27,10 +27,6 @@ type platform_config = {
 
 type response_format = ResText | ResHash | ResList
 
-type output_opts = {
-    mutable json            : bool;
-}
-
 (* server options *)
 
 type server_opts = {
@@ -41,7 +37,8 @@ type server_opts = {
     mutable clojure_version : string;
     mutable server_version  : string;
     mutable classpath       : string;
-    mutable config_file     : string
+    mutable config_file     : string;
+    mutable output_format   : string
 } 
 
 type cmd_opts = {
