@@ -27,7 +27,7 @@ module Repl =
     (* have a global repl config, since there is only ever one repl *)
     let config = {
       color           = true;
-      multiline       = false;
+      multiline       = true;
       readline        = true;
       completion      = false;
       completion_mode = Histfile;
@@ -110,18 +110,13 @@ module Repl =
       let lines = Gstr.unlines ["/clear";
                                  "/color [true false]";
                                  "/config";
-                                 "/completion [true false]";
-                                 "/completion-mode [server histfile]";
+                                 "/completion-mode [server histfile none]";
                                  "/cp [list add]";
                                  "/debug [true false]";
-                                 "/inspect var";
                                  "/multiline [true false]";
-                                 "/methods object";
                                  "/ns namespace";
-                                 "/readline [true false]";
                                  "/server [version info]";
                                  "/vm [info stat]";
-                                 "/who";
                                  "/quit"] in
       print_string [green] lines;
       Printf.printf "\n";
@@ -190,10 +185,8 @@ module Repl =
       | ["/ns"; o]              -> set_ns env o
       | ["/color"; o]           -> set_color o; env
       | ["/config"]             -> show_config (); env
-      | ["/completion"; o]      -> set_completion o; env
       | ["/completion-mode"; o] -> set_completion_mode o; env
       | ["/multiline"; o]       -> set_multiline o; env
-      | ["/readline"; o]        -> set_readline o; env
       | ["/quit"]               -> env
       | _                       -> env
 

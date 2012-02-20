@@ -93,6 +93,10 @@ module Config =
     | "output_format"   -> opts.output_format <- v
     | _                 -> ()
 
+    let classpath () = 
+      let opts = get_server_opts () in
+      server_jar platform.cljr opts.server_version opts.clojure_version ()      
+
     let read_config_file set_opt () =
       let opts = get_server_opts () in 
       let skip_line s =

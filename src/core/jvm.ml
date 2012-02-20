@@ -10,9 +10,8 @@ module Jvm =
     module C = Config
 
     let cp_boot () =
-      let opts = C.get_server_opts () in
       C.read_config ();
-      opts.classpath
+      C.classpath ()
 
     let start_cmd jvm_opts port log_file =
       String.concat " " ["java"; jvm_opts ; "-cp"; cp_boot (); "clojure.tools.jark.server"; port; " "; "&> "; log_file; " &"]

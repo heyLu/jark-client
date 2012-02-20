@@ -24,4 +24,5 @@ module Config :
 
     val print_config : unit -> unit
 
+    val classpath : unit -> string
   end
