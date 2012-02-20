@@ -13,25 +13,27 @@ WGET = wget --no-check-certificate -O -
 # download and make dependencies within the project directory
 TOP = $(shell pwd)
 DEP = $(TOP)/deps
+LEDIT = $(TOP)/src/lib/ledit
+GUTILS = src/lib/gutils
 DEPLIBS = $(DEP)/lib
-LEDIT = $(DEPLIBS)/ocaml/ledit
 ANSITERM = $(DEPLIBS)/ANSITerminal-0.6/_build
 CAMLP5 = $(DEPLIBS)/ocaml/camlp5
+
 
 WIN_LIBS = $(WLIB)/unix,$(WLIB)/bigarray,$(WLIB)/str,$(WLIB)/nums,$(WLIB)/camlp5/camlp5,$(WLIB)/camlp5/gramlib,$(WLIB)/ledit/ledit
 
 LIBS = unix,bigarray,str,nums,$(CAMLP5)/camlp5,$(CAMLP5)/gramlib,$(LEDIT)/ledit,$(ANSITERM)/ANSITerminal
 
-OCAMLBUILD = ocamlbuild -j 2 -quiet -I src/utils -I src/core -I src -I src/modules  -lflags -I,/usr/lib/ocaml/pcre  \
+OCAMLBUILD = ocamlbuild -j 2 -quiet -I $(GUTILS) -I src/core -I src -I src/modules  -lflags -I,/usr/lib/ocaml/pcre  \
            -lflags -I,$(CAMLP5) -cflags  -I,$(LEDIT) -lflags -I,$(ANSITERM) -cflags -I,$(ANSITERM)
 
-WOCAMLBUILD = ocamlbuild -j 2 -quiet -I src/utils -I src -I src/core -I src/modules -lflags -I,$(WLIB)/pcre  \
+WOCAMLBUILD = ocamlbuild -j 2 -quiet -I $(GUTILS) -I src -I src/core -I src/modules -lflags -I,$(WLIB)/pcre  \
            -lflags -I,$(WLIB)/camlp5 -cflags  -I,$(WLIB)/ledit
 
 all:: native
 
-
 native :
+	cd $(LEDIT)  && make && make ledit.cmxa 
 	$(OCAMLBUILD) -libs $(LIBS) main.native
 	if [ ! -d build/$(ARCH) ]; then mkdir -p build/$(ARCH); fi
 	cp _build/src/main.native build/$(ARCH)/$(BIN_NAME)
@@ -46,7 +48,7 @@ upx :
 	rm -f build/$(BIN_NAME)-un
 	rm -rf _build
 
-byte :
+byte : 
 	$(OCAMLBUILD) -libs $(LIBS) main.byte
 	cp _build/src/main.byte jark.byte
 
@@ -74,6 +76,7 @@ clean::
 	rm -f jark*.tar.{gz,bz2}
 	rm -rf jark
 	ocamlbuild -clean
+	cd $(LEDIT)  && make clean
 
 up:
 	cd upload && upload.rb jark-$(VERSION)-x86_64.tar.gz icylisper/jark-client
@@ -86,7 +89,7 @@ tar:
 	cp build/$(ARCH)/jark upload/jark-$(VERSION)-$(ARCH)/jark
 	cd upload && tar zcf jark-$(VERSION)-$(ARCH).tar.gz jark-$(VERSION)-$(ARCH)/*
 
-deps: ansiterminal camlp5 ledit
+deps: ansiterminal camlp5
 
 ansiterminal:
 	if [ ! -e $(ANSITERM)/ANSITerminal.cmxa ]; then \
@@ -101,14 +104,6 @@ camlp5:
 		cd $(DEPLIBS) && $(WGET) http://pauillac.inria.fr/~ddr/camlp5/distrib/src/camlp5-6.02.3.tgz 2> /dev/null | tar xzvf - ; \
 		cd camlp5-6.02.3 && ./configure --prefix $(DEP) && make world.opt && make install ;\
 		rm -rf $(DEPLIBS)/camlp5-6.02.3 ;\
-	fi
-
-ledit:
-	if [ ! -e $(LEDIT)/ledit.cmxa ]; then \
-		mkdir -p $(DEPLIBS) ; \
-		cd $(DEPLIBS) && $(WGET) http://pauillac.inria.fr/~ddr/ledit/distrib/src/ledit-2.03.tgz 2> /dev/null | tar xzvf - ; \
-		cd ledit-2.03 && make && make ledit.cmxa ; \
-		mv $(DEPLIBS)/ledit-2.03 $(DEPLIBS)/ocaml/ledit ; \
 	fi
 
 LINUX_64_HOST=vagrant@33.33.33.20
