@@ -9,7 +9,6 @@ open Config
 
 open Repl
 open Server
-open Installer
 open Printf
 open Optiontypes
 open Ntypes
