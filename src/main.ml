@@ -61,6 +61,7 @@ let eval_stdin () =
 
 let run_file file () =
   (* FIXME: Load file *)
+  Jark.nfa "clojure.tools.jark.plugin.ns" ~f:"load" ~a:[file] ();
   ()
 
 (* plugin system *)
