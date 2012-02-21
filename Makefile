@@ -22,10 +22,10 @@ CAMLP5 = $(DEPLIBS)/ocaml/camlp5
 
 WIN_LIBS = $(WLIB)/unix,$(WLIB)/bigarray,$(WLIB)/str,$(WLIB)/nums,$(WLIB)/camlp5/camlp5,$(WLIB)/camlp5/gramlib,$(WLIB)/ledit/ledit
 
-LIBS = unix,bigarray,str,nums,$(CAMLP5)/camlp5,$(CAMLP5)/gramlib,$(LEDIT)/ledit,$(ANSITERM)/ANSITerminal
+LIBS = unix,bigarray,str,nums,$(CAMLP5)/camlp5,$(CAMLP5)/gramlib,$(ANSITERM)/ANSITerminal,$(LEDIT)/ledit
 
 OCAMLBUILD = ocamlbuild -j 2 -quiet -I $(GUTILS) -I src/core -I src -I src/modules  -lflags -I,/usr/lib/ocaml/pcre  \
-           -lflags -I,$(CAMLP5) -cflags  -I,$(LEDIT) -lflags -I,$(ANSITERM) -cflags -I,$(ANSITERM)
+           -lflags -I,$(CAMLP5)  -lflags -I,$(ANSITERM) -cflags -I,$(ANSITERM) -cflags  -I,$(LEDIT)
 
 WOCAMLBUILD = ocamlbuild -j 2 -quiet -I $(GUTILS) -I src -I src/core -I src/modules -lflags -I,$(WLIB)/pcre  \
            -lflags -I,$(WLIB)/camlp5 -cflags  -I,$(WLIB)/ledit

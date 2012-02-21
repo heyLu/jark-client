@@ -14,8 +14,10 @@
 #load "pa_local.cmo";
 #load "pa_def.cmo";
 #load "pa_fstream.cmo";
+#load "pa_fstream.cmo";
 
 open Printf;
+open ANSITerminal;
 
 type encoding = [ Ascii | Iso_8859 | Utf_8 ];
 
@@ -163,7 +165,7 @@ module A :
         value parse s = get_char (fun () -> Stream.next s);
         value print c =
           if String.length c = 1 && c.[0] = '\n' then print_newline ()
-          else print_string c
+          else print_string [white] c
         ;
         value prerr c = output_string stderr c;
         value prerr_backsp c = do {
@@ -670,7 +672,7 @@ value put_bs st c = A.Char.prerr_backsp c;
 value put_space st = output_char stderr ' ';
 value put_newline st = prerr_endline "";
 value flush_out st = flush stderr;
-value bell () = do { prerr_string "\007"; flush stderr };
+value bell () = do { prerr_string [white] "\007"; flush stderr };
 
 value saved_tcio =
   try Some (Unix.tcgetattr Unix.stdin) with
@@ -1209,12 +1211,12 @@ value print_file_list st max_flen nb_by_line dirname files = do {
           loop 0 [file :: files]
         }
         else do {
-          prerr_string file;
+          prerr_string [white] file;
           let fn = Filename.concat dirname file in
-          if is_directory fn then prerr_string Filename.dir_sep
-          else prerr_string " ";
+          if is_directory fn then prerr_string [white] Filename.dir_sep
+          else prerr_string [white] " ";
           if n < nb_by_line - 1 then do {
-            prerr_string
+            prerr_string [white]
               (String.make (max_flen + 1 - String.length file) ' ');
           }
           else ();
@@ -1329,7 +1331,7 @@ value complete_file_name st = do {
         put_newline st;
         st.od.cur := 0;
         st.od.len := 0;
-        prerr_string "*** files";
+        prerr_string [white] "*** files";
         if nb_screens > 1 then eprintf " (%d/%d)" (screen_nb + 1) nb_screens
         else ();
         prerr_endline " ***";
@@ -1659,7 +1661,7 @@ value (set_prompt, get_prompt, input_a_char) =
     if ic != stdin then A.Char.input ic
     else do {
       if ind.val > A.String.length buff.val then do {
-        prerr_string prompt.val;
+        prerr_string [cyan] prompt.val;
         flush stderr;
         try do {
           set_edit ();

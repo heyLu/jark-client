@@ -6,9 +6,10 @@ MANDIR=/usr/local/man/man1
 OCAMLC=ocamlc
 OCAMLOPT=ocamlopt
 CAMLP5=camlp5r -I ext
+ANSITERM=../../../deps/lib/ANSITerminal-0.6/_build
 OBJS=cursor.cmo ledit.cmo go.cmo
-OTHER_OBJS=unix.cma -I `camlp5 -where` gramlib.cma
-OTHER_XOBJS=unix.cmxa -I `camlp5 -where` gramlib.cmxa
+OTHER_OBJS=unix.cma -I `camlp5 -where` -I $(ANSITERM) ANSITerminal.cma  gramlib.cma
+OTHER_XOBJS=unix.cmxa -I `camlp5 -where` -I $(ANSITERM) ANSITerminal.cmxa gramlib.cmxa
 TARGET=ledit.out
 MKDIR=mkdir -p
 EXT=ext/pa_def.cmo ext/pa_local.cmo
@@ -71,11 +72,11 @@ ext/%.cmo: ext/%.ml
 
 %.cmo: %.ml
 	$(CAMLP5) $< -o $*.ppo
-	$(OCAMLC) -I `camlp5 -where` -c -impl $*.ppo
+	$(OCAMLC) -I `camlp5 -where` -I $(ANSITERM) -c -impl $*.ppo
 	/bin/rm -f $*.ppo
 %.cmx: %.ml
 	$(CAMLP5) $< -o $*.ppo
-	$(OCAMLOPT) -I `camlp5 -where` -c -impl $*.ppo
+	$(OCAMLOPT) -I `camlp5 -where` -I $(ANSITERM) -c -impl $*.ppo
 	/bin/rm -f $*.ppo
 %.cmi: %.mli
 	$(CAMLP5) $< -o $*.ppi
