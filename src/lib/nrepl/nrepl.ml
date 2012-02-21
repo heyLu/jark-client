@@ -8,7 +8,7 @@ module Nrepl =
   struct
     
     open Printf
-    open Datatypes
+    open Ntypes
     open Gstr  
 
     let debug = ref false

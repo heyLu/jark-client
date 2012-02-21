@@ -2,9 +2,10 @@ module Jvm =
   struct
 
     open Config
-    open Datatypes
     open Gstr
     open Options
+    open Optiontypes
+    open Ntypes
     open Printf
     open Jark
     module C = Config

@@ -4,7 +4,8 @@ module Config =
   struct
 
     open Printf
-    open Datatypes
+    open Optiontypes
+    open Ntypes
     open Gsys
     open Gnet
     open Glist

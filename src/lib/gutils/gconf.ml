@@ -4,7 +4,6 @@ module Gconf =
   struct
 
     open Printf
-    open Datatypes
     open Gsys
     open Gnet
     open Glist

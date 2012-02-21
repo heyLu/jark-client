@@ -2,7 +2,8 @@ module Repl =
   struct
 
     open Printf
-    open Datatypes
+    open Optiontypes
+    open Ntypes
     open Jark
     open Gstr
     open Gsys

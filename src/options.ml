@@ -1,5 +1,5 @@
 module Options = struct
-  open Datatypes
+  open Optiontypes
   open Printf
   open Glist
 

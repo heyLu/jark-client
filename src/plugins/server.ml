@@ -1,7 +1,7 @@
 module Server =
   struct
 
-    open Datatypes
+    open Optiontypes
     open Printf
     open Gstr
     open Glist

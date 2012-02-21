@@ -15,6 +15,9 @@ TOP = $(shell pwd)
 DEP = $(TOP)/deps
 LEDIT = $(TOP)/src/lib/ledit
 GUTILS = src/lib/gutils
+NREPL = src/lib/nrepl
+
+# External Deps
 DEPLIBS = $(DEP)/lib
 ANSITERM = $(DEPLIBS)/ANSITerminal-0.6/_build
 CAMLP5 = $(DEPLIBS)/ocaml/camlp5
@@ -24,10 +27,10 @@ WIN_LIBS = $(WLIB)/unix,$(WLIB)/bigarray,$(WLIB)/str,$(WLIB)/nums,$(WLIB)/camlp5
 
 LIBS = unix,bigarray,str,nums,$(CAMLP5)/camlp5,$(CAMLP5)/gramlib,$(ANSITERM)/ANSITerminal,$(LEDIT)/ledit
 
-OCAMLBUILD = ocamlbuild -j 2 -quiet -I $(GUTILS) -I src/core -I src -I src/modules  -lflags -I,/usr/lib/ocaml/pcre  \
-           -lflags -I,$(CAMLP5)  -lflags -I,$(ANSITERM) -cflags -I,$(ANSITERM) -cflags  -I,$(LEDIT)
+OCAMLBUILD = ocamlbuild -j 2 -quiet  -I $(GUTILS) -I $(NREPL) -I src -I src/plugins  -lflags -I,/usr/lib/ocaml/pcre  \
+           -lflags -I,$(CAMLP5)  -lflags -I,$(ANSITERM) -cflags -I,$(ANSITERM) -cflags  -I,$(LEDIT) -lflags  -I,$(LEDIT)
 
-WOCAMLBUILD = ocamlbuild -j 2 -quiet -I $(GUTILS) -I src -I src/core -I src/modules -lflags -I,$(WLIB)/pcre  \
+WOCAMLBUILD = ocamlbuild -j 2 -quiet -I $(GUTILS) -I src -I src/core -I src/plugins -lflags -I,$(WLIB)/pcre  \
            -lflags -I,$(WLIB)/camlp5 -cflags  -I,$(WLIB)/ledit
 
 all:: native

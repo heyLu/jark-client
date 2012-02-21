@@ -11,7 +11,8 @@ open Repl
 open Server
 open Installer
 open Printf
-open Datatypes
+open Optiontypes
+open Ntypes
 open Options
 module O = Options
 

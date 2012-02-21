@@ -1,14 +1,14 @@
 module Config :
   sig
-    val platform : Datatypes.platform_config
+    val platform : Optiontypes.platform_config
 
-    val set_env : Datatypes.env -> unit
+    val set_env : Ntypes.env -> unit
 
-    val get_env : unit -> Datatypes.env
+    val get_env : unit -> Ntypes.env
 
-    val get_server_opts : unit -> Datatypes.server_opts
+    val get_server_opts : unit -> Optiontypes.server_opts
 
-    val set_server_opts : Datatypes.server_opts -> unit
+    val set_server_opts : Optiontypes.server_opts -> unit
 
     val cljr_lib : string -> unit -> string
 

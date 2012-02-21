@@ -1,7 +1,7 @@
 module Response =
   struct
 
-    open Datatypes
+    open Ntypes
     open Gstr
 
     (* helper functions for response deserialization *)

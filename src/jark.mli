@@ -4,7 +4,7 @@ module Jark :
     val eval : string -> ?out:bool -> ?value:bool -> unit -> string
 
     val nfa : string -> ?f:string -> ?a:string list ->
-      ?fmt:Datatypes.response_format -> unit -> unit
+      ?fmt:Ntypes.response_format -> unit -> unit
 
     val require : string -> string
 

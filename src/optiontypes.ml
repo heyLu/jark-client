@@ -1,22 +1,3 @@
-type env = {
-    ns          : string;
-    debug       : bool;
-    host        : string;
-    port        : int;
-  }
-
-type nrepl_message = {
-    mid: string;
-    code: string;
-  }
-
-type response = {
-    id     : string option;
-    out    : string option;
-    err    : string option;
-    value  : string option;
-    status : string option;
-}
 
 (* platform-specific string constants *)
 type platform_config = {
@@ -24,8 +5,6 @@ type platform_config = {
     mutable config_path: string;
     mutable wget_bin: string;
   }
-
-type response_format = ResText | ResHash | ResList
 
 (* server options *)
 
@@ -42,10 +21,10 @@ type server_opts = {
 } 
 
 type cmd_opts = {
-  env : env;
-  show_version: bool;
-  show_config: bool;
-  eval : bool ;
-  server_opts : server_opts;
-  args : string list
+  env          : Ntypes.env;
+  show_version : bool;
+  show_config  : bool;
+  eval         : bool ;
+  server_opts  : server_opts;
+  args         : string list
 }

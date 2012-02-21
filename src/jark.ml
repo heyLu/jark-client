@@ -2,7 +2,8 @@ module Jark =
   struct
 
     open Config
-    open Datatypes
+    open Optiontypes
+    open Ntypes
     open Gstr
     open Nrepl
     open Printf

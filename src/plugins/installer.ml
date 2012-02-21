@@ -2,7 +2,7 @@ module Installer =
   struct
 
     open Printf
-    open Datatypes
+    open Optiontypes
     open Gnet
     open Glist
     open Gstr
