@@ -78,6 +78,8 @@ clean::
 	rm -f gmon.out
 	rm -f jark*.tar.{gz,bz2}
 	rm -rf jark
+	rm -f ~/src/lib/nrepl/*.cm[iox]
+	rm -f ~/src/lib/gutils/*.cm[iox]
 	ocamlbuild -clean
 	cd $(LEDIT)  && make clean
 

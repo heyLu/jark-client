@@ -70,8 +70,10 @@ module Response =
       let a = (out   >>? (fmt_txt res.out)) @
               (value >>? (fmt_val res.value "nil"))
       in
-      Gstr.join_nonempty "\n" a
-     
+      if (Gstr.notnone res.out) then
+        Gstr.strip ~chars:"\n" (Gstr.join_nonempty "\n" a)
+      else
+        Gstr.strip ~chars:"\n" (fmt_txt res.value)
 
     (* called by `eval` in the repl
      * NOTE: unlike clojure's repl, we put a newline between out and val
