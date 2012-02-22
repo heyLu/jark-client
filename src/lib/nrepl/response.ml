@@ -67,13 +67,11 @@ module Response =
 
     let make_res_string out value res =
       let (>>?) x y = if x then [y] else [] in
-      let a = (out   >>? (fmt_txt res.out)) @
-              (value >>? (fmt_val res.value "nil"))
-      in
+      let value_format = ("=> " ^ Gstr.strip ~chars:"\n" (fmt_val res.value "nil")) in
       if (Gstr.notnone res.out) then
-        Gstr.strip ~chars:"\n" (Gstr.join_nonempty "\n" a)
+        (fmt_txt res.out) ^ value_format
       else
-        Gstr.strip ~chars:"\n" (fmt_txt res.value)
+        value_format
 
     (* called by `eval` in the repl
      * NOTE: unlike clojure's repl, we put a newline between out and val
