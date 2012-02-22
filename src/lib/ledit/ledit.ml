@@ -1523,7 +1523,8 @@ value rec update_line st comm c = do {
       update_output st
     }
   | Clear -> do {
-    ignore (Sys.command "clear")
+    ignore (Sys.command "clear");
+    flush stdout
   }   
   | Quit ->
       match son.val with

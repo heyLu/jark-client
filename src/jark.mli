@@ -6,6 +6,8 @@ module Jark :
     val nfa : string -> ?f:string -> ?a:string list ->
       ?fmt:Ntypes.response_format -> unit -> unit
 
+    val pfa : string -> ?f:string -> ?a:string list -> unit -> unit
+
     val require : string -> string
 
     val dispatch : string list -> unit

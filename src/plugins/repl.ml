@@ -102,19 +102,17 @@ module Repl =
       env
 
     let repl_cmd env plugin cmd () =
-      let str = "(clojure.tools.jark.plugin." ^ plugin ^ "/" ^ cmd ^ ")" in 
+      let str = "(clojure.tools.jark." ^ plugin ^ "/" ^ cmd ^ ")" in 
       send_cmd env str ()
 
     let display_help () =
       (* FIXME: Construct the help string dynamically *)
       print_string [cyan] "REPL Commands:\n";
       let lines = Gstr.unlines ["/clear";
-                                 "/color [true false]";
                                  "/config";
                                  "/completion-mode [server histfile none]";
                                  "/cp [list add]";
                                  "/debug [true false]";
-                                 "/multiline [true false]";
                                  "/ns namespace";
                                  "/server [version info]";
                                  "/vm [info stat]";
@@ -151,10 +149,6 @@ module Repl =
       config.multiline <- default_bool o config.multiline;
       print_line [default] ("multiline: " ^ (string_of_bool config.multiline))
 
-    let set_readline o =
-      config.readline <- default_bool o config.readline;
-      print_line [default] ("readline: " ^ (string_of_bool config.readline))
-
     let set_completion_mode o =
       begin
         config.completion_mode <- match o with
@@ -174,20 +168,20 @@ module Repl =
     }
 
     let handle_cmd env cmd () =
+      print_string [red] cmd;
       match Str.bounded_split (Str.regexp " +") cmd 2 with
       | ["/help"]               -> display_help (); env
+      | ["/?"]                  -> display_help (); env
       | ["/debug"; o]           -> set_debug env o
-      | ["/cp"; "list"]         -> repl_cmd env "cp" "list" ()
+      | ["/cp"; "list"]         -> Jark.pfa "plugin.cp" ~f:"list" (); env
+      | ["/cp"; "add"; path]    -> Jark.pfa "plugin.cp" ~f:"add" ~a:[path] (); env
       | ["/clear"]              -> ignore (Sys.command "clear"); env
-      | ["/server"; "version"]  -> repl_cmd env "server" "version" ()
-      | ["/server"; "info"]     -> repl_cmd env "server" "info" ()
-      | ["/vm"; "version"]      -> repl_cmd env "vm" "version" ()
-      | ["/vm"; "stat"]         -> repl_cmd env "vm" "stat" ()
+      | ["/server"; "version"]  -> Jark.pfa "server" ~f:"version" (); env
+      | ["/server"; "info"]     -> Jark.pfa "server" ~f:"info" (); env
+      | ["/vm"; "version"]      -> Jark.pfa "plugin.vm" ~f:"version" (); env
+      | ["/vm"; "stat"]         -> Jark.pfa "plugin.vm" ~f:"stat" (); env
       | ["/ns"; o]              -> set_ns env o
-      | ["/color"; o]           -> set_color o; env
       | ["/config"]             -> show_config (); env
-      | ["/completion-mode"; o] -> set_completion_mode o; env
-      | ["/multiline"; o]       -> set_multiline o; env
       | ["/quit"]               -> env
       | _                       -> env
 

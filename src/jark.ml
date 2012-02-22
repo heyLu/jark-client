@@ -60,6 +60,9 @@ module Jark =
       in
       nrepl_send env fmt { mid = node_id env; code = dm }
 
+    let pfa p ?(f="nil") ?(a=[]) () =
+      nfa ("clojure.tools.jark." ^ p) ~f:f ~a:a ()
+
     let dispatch args =
       match args with
         [] -> ()
