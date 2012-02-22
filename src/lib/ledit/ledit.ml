@@ -237,6 +237,7 @@ type command =
   | Beginning_of_history
   | Beginning_of_line
   | Capitalize_word
+  | Clear
   | Complete_file_name
   | Delete_char
   | Delete_char_or_end_of_file
@@ -413,7 +414,7 @@ value init_default_commands kb =
      ("\\C-k", Kill_line);
      ("\\C-y", Yank);
      ("\\C-u", Unix_line_discard);
-     ("\\C-l", Redraw_current_line);
+     ("\\C-l", Clear);
      ("\\C-g", Abort);
      ("\\C-c", Interrupt);
      ("\\C-z", Suspend);
@@ -1521,6 +1522,9 @@ value rec update_line st comm c = do {
       st.od.len := 0;
       update_output st
     }
+  | Clear -> do {
+    ignore (Sys.command "clear")
+  }   
   | Quit ->
       match son.val with
       [ Some pid -> Unix.kill pid Sys.sigquit
