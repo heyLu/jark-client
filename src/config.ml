@@ -81,18 +81,18 @@ module Config =
       server_opts := opts
         
     let set_server_opt k v = 
-    let opts = get_server_opts () in
-    match k with
-    | "jvm_opts"        -> opts.jvm_opts <- v
-    | "log_file"        -> opts.log_file <- v
-    | "install_root"    -> opts.install_root <- v
-    | "http_client"     -> opts.http_client <- v
-    | "clojure_version" -> opts.clojure_version <- v
-    | "server_version"  -> opts.server_version <- v
-    | "classpath"       -> opts.classpath <- v
-    | "config_file"     -> opts.config_file <- v
-    | "output_format"   -> opts.output_format <- v
-    | _                 -> ()
+      let opts = get_server_opts () in
+      match k with
+        | "jvm_opts"        -> opts.jvm_opts <- v
+        | "log_file"        -> opts.log_file <- v
+        | "install_root"    -> opts.install_root <- v
+        | "http_client"     -> opts.http_client <- v
+        | "clojure_version" -> opts.clojure_version <- v
+        | "server_version"  -> opts.server_version <- v
+        | "classpath"       -> opts.classpath <- v
+        | "config_file"     -> opts.config_file <- v
+        | "output_format"   -> opts.output_format <- v
+        | _                 -> ()
 
     let classpath () = 
       let opts = get_server_opts () in

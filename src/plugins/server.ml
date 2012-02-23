@@ -92,20 +92,20 @@ module Server =
       Gstr.pe "Removed jark configs successfully"
 
     let info args =
-      Jark.nfa "clojure.tools.jark.server" ~f:"info" ~a:args ()
+      Jark.pfa "server" ~f:"info" ~a:args ()
 
     let clients args = 
-      Jark.nfa "clojure.tools.jark.server" ~f:"clients" ~a:args ()
+      Jark.pfa "server" ~f:"clients" ~a:args ()
 
     let version args = 
-      Jark.nfa "clojure.tools.jark.server" ~f:"version" ~a:args ()
+      Jark.pfa "server" ~f:"version" ~a:args ()
 
     let cp_boot () =
       C.read_config ();
       C.classpath ()
 
     let start_cmd jvm_opts port log_file =
-      String.concat " " ["java"; jvm_opts ; "-cp"; cp_boot (); "clojure.tools.jark.server"; port; " "; "&> "; log_file; " &"]
+      String.concat " " ["java"; (Gstr.uq jvm_opts) ; "-cp"; cp_boot (); "clojure.tools.jark.server"; port; " "; "&> "; log_file; " &"]
 
     let start args =
       let opts = C.get_server_opts () in
