@@ -168,7 +168,6 @@ module Repl =
     }
 
     let handle_cmd env cmd () =
-      print_string [red] cmd;
       match Str.bounded_split (Str.regexp " +") cmd 2 with
       | ["/help"]               -> display_help (); env
       | ["/?"]                  -> display_help (); env

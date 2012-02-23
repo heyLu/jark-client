@@ -5,6 +5,7 @@ module Jark =
     open Optiontypes
     open Ntypes
     open Gstr
+    open Glist
     open Nrepl
     open Printf
     open Response
@@ -37,6 +38,9 @@ module Jark =
       let expr = clj_string env code in
       let msg = make_eval_message env expr in
       nrepl_send_np ~out:out ~value:value env msg
+
+    let value_of v  =
+      Gstr.uq (Glist.last (Gstr.split "=> " v))
 
     let require ns =
       eval (sprintf "(require '%s)" ns) ()

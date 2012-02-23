@@ -59,11 +59,6 @@ let eval_stdin () =
    try while true do Buffer.add_string buf (input_line stdin) done
    with End_of_file -> Gstr.pe (Jark.eval (Buffer.contents buf) ());;
 
-let run_file file () =
-  (* FIXME: Load file *)
-  Jark.nfa "clojure.tools.jark.plugin.ns" ~f:"load" ~a:[file] ();
-  ()
-
 (* plugin system *)
 module type PLUGIN =
   sig
@@ -219,7 +214,7 @@ let _ =
         if Hashtbl.mem registry m then
           plugin_dispatch m args
         else if Gfile.exists m then    
-          run_file m ()        
+          Jark.pfa "plugin.ns" ~f:"load" ~a:[m] ()        
         else
           main_handler m args
   with

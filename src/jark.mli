@@ -12,4 +12,6 @@ module Jark :
 
     val dispatch : string list -> unit
 
+    val value_of : string -> string
+
    end

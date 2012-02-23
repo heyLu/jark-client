@@ -119,9 +119,9 @@ module Server =
       printf "Started JVM on port %s\n" port
     
     let get_pid () =
-      let msg = "(clojure.tools.jark.server/dispatch \"clojure.tools.jark.server\" \"pid\")" in
+      let msg = "(clojure.tools.jark.server/pid)" in
       let pid = Gstr.strip (Jark.eval ~out:true ~value:false msg ()) in
-      Gstr.maybe_int pid
+      Gstr.maybe_int (Jark.value_of pid)
 
     let stop args =
       (* FIXME: Ensure that stop is issued only on the server *)

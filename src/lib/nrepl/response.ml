@@ -76,9 +76,10 @@ module Response =
     (* called by `eval` in the repl
      * NOTE: unlike clojure's repl, we put a newline between out and val
      * even if out is not \n-terminated *)
-    let string_of_res ?(out=true) ?(value=true) res = match res.err with
-      Some e -> fmt_txt res.err
-    | None   -> make_res_string out value res
+    let string_of_res ?(out=true) ?(value=true) res =
+      match res.err with
+          Some e -> fmt_txt res.err
+        | None   -> make_res_string out value res
 
     (* output err or (both out and value) *)
     let print_res ?(fmt=ResText) res =
