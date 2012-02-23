@@ -96,7 +96,8 @@ module Config =
 
     let classpath () = 
       let opts = get_server_opts () in
-      server_jar platform.cljr opts.server_version opts.clojure_version ()      
+      let main_cp = (server_jar platform.cljr opts.server_version opts.clojure_version ()) in
+      main_cp ^ (Gstr.uq opts.classpath)
 
     let read_config_file set_opt () =
       let opts = get_server_opts () in 
