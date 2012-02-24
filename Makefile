@@ -125,8 +125,8 @@ LINUX_64_HOST=vagrant@33.33.33.20
 LINUX_32_HOST=vagrant@33.33.33.21
 WIN_32_HOST=vagrant@33.33.33.22
 
-linux-64: deb
-	ssh ${LINUX_64_HOST} "cd ~/jark-client && git pull && make && make tar"
+linux-64: 
+	ssh ${LINUX_64_HOST} "cd ~/jark-client && git pull && make && make tar && make deb"
 	scp ${LINUX_64_HOST}:~/jark-client/upload/jark-${VERSION}-Linux-x86_64.tar.gz upload/
 	scp ${LINUX_64_HOST}:~/*.deb upload/
 
