@@ -45,6 +45,7 @@ native :
 	rm -rf _build
 
 upx :
+	cd $(LEDIT)  && make && make ledit.cmxa 
 	$(OCAMLBUILD) -libs $(LIBS) main.native
 	if [ ! -d build/$(ARCH) ]; then mkdir -p build/$(ARCH); fi
 	cp _build/src/main.native build/$(ARCH)/$(BIN_NAME)-un
@@ -126,7 +127,7 @@ LINUX_32_HOST=vagrant@33.33.33.21
 WIN_32_HOST=vagrant@33.33.33.22
 
 linux-64: 
-	ssh ${LINUX_64_HOST} "cd ~/jark-client && git pull && make && make tar && make deb"
+	ssh ${LINUX_64_HOST} "cd ~/jark-client && git pull && make upx && make tar && make deb"
 	scp ${LINUX_64_HOST}:~/jark-client/upload/jark-${VERSION}-Linux-x86_64.tar.gz upload/
 	scp ${LINUX_64_HOST}:~/*.deb upload/
 
