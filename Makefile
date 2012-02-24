@@ -3,6 +3,8 @@ VERSION = 0.4-pre
 
 ARCH = $(shell uname)-$(shell uname -m)
 
+PREFIX=debian/jark/usr
+
 BIN_NAME = jark
 
 OLIB = /usr/lib/ocaml
@@ -82,6 +84,10 @@ clean::
 	rm -f ~/src/lib/gutils/*.cm[iox]
 	ocamlbuild -clean
 	cd $(LEDIT)  && make clean
+
+install : native
+	mkdir -p $(PREFIX)/bin
+	install -m 0755 build/$(ARCH)/$(BIN_NAME) $(PREFIX)/bin/
 
 up:
 	cd upload && upload.rb jark-$(VERSION)-x86_64.tar.gz icylisper/jark-client

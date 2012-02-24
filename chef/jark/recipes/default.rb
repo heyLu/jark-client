@@ -18,7 +18,7 @@
 #
 
 
-remote_file "/usr/local/src/jark-#{node[:jark][:client_version]}" do
+remote_file "/usr/local/src/jark-#{node[:jark][:client_version]}.tar.gz" do
   source "#{node[:jark][:src_url]}/jark-#{node[:jark][:client_version]}.tar.gz"
 end
 

@@ -1,0 +1,24 @@
+Source: jark
+Section: dev
+Priority: extra
+Maintainer: Isaac Praveen <icylisper@gmail.com>
+Build-Depends: debhelper (>= 8.0.0)
+Standards-Version: 3.9.2
+Homepage: <insert the upstream URL, if relevant>
+Vcs-Git: git://github.com/icylisper/jark-client.git
+
+Package: jark
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: A tool to run clojure programs on the JVM, interactively and remotely.
+Jark is a tool to run clojure code on the JVM, interactively and remotely. It has 2 components – a client written in OCaml and a server written in Clojure/Java. The client is compiled to native code and is extremely tiny (~300KB). The client uses the nREPL protocol to transfer clojure data structures over the wire.
+
+It is designed to be
+
+   Interactive
+   Lightweight and can be used by Editors/IDEs (client)
+   OS agnostic (client)
+   Extensible with server-side plugins
+   Secure
+   Embeddable (server)
+   Interoperable with existing clojure tools (lein, cljr etc)
