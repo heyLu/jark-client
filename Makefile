@@ -100,6 +100,10 @@ tar:
 	cp build/$(ARCH)/jark upload/jark-$(VERSION)-$(ARCH)/jark
 	cd upload && tar zcf jark-$(VERSION)-$(ARCH).tar.gz jark-$(VERSION)-$(ARCH)/*
 
+deb:
+	fakeroot debian/rules clean
+	fakeroot debian/rules binary
+
 deps: ansiterminal camlp5
 
 ansiterminal:
@@ -121,9 +125,10 @@ LINUX_64_HOST=vagrant@33.33.33.20
 LINUX_32_HOST=vagrant@33.33.33.21
 WIN_32_HOST=vagrant@33.33.33.22
 
-linux-64:
+linux-64: deb
 	ssh ${LINUX_64_HOST} "cd ~/jark-client && git pull && make && make tar"
 	scp ${LINUX_64_HOST}:~/jark-client/upload/jark-${VERSION}-Linux-x86_64.tar.gz upload/
+	scp ${LINUX_64_HOST}:~/*.deb upload/
 
 linux-32:
 	ssh ${LINUX_32_HOST} "cd ~/jark-client && git pull && make && make tar"
