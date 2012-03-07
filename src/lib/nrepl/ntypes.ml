@@ -1,8 +1,8 @@
 type env = {
     ns          : string;
     debug       : bool;
-    host        : string;
-    port        : int;
+    mutable host        : string;
+    mutable port        : int;
   }
 
 type nrepl_message = {

@@ -195,7 +195,6 @@ let parse_argv () =
 let _ =
   try
     Config.read_config ();
-    Gconf.load ();
     let opts = parse_argv () in
     Config.set_env opts.env;
     Config.set_server_opts opts.server_opts;

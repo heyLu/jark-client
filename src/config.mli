@@ -18,7 +18,7 @@ module Config :
 
     val jark_version : string
 
-    val read_config_file : (string -> string -> unit) -> unit -> unit
+    val read_config_file : (string -> string -> unit) -> string -> unit -> unit
 
     val read_config : unit -> unit
 

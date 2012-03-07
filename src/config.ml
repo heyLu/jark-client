@@ -82,6 +82,7 @@ module Config =
         
     let set_server_opt k v = 
       let opts = get_server_opts () in
+      let env  = get_env () in 
       match k with
         | "jvm_opts"        -> opts.jvm_opts <- v
         | "log_file"        -> opts.log_file <- v
@@ -92,6 +93,8 @@ module Config =
         | "classpath"       -> opts.classpath <- v
         | "config_file"     -> opts.config_file <- v
         | "output_format"   -> opts.output_format <- v
+        | "host"            -> env.host <- v
+        | "port"            -> env.port <- (int_of_string v)
         | _                 -> ()
 
     let classpath () = 
@@ -99,8 +102,7 @@ module Config =
       let main_cp = (server_jar platform.cljr opts.server_version opts.clojure_version ()) in
       main_cp ^ (Gstr.uq opts.classpath)
 
-    let read_config_file set_opt () =
-      let opts = get_server_opts () in 
+    let read_config_file set_opt config_file () =
       let skip_line s =
         let s = Gstr.strip s in
         (Gstr.starts_with s "#") ||
@@ -114,20 +116,21 @@ module Config =
             | _ -> raise (Failure "Bad config file line")
           end
         with _ -> begin
-          print_endline ("Bad config file: " ^ opts.config_file);
+          print_endline ("Bad config file: " ^ config_file);
           print_endline ("Could not parse line: " ^ s);
           raise (Failure "Could not load config file")
         end
       in
-      if (Gfile.exists opts.config_file) then begin
-        let config = Gfile.getlines opts.config_file in
+      if (Gfile.exists config_file) then begin
+        let config = Gfile.getlines config_file in
         List.iter process_line config
       end
       else
         ()
 
     let read_config () = 
-      read_config_file set_server_opt ()
+      let opts = get_server_opts () in 
+      read_config_file set_server_opt opts.config_file ()
 
     let print_config () =
       let opts = get_server_opts () in 
@@ -137,6 +140,7 @@ module Config =
         "";
         "classpath       = " ^ opts.classpath;
         "clojure_version = " ^ opts.clojure_version;
+        "config_file     = " ^ opts.config_file;
         "http_client     = " ^ opts.http_client;
         "install_root    = " ^ opts.install_root;
         "jvm_opts        = " ^ opts.jvm_opts ;
