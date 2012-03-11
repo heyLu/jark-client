@@ -32,8 +32,8 @@ LIBS = unix,bigarray,str,nums,$(CAMLP5)/camlp5,$(CAMLP5)/gramlib,$(ANSITERM)/ANS
 OCAMLBUILD = ocamlbuild -j 2 -quiet  -I $(GUTILS) -I $(NREPL) -I src -I src/plugins  -lflags -I,/usr/lib/ocaml/pcre  \
            -lflags -I,$(CAMLP5)  -lflags -I,$(ANSITERM) -cflags -I,$(ANSITERM) -cflags  -I,$(LEDIT) -lflags  -I,$(LEDIT)
 
-WOCAMLBUILD = ocamlbuild -j 2 -quiet -I $(GUTILS) -I src -I src/core -I src/plugins -lflags -I,$(WLIB)/pcre  \
-           -lflags -I,$(WLIB)/camlp5 -cflags  -I,$(WLIB)/ledit
+WOCAMLBUILD = ocamlbuild -j 2 -quiet -I $(GUTILS) -I $(NREPL) -I src -I src/core -I src/plugins -lflags -I,$(WLIB)/pcre  \
+           -lflags -I,$(WLIB)/camlp5 -lflags -I,$(ANSITERM) -cflags -I,$(ANSITERM) -cflags  -I,$(WLIB)/ledit
 
 all:: native
 
@@ -64,10 +64,6 @@ native32 :
 	cp _build/src/main.native jark.native
 	rm -rf _build
 
-gprof :
-	$(OCAMLBUILD) -libs $(LIBS) -ocamlopt "ocamlopt -p" main.native
-	cp _build/src/main.native jark.native
-
 exe :
 	$(WOCAMLBUILD) -libs $(WIN_LIBS) -ocamlc i486-mingw32-ocamlc -ocamlopt i486-mingw32-ocamlopt  main.native
 	mkdir -p build/Win-i386
@@ -90,9 +86,6 @@ install : native
 	mkdir -p $(PREFIX)/bin
 	install -m 0755 build/$(ARCH)/$(BIN_NAME) $(PREFIX)/bin/
 
-up:
-	cd upload && upload.rb jark-$(VERSION)-x86_64.tar.gz icylisper/jark-client
-
 tar:
 	rm -rf upload/jark-$(VERSION)-$(ARCH)
 	mkdir -p upload
@@ -100,6 +93,14 @@ tar:
 	cp README.md upload/jark-$(VERSION)-$(ARCH)/README
 	cp build/$(ARCH)/jark upload/jark-$(VERSION)-$(ARCH)/jark
 	cd upload && tar zcf jark-$(VERSION)-$(ARCH).tar.gz jark-$(VERSION)-$(ARCH)/*
+
+zip:
+	rm -rf upload/jark-$(VERSION)-win32
+	mkdir -p upload
+	cd upload && mkdir jark-$(VERSION)-win32
+	cp README.md upload/jark-$(VERSION)-win32/README
+	cp build/$(ARCH)/jark.exe upload/jark-$(VERSION)-win32/jark.exe
+	cd upload && zip -r jark-$(VERSION)-win32.zip jark-$(VERSION)-win32/*
 
 deb:
 	fakeroot debian/rules clean
@@ -126,11 +127,16 @@ LINUX_64_HOST=vagrant@33.33.33.20
 LINUX_32_HOST=vagrant@33.33.33.21
 WIN_32_HOST=vagrant@33.33.33.22
 
-linux-64: 
+linux64: 
 	ssh ${LINUX_64_HOST} "cd ~/jark-client && git pull && make upx && make tar && make deb"
 	scp ${LINUX_64_HOST}:~/jark-client/upload/jark-${VERSION}-Linux-x86_64.tar.gz upload/
 	scp ${LINUX_64_HOST}:~/*.deb upload/
 
-linux-32:
+linux32:
 	ssh ${LINUX_32_HOST} "cd ~/jark-client && git pull && make && make tar"
 	scp ${LINUX_32_HOST}:~/jark-client/upload/jark-${VERSION}-Linux-i386.tar.gz upload/
+
+win32:
+	ssh ${WIN_32_HOST} "cd ~/jark-client && git pull && make exe && make zip"
+	scp ${WIN_32_HOST}:~/jark-client/upload/jark-${VERSION}-win32.zip upload/
+
