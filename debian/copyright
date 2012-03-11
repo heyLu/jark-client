@@ -3,15 +3,15 @@ Upstream-Name: jark
 Source: <url://example.com>
 
 Files: *
-Copyright: 2011 - 2012 , Isaac Praveen <icylisper@gmail.com>
+Copyright: 2011 - 2012 , Martin DeMello <martindemello@gmail.com> and Isaac Praveen <icylisper@gmail.com>
 
-License: GPL-3.0+
+License: GPL-2.0+
 
 Files: debian/*
-Copyright: 2012 vagrant <icylisper@gmail.com>
-License: GPL-3.0+
+Copyright: 2012 Isaac Praveen <icylisper@gmail.com>
+License: GPL-2.0+
 
-License: GPL-3.0+
+License: GPL-2.0+
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
@@ -26,7 +26,7 @@ License: GPL-3.0+
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  .
  On Debian systems, the complete text of the GNU General
- Public License version 3 can be found in "/usr/share/common-licenses/GPL-3".
+ Public License version 3 can be found in "/usr/share/common-licenses/GPL-2".
 
 # Please also look if there are files or directories which have a
 # different copyright/license attached and list them here.

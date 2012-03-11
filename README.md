@@ -20,7 +20,10 @@ Catch us on #jark on irc.freenode.net
 
 * Martin DeMello
 * Isaac Praveen
+
+Contributors:
 * Lucas Stadler
+* Abhijith Gopal
 
 ## Thanks
 
@@ -34,4 +37,4 @@ Catch us on #jark on irc.freenode.net
 
 Copyright © 2012 Martin DeMello and Isaac Praveen
 
-Licensed under the EPL. (See the file epl.html.)
+Licensed under the GPLv2

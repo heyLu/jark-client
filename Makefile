@@ -49,7 +49,7 @@ upx :
 	$(OCAMLBUILD) -libs $(LIBS) main.native
 	if [ ! -d build/$(ARCH) ]; then mkdir -p build/$(ARCH); fi
 	cp _build/src/main.native build/$(ARCH)/$(BIN_NAME)-un
-	rm build/$(ARCH)/$(BIN_NAME)
+	rm -f build/$(ARCH)/$(BIN_NAME)
 	upx --brute --best -f -o build/$(ARCH)/$(BIN_NAME) build/$(ARCH)/$(BIN_NAME)-un
 	rm -f build/$(BIN_NAME)-un
 	rm -rf _build
