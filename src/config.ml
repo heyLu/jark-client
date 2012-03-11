@@ -13,7 +13,7 @@ module Config =
     open Gfile
     open Gconf
 
-    let release_version = "0.4-pre"
+    let release_version = "0.4.0"
 
     let jark_version = "jark client version " ^ release_version
 
@@ -65,7 +65,7 @@ module Config =
 
     let server_opts = ref {
       jvm_opts        = "-Xms256m -Xmx512m";
-      log_file        = "/dev/null";
+      log_file        = "";
       install_root    = platform.cljr;
       http_client     = platform.wget_bin;
       clojure_version = clojure_version;
@@ -99,8 +99,7 @@ module Config =
 
     let classpath () = 
       let opts = get_server_opts () in
-      let main_cp = (server_jar platform.cljr opts.server_version opts.clojure_version ()) in
-      main_cp ^ (Gstr.uq opts.classpath)
+      (Gstr.uq opts.classpath)
 
     let read_config_file set_opt config_file () =
       let skip_line s =

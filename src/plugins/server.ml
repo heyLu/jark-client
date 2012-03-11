@@ -104,8 +104,14 @@ module Server =
       C.read_config ();
       C.classpath ()
 
+    let outp log_file () =
+      match log_file with 
+        | ""  -> ""
+        |  _  -> "&> " ^ log_file
+
     let start_cmd jvm_opts port log_file =
-      String.concat " " ["java"; (Gstr.uq jvm_opts) ; "-cp"; cp_boot (); "clojure.tools.jark.server"; port; " "; "&> "; log_file; " &"]
+      let outp = outp log_file () in
+      String.concat " " ["java"; (Gstr.uq jvm_opts) ; "-cp"; cp_boot (); "clojure.tools.jark.server"; port; " "; outp; " &"]
 
     let start args =
       let opts = C.get_server_opts () in

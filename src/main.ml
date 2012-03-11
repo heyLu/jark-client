@@ -28,7 +28,6 @@ let usage =
                 "       -h  --host (localhost)";
                 "       -i  --install-root ($HOME/.cljr)" ;
                 "       -j  --jvm-opts (-Xms256m -Xmx512m)" ;
-                "       -l  --log-file (none)" ;
                 "       -o  --output-format json|plain (plain)" ;
                 "       -p  --port (9000)";
                 "       -s  --server-version (0.4-SNAPSHOT)" ;
@@ -146,7 +145,6 @@ let parse_argv () =
     "--install-root",    O.Set_string install_root,    "Set install root";
     "--output-format",   O.Set_string output_format,   "Set output format (json|plain)";
     "--jvm-opts",        O.Set_string jvm_opts,        "Set JVM version";
-    "--log-file",        O.Set_string log_file,        "Set Log path";
     "--prefix",          O.Set_string install_root,    "Set install root (required for debian)";
     "--show-config",     O.Set_on show_config,         "Show config";
     "--version",         O.Set_on version,             "Show jark version";
@@ -160,7 +158,6 @@ let parse_argv () =
     "-h",                O.Set_string host,            ("Set server hostname (default: " ^ !host ^ ")");
     "-i",                O.Set_string install_root,    "Set install root";
     "-j",                O.Set_string jvm_opts,        "Set JVM version";
-    "-l",                O.Set_string log_file,        "Set Log path";
     "-o",                O.Set_string output_format,   "Set output format (json|plain)";
     "-p",                O.Set_int port,               (sprintf "Set server port (default: %d)" !port);
     "-s",                O.Set_string server_version,  "Set jark server version";
