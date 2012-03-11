@@ -38,7 +38,7 @@ module Server =
 
     let server_jar_url ver ()  =
       let jar =
-        sprintf "jark-0.4-SNAPSHOT-clojure-%s-standalone.jar" ver
+        sprintf "jark-0.4.0-clojure-%s-standalone.jar" ver
       in
       let git_base = "https://github.com/downloads/icylisper/jark-server" in
       let url xs = String.concat "/" xs in

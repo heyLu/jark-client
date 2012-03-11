@@ -30,7 +30,7 @@ let usage =
                 "       -j  --jvm-opts (-Xms256m -Xmx512m)" ;
                 "       -o  --output-format json|plain (plain)" ;
                 "       -p  --port (9000)";
-                "       -s  --server-version (0.4-SNAPSHOT)" ;
+                "       -s  --server-version (0.4.0)" ;
                 "       -v  --version";
                 "       -w  --http-client (wget)";
                 "";
