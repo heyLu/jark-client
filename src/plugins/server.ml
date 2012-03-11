@@ -85,8 +85,10 @@ module Server =
         setup_cljr ();
         (* download jar *)
         let url = (server_jar_url o.clojure_version ()) in
-        Gnet.http_get o.http_client url  install_location;
-        Gstr.pe ("Installed server to " ^ install_location)
+        let out = Gnet.http_get o.http_client url  install_location in
+        match out with 
+        | 0 -> Gstr.pe ("Installed server to " ^ install_location)
+        | _ -> Gstr.pe ("Failed to download server jar")
       end
 
     let uninstall args =

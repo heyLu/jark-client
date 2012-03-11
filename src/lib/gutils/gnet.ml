@@ -5,5 +5,5 @@ module Gnet =
 
     let http_get bin url dest =
       let cmd = bin ^ " " ^ url ^ " -O " ^ dest in
-      ignore (Sys.command cmd);
+      Sys.command cmd;
 end 
