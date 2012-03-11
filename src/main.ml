@@ -146,6 +146,7 @@ let parse_argv () =
     "--output-format",   O.Set_string output_format,   "Set output format (json|plain)";
     "--jvm-opts",        O.Set_string jvm_opts,        "Set JVM version";
     "--prefix",          O.Set_string install_root,    "Set install root (required for debian)";
+    "--port",            O.Set_int port,               (sprintf "Set server port (default: %d)" !port);
     "--show-config",     O.Set_on show_config,         "Show config";
     "--version",         O.Set_on version,             "Show jark version";
     "-S",                O.Set_on show_config,         "Show config";
