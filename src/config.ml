@@ -97,8 +97,17 @@ module Config =
         | "port"            -> env.port <- (int_of_string v)
         | _                 -> ()
 
+    let valid_clojure_versions = ["1.3.0"; "1.2.1"]
+
+    let check_valid_clojure_version ver () =
+      if (List.exists (fun x -> x = ver) valid_clojure_versions) then
+        true
+      else
+        raise (Failure ("Unsupported clojure version: " ^ ver ^ "\nSupported versions: \n" ^ (Gstr.unlines valid_clojure_versions)))
+
     let classpath () = 
       let opts = get_server_opts () in
+      check_valid_clojure_version opts.clojure_version ();
       (Gstr.uq opts.classpath)
 
     let read_config_file set_opt config_file () =

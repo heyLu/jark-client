@@ -25,4 +25,6 @@ module Config :
     val print_config : unit -> unit
 
     val classpath : unit -> string
+
+    val check_valid_clojure_version : string -> unit -> bool
   end
