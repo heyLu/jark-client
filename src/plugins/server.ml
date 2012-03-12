@@ -30,9 +30,9 @@ module Server =
       end
 
     let ns_load args = match args with
-    [] -> (); Plugin.show_cmd_usage registry "load"
-    | x :: xs -> load x
-
+        [] -> (); Plugin.show_cmd_usage registry "load"
+      | x :: xs -> load x
+        
     let cljr_lib () =
       Gfile.path [ C.platform.cljr ; "lib" ]
 
@@ -87,8 +87,8 @@ module Server =
         let url = (server_jar_url o.clojure_version ()) in
         let out = Gnet.http_get o.http_client url  install_location in
         match out with 
-        | 0 -> Gstr.pe ("Installed server to " ^ install_location)
-        | _ -> Gstr.pe ("Failed to download server jar")
+          | 0 -> Gstr.pe ("Installed server to " ^ install_location)
+          | _ -> Gstr.pe ("Failed to download server jar")
       end
 
     let uninstall args =
@@ -135,8 +135,8 @@ module Server =
     let stop args =
       (* FIXME: Ensure that stop is issued only on the server *)
       match get_pid () with
-      | None -> print_endline "Could not get pid of JVM"
-      | Some pid ->
+        | None -> print_endline "Could not get pid of JVM"
+        | Some pid ->
           begin
             printf "Stopping JVM with pid: %d\n" pid;
             Unix.kill pid Sys.sigkill;
@@ -163,12 +163,12 @@ module Server =
 
     let dispatch cmd args =
       match cmd with
-      | "info"       -> info args
-      | "install"    -> install args
-      | "load"       -> ns_load args
-      | "start"      -> start args
-      | "stop"       -> stop args
-      | "version"    -> version args
-      | _            -> Jark.nfa "clojure.tools.jark.server" ~f:cmd ~a:args ()
+        | "info"       -> info args
+        | "install"    -> install args
+        | "load"       -> ns_load args
+        | "start"      -> start args
+        | "stop"       -> stop args
+        | "version"    -> version args
+        | _            -> Jark.nfa "clojure.tools.jark.server" ~f:cmd ~a:args ()
 
 end

@@ -48,9 +48,9 @@ module Jark =
     let dispatch_fn () = 
       let opts = C.get_server_opts () in
       match opts.output_format with 
-        "plain" -> "(clojure.tools.jark.server/dispatch "
-      | "json"  -> "(clojure.tools.jark.server/dispatch-json "
-      |  _      -> "(clojure.tools.jark.server/dispatch "
+          "plain" -> "(clojure.tools.jark.server/dispatch "
+        | "json"  -> "(clojure.tools.jark.server/dispatch-json "
+        |  _      -> "(clojure.tools.jark.server/dispatch "
 
     let nfa n ?(f="nil") ?(a=[]) ?(fmt=ResText) () =
       let d = dispatch_fn () in
@@ -59,8 +59,8 @@ module Jark =
       let qf = Gstr.qq f in
       let sa = String.concat " " (List.map Gstr.qq a) in
       let dm = match f with
-      "nil" -> sprintf "%s %s)" d qn
-      | _   -> sprintf "%s %s %s %s)" d qn qf sa
+          "nil" -> sprintf "%s %s)" d qn
+        | _   -> sprintf "%s %s %s %s)" d qn qf sa
       in
       nrepl_send env fmt { mid = node_id env; code = dm }
 
@@ -69,8 +69,8 @@ module Jark =
 
     let dispatch args =
       match args with
-        [] -> ()
-      | [ns] -> nfa ns ()
-      | ns :: f :: rest -> nfa ns ~f:f ~a:rest ()
+          [] -> ()
+        | [ns] -> nfa ns ()
+        | ns :: f :: rest -> nfa ns ~f:f ~a:rest ()
 
 end

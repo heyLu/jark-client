@@ -14,8 +14,8 @@ module Repl =
     type completion_mode = Server | Histfile
 
     let string_of_completion_mode c = match c with
-    | Server -> "server"
-    | Histfile -> "histfile"
+      | Server -> "server"
+      | Histfile -> "histfile"
 
     type repl_config = {
       mutable color           : bool;
@@ -36,11 +36,11 @@ module Repl =
 
     let bool_of_string s =
       match s with
-      | "true"  -> Some true
-      | "on"    -> Some true
-      | "false" -> Some false
-      | "off"   -> Some false
-      | _       -> None
+        | "true"  -> Some true
+        | "on"    -> Some true
+        | "false" -> Some false
+        | "off"   -> Some false
+        | _       -> None
 
     let default_bool s def =
       match bool_of_string s with
@@ -84,8 +84,8 @@ module Repl =
       Ledit.open_histfile false "/tmp/jark";
       let buf = Buffer.create 4096 in
       let rec loop c = match c with
-      | "\n" -> Buffer.contents buf
-      | _    -> Buffer.add_string buf c; loop (Ledit.input_char stdin)
+        | "\n" -> Buffer.contents buf
+        | _    -> Buffer.add_string buf c; loop (Ledit.input_char stdin)
       in
       loop (Ledit.input_char stdin)
       
@@ -123,8 +123,8 @@ module Repl =
     (* update env from string options *)
     let set_debug env o =
       let d = match bool_of_string o with
-      | Some b  -> b
-      | None    -> env.debug
+        | Some b  -> b
+        | None    -> env.debug
       in
 
       Printf.printf "debug = %s\n" (if d then "true" else "false");
@@ -151,9 +151,9 @@ module Repl =
     let set_completion_mode o =
       begin
         config.completion_mode <- match o with
-        | "server"   -> Server
-        | "histfile" -> Histfile
-        | _          -> config.completion_mode
+          | "server"   -> Server
+          | "histfile" -> Histfile
+          | _          -> config.completion_mode
       end;
       print_line [default] (
         "completion-mode: " ^
@@ -168,21 +168,21 @@ module Repl =
 
     let handle_cmd env cmd () =
       match Str.bounded_split (Str.regexp " +") cmd 2 with
-      | ["/help"]               -> display_help (); env
-      | ["/?"]                  -> display_help (); env
-      | ["/debug"; o]           -> set_debug env o
-      | ["/cp"; "list"]         -> Jark.pfa "plugin.cp" ~f:"list" (); env
-      | ["/cp"; "add"; path]    -> Jark.pfa "plugin.cp" ~f:"add" ~a:[path] (); env
-      | ["/clear"]              -> ignore (Sys.command "clear"); env
-      | ["/server"; "version"]  -> Jark.pfa "server" ~f:"version" (); env
-      | ["/server"; "info"]     -> Jark.pfa "server" ~f:"info" (); env
-      | ["/vm"; "version"]      -> Jark.pfa "plugin.vm" ~f:"version" (); env
-      | ["/vm"; "stat"]         -> Jark.pfa "plugin.vm" ~f:"stat" (); env
-      | ["/ns"; o]              -> set_ns env o
-      | ["/config"]             -> show_config (); env
-      | ["/quit"]               -> env
-      | _                       -> env
-
+        | ["/help"]               -> display_help (); env
+        | ["/?"]                  -> display_help (); env
+        | ["/debug"; o]           -> set_debug env o
+        | ["/cp"; "list"]         -> Jark.pfa "plugin.cp" ~f:"list" (); env
+        | ["/cp"; "add"; path]    -> Jark.pfa "plugin.cp" ~f:"add" ~a:[path] (); env
+        | ["/clear"]              -> ignore (Sys.command "clear"); env
+        | ["/server"; "version"]  -> Jark.pfa "server" ~f:"version" (); env
+        | ["/server"; "info"]     -> Jark.pfa "server" ~f:"info" (); env
+        | ["/vm"; "version"]      -> Jark.pfa "plugin.vm" ~f:"version" (); env
+        | ["/vm"; "stat"]         -> Jark.pfa "plugin.vm" ~f:"stat" (); env
+        | ["/ns"; o]              -> set_ns env o
+        | ["/config"]             -> show_config (); env
+        | ["/quit"]               -> env
+        | _                       -> env
+          
     let handle env str () =
       if String.length str == 0 then
         env

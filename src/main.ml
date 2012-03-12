@@ -74,8 +74,8 @@ let _ = register "server"     (module Server: PLUGIN)
 let plugin_dispatch m args =
   let module Handler = (val (Hashtbl.find registry m) : PLUGIN) in
   match args with
-  [] | "usage" :: _ | "help" :: _ -> Handler.show_usage ()
-  | x :: xs -> Handler.dispatch x xs
+      [] | "usage" :: _ | "help" :: _ -> Handler.show_usage ()
+    | x :: xs -> Handler.dispatch x xs
 
 let run_eval args =
   Gstr.pe (Jark.eval args ())
@@ -84,10 +84,10 @@ let run_eval args =
 
 let server_dispatch args =
   match args with
-  [] -> show_usage ()
-  | ns :: _ when String.contains ns '.' -> Jark.dispatch args
-  | ns :: []                            -> Jark.nfa ns ()
-  | ns :: f :: xs                       -> Jark.nfa ns ~f:f ~a:xs ()
+      [] -> show_usage ()
+    | ns :: _ when String.contains ns '.' -> Jark.dispatch args
+    | ns :: []                            -> Jark.nfa ns ()
+    | ns :: f :: xs                       -> Jark.nfa ns ~f:f ~a:xs ()
 
 let show_version () = Gstr.pe Config.jark_version
 
@@ -109,12 +109,12 @@ let run_lein xs () =
 (* handle actions that don't dispatch to a plugin *)
 let main_handler m args =
   match m :: args with
-  | "repl"      :: [ns]     -> run_repl ns ()
-  | "repl"      :: []       -> run_repl "user" ()
-  | "plugin"    :: ["list"] -> show_plugins ()
-  | "lein"      :: xs       -> run_lein xs ()
-  | "version"   :: []       -> show_version ()
-  | xs                      -> server_dispatch xs
+    | "repl"      :: [ns]     -> run_repl ns ()
+    | "repl"      :: []       -> run_repl "user" ()
+    | "plugin"    :: ["list"] -> show_plugins ()
+    | "lein"      :: xs       -> run_lein xs ()
+    | "version"   :: []       -> show_version ()
+    | xs                      -> server_dispatch xs
 
 (* option parsing *)
 
@@ -203,11 +203,11 @@ let _ =
       Config.print_config ()
     else if opts.eval then
       match opts.args with
-        []  -> eval_stdin ()
-      | _   -> run_eval (List.hd opts.args)
+          []  -> eval_stdin ()
+        | _   -> run_eval (List.hd opts.args)
     else match opts.args with
-      [] -> show_usage ()
-    | m :: args ->
+        [] -> show_usage ()
+      | m :: args ->
         if Hashtbl.mem registry m then
           plugin_dispatch m args
         else if Gfile.exists m then    
@@ -215,7 +215,7 @@ let _ =
         else
           main_handler m args
   with
-  | Unix.Unix_error(_, "connect", "") ->
-      Gstr.pe (connection_usage ())
-  | Failure e ->
+    | Unix.Unix_error(_, "connect", "") ->
+    Gstr.pe (connection_usage ())
+    | Failure e ->
       Gstr.pe ("Fatal error: " ^ e)
