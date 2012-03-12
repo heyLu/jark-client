@@ -110,7 +110,6 @@ module Repl =
       print_string [cyan] "REPL Commands:\n";
       let lines = Gstr.unlines ["/clear";
                                  "/config";
-                                 "/completion-mode [server histfile none]";
                                  "/cp [list add]";
                                  "/debug [true false]";
                                  "/ns namespace";
