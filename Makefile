@@ -8,7 +8,7 @@ PREFIX=debian/jark/usr
 BIN_NAME = jark
 
 OLIB = /usr/lib/ocaml
-WLIB = /usr/lib/i486-mingw32-ocaml
+WLIB = /usr/i586-mingw32msvc/lib/ocaml/
 WGET = wget --no-check-certificate -O -
 
 
@@ -25,15 +25,15 @@ ANSITERM = $(DEPLIBS)/ANSITerminal-0.6/_build
 CAMLP5 = $(DEPLIBS)/ocaml/camlp5
 
 
-WIN_LIBS = $(WLIB)/unix,$(WLIB)/bigarray,$(WLIB)/str,$(WLIB)/nums,$(WLIB)/camlp5/camlp5,$(WLIB)/camlp5/gramlib,$(WLIB)/ledit/ledit
+WIN_LIBS = $(WLIB)/unix,$(WLIB)/bigarray,$(WLIB)/str,$(WLIB)/nums,$(CAMLP5)/camlp5,$(CAMLP5)/gramlib,$(ANSITERM)/ANSITerminal,$(LEDIT)/ledit
 
 LIBS = unix,bigarray,str,nums,$(CAMLP5)/camlp5,$(CAMLP5)/gramlib,$(ANSITERM)/ANSITerminal,$(LEDIT)/ledit
 
 OCAMLBUILD = ocamlbuild -j 2 -quiet  -I $(GUTILS) -I $(NREPL) -I src -I src/plugins  -lflags -I,/usr/lib/ocaml/pcre  \
            -lflags -I,$(CAMLP5)  -lflags -I,$(ANSITERM) -cflags -I,$(ANSITERM) -cflags  -I,$(LEDIT) -lflags  -I,$(LEDIT)
 
-WOCAMLBUILD = ocamlbuild -j 2 -quiet -I $(GUTILS) -I $(NREPL) -I src -I src/core -I src/plugins -lflags -I,$(WLIB)/pcre  \
-           -lflags -I,$(WLIB)/camlp5 -lflags -I,$(ANSITERM) -cflags -I,$(ANSITERM) -cflags  -I,$(WLIB)/ledit
+WOCAMLBUILD = ocamlbuild -j 2 -quiet -I $(GUTILS) -I $(NREPL) -I src -I src/plugins  -lflags -I,/usr/lib/ocaml/pcre \
+           -lflags -I,$(CAMLP5) -lflags -I,$(ANSITERM) -cflags -I,$(ANSITERM) -cflags -I,$(LEDIT) -lflags  -I,$(LEDIT)
 
 all:: native
 
@@ -65,7 +65,8 @@ native32 :
 	rm -rf _build
 
 exe :
-	$(WOCAMLBUILD) -libs $(WIN_LIBS) -ocamlc i486-mingw32-ocamlc -ocamlopt i486-mingw32-ocamlopt  main.native
+	cd $(LEDIT)  && make -f Makefile.win32 && make -f Makefile.win32 ledit.cmxa 
+	$(WOCAMLBUILD) -libs $(WIN_LIBS) -ocamlc i586-mingw32msvc-ocamlc -ocamlopt i586-mingw32msvc-ocamlopt  main.native
 	mkdir -p build/Win-i386
 	cp _build/src/main.native build/Win-i386/jark.exe
 	rm -rf _build
@@ -120,6 +121,16 @@ camlp5:
 		mkdir -p $(DEPLIBS) ; \
 		cd $(DEPLIBS) && $(WGET) http://pauillac.inria.fr/~ddr/camlp5/distrib/src/camlp5-6.02.3.tgz 2> /dev/null | tar xzvf - ; \
 		cd camlp5-6.02.3 && ./configure --prefix $(DEP) && make world.opt && make install ;\
+		rm -rf $(DEPLIBS)/camlp5-6.02.3 ;\
+	fi
+
+deps-win32: ansiterminal camlp5-win32
+
+camlp5-win32:
+	if [ ! -e $(CAMLP5)/camlp5.cmxa ]; then \
+		mkdir -p $(DEPLIBS) ; \
+		cd $(DEPLIBS) && $(WGET) http://pauillac.inria.fr/~ddr/camlp5/distrib/src/camlp5-6.02.3.tgz 2> /dev/null | tar xzvf - ; \
+		cd camlp5-6.02.3 && ./configure --prefix $(DEP) --no-opt && make world.opt && make install ;\
 		rm -rf $(DEPLIBS)/camlp5-6.02.3 ;\
 	fi
 
