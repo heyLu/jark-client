@@ -22,7 +22,8 @@ Catch us on #jark on irc.freenode.net
 * Isaac Praveen
 
 Contributors:
-* Lucas Stadler
+
+* Lucas Stadler  
 * Abhijith Gopal
 
 ## Thanks
@@ -31,7 +32,7 @@ Contributors:
 * Ambrose Bonnaire Sergeant
 * Chas Emerick (for nREPL)
 * Phil Hagelberg (for Leiningen)
-* Rich Hickey and team (for Clojure)
+* Rich Hickey (for Clojure)
     
 ## License
 
