@@ -67,8 +67,8 @@ native32 :
 exe :
 	cd $(LEDIT)  && make -f Makefile.win32 && make -f Makefile.win32 ledit.cmxa 
 	$(WOCAMLBUILD) -libs $(WIN_LIBS) -ocamlc i586-mingw32msvc-ocamlc -ocamlopt i586-mingw32msvc-ocamlopt  main.native
-	mkdir -p build/Win-i386
-	cp _build/src/main.native build/Win-i386/jark.exe
+	mkdir -p build/Win32
+	cp _build/src/main.native build/Win32/jark.exe
 	rm -rf _build
 
 clean::
@@ -100,7 +100,7 @@ zip:
 	mkdir -p upload
 	cd upload && mkdir jark-$(VERSION)-win32
 	cp README.md upload/jark-$(VERSION)-win32/README
-	cp build/$(ARCH)/jark.exe upload/jark-$(VERSION)-win32/jark.exe
+	cp build/Win32/jark.exe upload/jark-$(VERSION)-win32/jark.exe
 	cd upload && zip -r jark-$(VERSION)-win32.zip jark-$(VERSION)-win32/*
 
 deb:
@@ -148,6 +148,6 @@ linux32:
 	scp ${LINUX_32_HOST}:~/jark-client/upload/jark-${VERSION}-Linux-i386.tar.gz upload/
 
 win32:
-	ssh ${WIN_32_HOST} "cd ~/jark-client && git pull && make exe && make zip"
+	ssh ${WIN_32_HOST} "cd ~/jark-client && git pull origin win32 && export PATH=${PATH}:/usr/i586-mingw32msvc/bin && make exe && make zip"
 	scp ${WIN_32_HOST}:~/jark-client/upload/jark-${VERSION}-win32.zip upload/
 
